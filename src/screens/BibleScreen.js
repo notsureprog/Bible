@@ -35,24 +35,41 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
-    const VersionSelectMenu = React.forwardRef(({ children }, ref) => {
+    const VersionSelectMenu = () => {
         return (
-            <View>
-                <Form.Control
-
-                    autoFocus
-                    onChange={(e) => setBible(e.target.value)}
-                // value={bible}
-                />
-                {/* <TouchableOpacity onClick={() => setBible('de4e12af7f28f599-01')}><Text>KJV</Text></TouchableOpacity>
-                <TouchableOpacity onClick={() => setBible('06125adad2d5898a-01')}><Text>ASV</Text></TouchableOpacity>
-                <TouchableOpacity onClick={() => setBible('9879dbb7cfe39e4d-03')}><Text>WEB</Text></TouchableOpacity> */}
-                <ul>
-                    {React.Children.toArray(children).filter((child) => !bible || child.props.children.toLowerCase().startsWith(bible))}
-                </ul>
-            </View>
+            <Dropdown>
+                <Dropdown.Toggle variant='success' id="dropdown-basic">
+                    Version
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => setBible('de4e12af7f28f599-01')}>Action 1</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setBible('06125adad2d5898a-01')}>Action 2</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setBible('9879dbb7cfe39e4d-03')}>Action 3</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
         )
-    })
+    }
+
+    // const VersionSelectMenu = React.forwardRef(({ children }, ref) => {
+    //     return (
+    //         <View>
+
+    //             {/* <Form.Control
+
+    //                 autoFocus
+    //                 onChange={(e) => setBible(e.target.value)}
+    //             // value={bible}
+    //             /> */}
+    //             {/* <TouchableOpacity onClick={() => setBible('de4e12af7f28f599-01')}><Text>KJV</Text></TouchableOpacity>
+    //             <TouchableOpacity onClick={() => setBible('06125adad2d5898a-01')}><Text>ASV</Text></TouchableOpacity>
+    //             <TouchableOpacity onClick={() => setBible('9879dbb7cfe39e4d-03')}><Text>WEB</Text></TouchableOpacity> */}
+    //             {/* <ul> */}
+                    
+    //                 {/* {React.Children.toArray(children).filter((child) => !bible || child.props.children.toLowerCase().startsWith(bible))} */}
+    //             {/* </ul> */}
+    //         </View>
+    //     )
+    // })
     console.log(chapter)
     console.log(darkMode)
     console.log(bible)
@@ -64,7 +81,7 @@ const BibleScreen = ({ navigation, route }) => {
                 url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
                 // url: `https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/chapters/GEN.1/verses`,
                 headers: {
-                    'api-key': ''
+                    'api-key': '64a594186127bbd1c9dba6e9f71d58f6'
                 }
             }
 
@@ -83,24 +100,15 @@ const BibleScreen = ({ navigation, route }) => {
     return (
         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
             {data !== null &&
-                <View >
+                <View>
+                    
                     <TouchableOpacity onPress={() => onClick()}>
                         <Text>Theme</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.pop(1)}>
                         <Text>Go Back</Text>
                     </TouchableOpacity>
-                    <DropdownButton title='Version' className='d-inline mx-2'>
-
-                        {/* <Dropdown.Toggle id="dropdown-autoclose-inside">Version</Dropdown.Toggle> */}
-                        <Dropdown.Menu as={VersionSelectMenu} id='dropdown-menu-align-responsive-2'>
-                            {/* <TouchableOpacity onClick={() => setBible('de4e12af7f28f599-01')}><Text>KJV</Text></TouchableOpacity>
-                            <TouchableOpacity onClick={() => setBible('06125adad2d5898a-01')}><Text>ASV</Text></TouchableOpacity>
-                            <TouchableOpacity onClick={() => setBible('9879dbb7cfe39e4d-03')}><Text>WEB</Text></TouchableOpacity> */}
-                            <Dropdown.Item href='#'>ASV</Dropdown.Item>
-                            <Dropdown.Item href='#'>WEB</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </DropdownButton>
+                    
                     <View>
                         {data.id === 'GEN.intro' &&
                             <View>
@@ -130,6 +138,7 @@ const BibleScreen = ({ navigation, route }) => {
                             </View>
                         }
                     </View>
+                    <VersionSelectMenu />
                 </View>
             }
         </View>

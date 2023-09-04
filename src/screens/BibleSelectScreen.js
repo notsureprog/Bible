@@ -129,7 +129,7 @@ const BibleSelectScreen = ({ navigation }) => {
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
                     headers: {
                         // EXPO_PRIVATE
-                        'api-key': ''
+                        'api-key': '64a594186127bbd1c9dba6e9f71d58f6'
                     }
                 }
                 const result = await axios(options);
