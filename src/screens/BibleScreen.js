@@ -108,11 +108,11 @@ const BibleScreen = ({ navigation, route }) => {
         try {
             const options = {
                 method: 'GET',
-                // url: 'https://f0207add-c929-4273-85cd-7030e30c0a8a.mock.pstmn.io/Bibles'
+                // url: 'https://f0207add-c929-4273-85cd-7030e30c0a8a.mock.pstmn.io/Bibles' // taken off :)
                 url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
                 // // url: `https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/chapters/GEN.1/`,
                 headers: {
-                    'api-key': '64a594186127bbd1c9dba6e9f71d58f6'
+                    'api-key': '16ccfc7b84a090408553923f03335392' //regenerated :)
                 }
             }
 
