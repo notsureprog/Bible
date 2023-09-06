@@ -23,7 +23,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home'>
+        <Stack.Navigator initialRouteName='BibleSelectScreen'>
           <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ title: 'Select your Book/Chapter' }} />
           <Stack.Screen name='BibleScreen' component={BibleScreen} />
         </Stack.Navigator>

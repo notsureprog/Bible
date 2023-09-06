@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import axios from 'axios'
 // import { ScrollView } from 'react-native-web'
 // do not use semi colon on import due to errors, but yes everywhere else.
