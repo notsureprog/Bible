@@ -16,7 +16,7 @@ const BibleSelectScreen = ({ navigation }) => {
     // de4e12af7f28f599-02 - KJV
     // bba9f40183526463-01 - BSB
 
-    const BibleBooks = () => {
+    const BibleBooks = () => React.useMemo(() => {
         // I really just need a reset for the view rather than navigation.pop()
         // api key... I want private... maybe eas.json config...
         // 2073974de941e662df81167f889be71e
@@ -107,19 +107,22 @@ const BibleSelectScreen = ({ navigation }) => {
         return (
 
             <View>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('Dummy')}>
+                    <Text>Dummy</Text>
+                </TouchableOpacity> */}
                 <FlatList
                     data={selection}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View>
-                            <TouchableOpacity onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{fontSize: 30, margin: 10}}>{item.name}</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10 }}>{item.name}</Text></TouchableOpacity>
                         </View>
                     )}
                 />
             </View>
         )
 
-    }
+    }, [])
 
     const GetSelectOptions = async () => {
         if (loading && book !== null) {
@@ -129,7 +132,7 @@ const BibleSelectScreen = ({ navigation }) => {
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
                     headers: {
                         // EXPO_PRIVATE
-                        'api-key': '64a594186127bbd1c9dba6e9f71d58f6'
+                        'api-key': ''
                     }
                 }
                 const result = await axios(options);
