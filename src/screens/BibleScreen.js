@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
 import axios from 'axios'
-import { RenderHTML } from 'react-native-render-html'
+import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 // import DropdownButton from 'react-bootstrap/DropdownButton'
@@ -29,6 +29,16 @@ const BibleScreen = ({ navigation, route }) => {
     if (data !== null) {
 
         console.log(Object.values(data)) //array
+    }
+
+    const customHTMLElementModels = {
+        'dynamic-font-color': HTMLElementModel.fromCustomModel({
+            tagName: 'dynamic-font-color',
+            mixedUAStyles: {
+                color: darkMode ? styles.dark.color : styles.light.color
+            },
+            contentModel: HTMLContentModel.block
+        })
     }
 
     const onOpen = React.useCallback(() => {
@@ -110,7 +120,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
                                     <Text>{data.next.bookId} {data.next.number}</Text>
                                 </TouchableOpacity>
-                                <RenderHTML source={{ html: `<div style='color: ${darkMode} ? ${styles.dark.color} : ${styles.light.color}'>${data.content}</div>` }} />
+                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div style='color: ${darkMode} ? ${styles.dark.color} : ${styles.light.color}'>${data.content}</div>` }} />
                             </View>
                         }
                         {data.id === 'REV.22' &&
@@ -132,11 +142,11 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Text>{data.next.bookId} {data.next.number}</Text>
                                 </TouchableOpacity>
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                <RenderHTML source={{ html: `${data.content}` }} />
-                                <VersionSelectMenu />
+                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
                             </ScrollView>
                         }
                     </View>
+                        <VersionSelectMenu />
                 </View>
             }
         </View>
