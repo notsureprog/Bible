@@ -4,6 +4,10 @@ import axios from 'axios'
 import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
+import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
+
+console.log(scriptureStyles)
+// import "/scripture-styles/dist/css/scripture-styles.css"
 // import DropdownButton from 'react-bootstrap/DropdownButton'
 // import Form from 'react-bootstrap/Form'
 
@@ -19,15 +23,13 @@ const BibleScreen = ({ navigation, route }) => {
         { label: 'ASV', value: '06125adad2d5898a-01' },
         { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
 
-    ])
+    ]);
     const [chapter, setChapter] = React.useState(route.params.chapter);
     const [bible, setBible] = React.useState(route.params.version);
-
     const [data, setData] = React.useState(null); //data is an array of objects and not a fn which i could use deps of something other than chapter because chapter changes all the time
 
 
     if (data !== null) {
-
         console.log(Object.values(data)) //array
     }
 
@@ -35,10 +37,15 @@ const BibleScreen = ({ navigation, route }) => {
         'dynamic-font-color': HTMLElementModel.fromCustomModel({
             tagName: 'dynamic-font-color',
             mixedUAStyles: {
-                color: darkMode ? styles.dark.color : styles.light.color
+                color: darkMode ? styles.dark.color : styles.light.color,
             },
             contentModel: HTMLContentModel.block
         })
+    }
+
+    const classesStyles = {
+        // needs to be an object
+        scriptureStyles
     }
 
     const onOpen = React.useCallback(() => {
@@ -56,7 +63,7 @@ const BibleScreen = ({ navigation, route }) => {
 
     const VersionSelectMenu = () => {
         return (
-            <View style={{ marginRight: 0, width: 175 }}>
+            <View style={{ flex: 1, marginLeft: '70%', width: 175, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                 <DropDownPicker
                     placeholder='Select a Version'
                     open={open}
@@ -103,15 +110,17 @@ const BibleScreen = ({ navigation, route }) => {
     }, [chapter, bible]) //component unmount? take out chapter and use it as a dep in memo.. chapter as a dep previously
 
     return (
-        <View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 10, borderStyle: 'solid' }}>
+        <View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }}>
             {data !== null &&
                 <View>
+                    {/* it is not really even white space. I think it is a p tag with a style to put space. it is <p class="p"></p> */}
                     <TextInput placeholder='Search for a verse' onSubmitEditing={() => console.log('I want a verse to be handled and match')} />
+                    <VersionSelectMenu />
                     <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => onClick()}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.pop(1)}>
-                        <Text>Go Back</Text>
+                    <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => navigation.pop(1)}>
+                        <Text style={{ height: 30, width: 125, color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </TouchableOpacity>
 
                     <View>
@@ -120,20 +129,21 @@ const BibleScreen = ({ navigation, route }) => {
                                 <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
                                     <Text>{data.next.bookId} {data.next.number}</Text>
                                 </TouchableOpacity>
-                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div style='color: ${darkMode} ? ${styles.dark.color} : ${styles.light.color}'>${data.content}</div>` }} />
+                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
                             </View>
                         }
                         {data.id === 'REV.22' &&
-                            <View>
+                            <ScrollView>
                                 <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                     <Text>{data.previous.bookId} {data.previous.number}</Text>
                                 </TouchableOpacity>
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                <RenderHTML source={{ html: `<div style='color: ${darkMode} ? ${styles.dark.color} : ${styles.light.color}'>${data.content}</div>` }} />
-                            </View>
+                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                            </ScrollView>
                         }
                         {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
-                            <ScrollView style={{ marginBottom: 75 }}>
+
+                            <ScrollView style={{ marginBottom: 100 }}>
                                 {/* idk if this is right, but setChapter is a function i do know */}
                                 <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                     <Text>{data.previous.bookId} {data.previous.number}</Text>
@@ -142,11 +152,11 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Text>{data.next.bookId} {data.next.number}</Text>
                                 </TouchableOpacity>
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                <RenderHTML classesStyles={classesStyles} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
                             </ScrollView>
                         }
                     </View>
-                        <VersionSelectMenu />
+
                 </View>
             }
         </View>
@@ -156,11 +166,15 @@ const BibleScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     dark: {
         backgroundColor: '#000000',
-        color: '#ffffff'
+        color: '#ffffff',
+
     },
     light: {
         backgroundColor: '#ffffff',
         color: '#000000'
+    },
+    main: {
+        flex: 3
     }
 })
 
