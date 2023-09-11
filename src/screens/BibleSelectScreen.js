@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 // import { ScrollView } from 'react-native-web'
 // do not use semi colon on import due to errors, but yes everywhere else.
 
