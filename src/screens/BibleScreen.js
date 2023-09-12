@@ -5,9 +5,9 @@ import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-ren
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
+// import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
 
-console.log(scriptureStyles)
+// console.log(scriptureStyles)
 // import "/scripture-styles/dist/css/scripture-styles.css"
 // import DropdownButton from 'react-bootstrap/DropdownButton'
 // import Form from 'react-bootstrap/Form'
@@ -74,10 +74,10 @@ const BibleScreen = ({ navigation, route }) => {
         })
     }
 
-    const classesStyles = {
-        // needs to be an object
-        scriptureStyles: scriptureStyles
-    }
+    // const classesStyles = {
+    //     // needs to be an object
+    //     scriptureStyles: scriptureStyles
+    // }
 
     const onOpen = React.useCallback(() => {
         setOpen(!open);
@@ -196,7 +196,8 @@ const BibleScreen = ({ navigation, route }) => {
 
 
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                <RenderHTML classesStyles={classesStyles.scriptureStyles} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
+                                {/* classesStyles={classesStyles.scriptureStyles} */}
+                                <RenderHTML  customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
                                 {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
                                 <View style={{display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative'}}>
                                     <TouchableOpacity style={{flexDirection: 'row' ,  }} onPress={() => { setChapter(`${data.previous.id}`) }}>
