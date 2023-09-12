@@ -7,13 +7,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 // import { ScrollView } from 'react-native-web'
 // do not use semi colon on import due to errors, but yes everywhere else.
 
-console.log(process.env.EXPO_PUBLIC_API_URL)
+
 
 
 const BibleSelectScreen = ({ navigation }) => {
     
-    const EXPO_PUBLIC_API_KEY = process.env.BIBLE_API_KEY; //reserved name?
-    console.log(EXPO_PUBLIC_API_KEY);
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [data, setData] = React.useState(null);
@@ -175,7 +173,7 @@ const BibleSelectScreen = ({ navigation }) => {
         }
     }
 
-    console.log(data)
+    console.log(data) //if it is null for garbage, I could handle. However, it seems like garbage is handled, but something that returns 400 or 401 is breaking.
     React.useEffect(() => {
         GetSelectOptions()
     }, [view, book]) //should only fire once... I hard code the books of the bible, and the view will fire up the url for the api

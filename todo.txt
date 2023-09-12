@@ -1,0 +1,6 @@
+make functions for repetitive code (like dropdown) or custom hooks
+
+work on styling
+
+eas config for dev and prod keys and whatnot.
+

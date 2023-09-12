@@ -5,6 +5,7 @@ import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-ren
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
+import "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
 // import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
 
 // console.log(scriptureStyles)
@@ -14,6 +15,7 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 
 // so really the only buttons i will be pressing - in terms of data changing - is next and previous. and setData (function) changes according to that. I want to cache data (state variable) if i visit that same verse.
 
+// in order to go from search screen into this one and pass the verse that was selected into here, I will have to break down the customHTMLElementModel in a way to obtain the data-id class
 const BibleScreen = ({ navigation, route }) => {
     const fontReducer = (state, action) => {
         if (action.type === "INCREASE_FONT") {
@@ -68,7 +70,8 @@ const BibleScreen = ({ navigation, route }) => {
             tagName: 'dynamic-font-color',
             mixedUAStyles: {
                 color: darkMode ? styles.dark.color : styles.light.color,
-                fontSize: fontState.size
+                fontSize: fontState.size,
+                
             },
             contentModel: HTMLContentModel.block
         })
@@ -132,6 +135,7 @@ const BibleScreen = ({ navigation, route }) => {
             const result = await axios(options);
             console.log(result.data.data); //not an array
             setData(result.data.data);
+            // const test = document.getElementById('verseId').innerHTML
         } catch (err) {
             console.log(err)
         }
@@ -148,23 +152,28 @@ const BibleScreen = ({ navigation, route }) => {
                     <Text style={{ marginLeft: '25%', marginRight: '25%', color: darkMode ? styles.dark.color : styles.light.color, fontSize: 35 }}>{data.reference}</Text>
                     {/* it is not really even white space. I think it is a p tag with a style to put space. it is <p class="p"></p> */}
                     {/* onChangeText={(text) => searchData(text.nativeEvent.text)} onSubmitEditing={(text) => console.log('I kind of would not mind onChangeText suggesting a verse on each keystroke, but the api calls could rack up more (5000 limit)')} but either way I am going to have to have a baseUrl in axios, and then maybe switch a view for the search and the actual chapter being read. OR I could redirect the user to an entirely different page, and then redirect back here (since it does have route.params.whatever (which needs an OR)) */}
-                    <TextInput style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color, borderColor: darkMode ? styles.dark.color : styles.light.color }} placeholder='Search for a verse' />
+                    {/* <TextInput style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color, borderColor: darkMode ? styles.dark.color : styles.light.color }} placeholder='Search for a verse' /> */}
                     <VersionSelectMenu />
                     <TouchableOpacity style={{ height: 30, width: 125, borderColor: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => onClick()}>
                         <MaterialCommunityIcons name="theme-light-dark" style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                     </TouchableOpacity>
+                    {/* I could go back to the bible select screen, but i kind of like it to go back to search if i searched too */}
                     <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
                         <Text style={{ height: 30, width: 125, color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.popToTop()}>
+                        <Text style={{ height: 30, width: 125, color: darkMode ? styles.dark.color : styles.light.color }}>Home Page</Text>
+                    </TouchableOpacity>
                     <Text>Change the Font Size:</Text>
+
                     <TouchableOpacity style={{ paddingBottom: 0, paddingLeft: 30 }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
-                        <AntDesign name="pluscircle" size={30} />
+                        <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                     </TouchableOpacity>
                     <TouchableOpacity style={{ paddingBottom: -30, paddingLeft: 0 }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
-                        <AntDesign name="minuscircle" size={30} />
+                        <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                     </TouchableOpacity>
 
-
+{/* This below needs to be scrollview probably. ngrok doesnt care, but expo qr does. */}
                     <View>
                         {data.id === 'GEN.intro' &&
                             <View>
@@ -186,10 +195,10 @@ const BibleScreen = ({ navigation, route }) => {
                         {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                             <ScrollView style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-                                {/* <TouchableOpacity onPress={() => fontDispatch({type: "INCREASE_FONT"})}>
+                                {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                                     <Text>Increase</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => fontDispatch({type: "DECREASE_FONT"})}>
+                                <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
                                     <Text>Decrease</Text>
                                 </TouchableOpacity> */}
                                 {/* idk if this is right, but setChapter is a function i do know */}
@@ -197,19 +206,23 @@ const BibleScreen = ({ navigation, route }) => {
 
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
                                 {/* classesStyles={classesStyles.scriptureStyles} */}
-                                <RenderHTML  customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
+                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
                                 {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
-                                <View style={{display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative'}}>
-                                    <TouchableOpacity style={{flexDirection: 'row' ,  }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+
+                                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                         {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
-                                        <AntDesign name="rightcircle" size={30} />
+                                        <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                     </TouchableOpacity>
 
                                     {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
-                                    <TouchableOpacity style={{paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                    <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
                                         {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
-                                        <AntDesign name="leftcircle" size={30} />
+                                        <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                     </TouchableOpacity>
+
+
+
                                 </View>
 
                             </ScrollView>
