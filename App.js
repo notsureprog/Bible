@@ -10,6 +10,7 @@ import Dummy from './src/screens/Dummy'
 import { ThemeProvider } from './src/screens/context/ThemeContext'
 // import { ThemeContext } from './src/screens/context/ThemeContext'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import BibleSearchVerseScreen from './src/screens/BibleSearchVerseScreen'
 
 
 // 64a594186127bbd1c9dba6e9f71d58f6
@@ -33,12 +34,14 @@ const App = () => {
   // const theme = useContext(ThemeContext);
   // const darkMode = theme.state.darkMode;
 
+  // I would not mind exporting a function and placing app inside and putting it in the provider 
   return (
     <ThemeProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='BibleSelectScreen'>
-          <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ title: 'Select your Book/Chapter' }}  />
+        <Stack.Navigator initialRouteName='Home'>
+          <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ title: 'Select your Book/Chapter' }} />
           <Stack.Screen name='BibleScreen' component={BibleScreen} />
+          <Stack.Screen name='BibleSearchVerseScreen' component={BibleSearchVerseScreen} />
           <Stack.Screen name='Dummy' component={Dummy} />
           <Stack.Screen name='Home' component={Home} />
         </Stack.Navigator>

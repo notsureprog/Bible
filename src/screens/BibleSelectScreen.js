@@ -2,13 +2,18 @@ import React from 'react'
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
+import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 // import { ScrollView } from 'react-native-web'
 // do not use semi colon on import due to errors, but yes everywhere else.
 
-console.log(process.env.EXPO_PUBLIC_API_KEY)
+console.log(process.env.EXPO_PUBLIC_API_URL)
+
 
 const BibleSelectScreen = ({ navigation }) => {
+    
+    const EXPO_PUBLIC_API_KEY = process.env.BIBLE_API_KEY; //reserved name?
+    console.log(EXPO_PUBLIC_API_KEY);
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [data, setData] = React.useState(null);
@@ -16,6 +21,7 @@ const BibleSelectScreen = ({ navigation }) => {
     const [bible, setBible] = React.useState('de4e12af7f28f599-01'); //de4e12af7f28f599-01 de4e12af7f28f599-02
     const [book, setBook] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    
 
     console.log(darkMode)
 
@@ -128,15 +134,20 @@ const BibleSelectScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => onClick()}>
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
                 </TouchableOpacity>
-                <FlatList
-                    data={selection}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <View>
-                            <TouchableOpacity onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10, color: darkMode ? styles.dark.color : styles.light.color }}>{item.name}</Text></TouchableOpacity>
-                        </View>
-                    )}
-                />
+                <View style={{ display: 'flex', }}>
+
+                    <FlatList
+                        data={selection}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <View style={{ alignContent: 'flex-start', flexWrap: 'wrap', overflow: 'scroll', margin: '5px', }}>
+
+                                <TouchableOpacity onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10, color: darkMode ? styles.dark.color : styles.light.color }}>{item.name}</Text></TouchableOpacity>
+                            </View>
+
+                        )}
+                    />
+                </View>
             </View>
         )
 
@@ -175,25 +186,33 @@ const BibleSelectScreen = ({ navigation }) => {
                 <BibleBooks />
             }
             {view === 'ChapterSelect' && book !== null && data !== null &&
-                <View style={{ margin: 15, justifyContent: 'space-evenly', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                    {/* touchableopacity is a direct child element which flex manipulates */}
                     <TouchableOpacity onPress={() => onClick()}>
-                        <Text style={{color: darkMode ? styles.dark.color : styles.light.color}}>Theme</Text>
+                        {/* text is not a direct child element */}
+                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
                     </TouchableOpacity>
                     {/* data.whatever */}
                     {/* data.id is the chapterId to pass into the next screen. */}
+                    {/* view is a direct child element, but does double view/div conflict? i dont think */}
+                    {/* <View style={{ borderColor: darkMode ? styles.dark.color : styles.light.color }}> */}
                     <FlatList
                         data={data}
                         renderItem={({ item }) => (
                             // console.log(item)
-                            <View>
-                                <TouchableOpacity style={{ height: 30, width: 150, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
+                            // flexDirection defaults to column in react native instead of row like css
+                            <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                                {/* I am starting to think that styling this touchable opacity would be the right thing for direct child element manipulation */}
+                                <TouchableOpacity style={{ flexDirection: 'row', flexWrap: 'wrap', margin: '10px', padding: '20px' }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
+
                                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
                     />
+                    {/* </View> */}
                     <TouchableOpacity onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
-                        <Text style={{color: darkMode ? styles.dark.color : styles.light.color}}>Go Back</Text>
+                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </TouchableOpacity>
                     {/* I like passing a param to another screen with what I need to read the bible... */}
                 </View>
@@ -215,7 +234,14 @@ const styles = StyleSheet.create({
     },
     main: {
         flex: 3
-    }
+    },
+    bibleGrid: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignContent: 'flex-start',
+        overflow: 'scroll'
+    },
+
 })
 
 export default BibleSelectScreen

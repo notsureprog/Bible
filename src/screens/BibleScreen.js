@@ -34,7 +34,7 @@ const BibleScreen = ({ navigation, route }) => {
     }
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
-    const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 12 })
+    const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
     const [open, setOpen] = React.useState(false);
     const [haveVersion, setHaveVersion] = React.useState();
     const [version, setVersion] = React.useState([
@@ -42,7 +42,7 @@ const BibleScreen = ({ navigation, route }) => {
         { label: 'ASV', value: '06125adad2d5898a-01' },
         { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
         { label: 'WEBBE', value: '7142879509583d59-04' },
-        { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
+        // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
         // { label: 'BSB', value: 'bba9f40183526463-01' },
         // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
         // { label: 'DRA', value: '179568874c45066f-01' },
@@ -58,8 +58,6 @@ const BibleScreen = ({ navigation, route }) => {
     const [chapter, setChapter] = React.useState(route.params.chapter);
     const [bible, setBible] = React.useState(route.params.version);
     const [data, setData] = React.useState(null); //data is an array of objects and not a fn which i could use deps of something other than chapter because chapter changes all the time
-
-
 
     if (data !== null) {
         console.log(Object.values(data)) //array
@@ -200,16 +198,18 @@ const BibleScreen = ({ navigation, route }) => {
                                 {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
                                 <RenderHTML classesStyles={classesStyles.scriptureStyles} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
                                 {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
-                                <TouchableOpacity style={{marginBottom: 5, marginLeft: '75%'}} onPress={() => { setChapter(`${data.previous.id}`) }}>
-                                    {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
-                                    <AntDesign name="rightcircle" size={30} />
-                                </TouchableOpacity>
+                                <View style={{display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative'}}>
+                                    <TouchableOpacity style={{flexDirection: 'row' ,  }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                        {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
+                                        <AntDesign name="rightcircle" size={30} />
+                                    </TouchableOpacity>
 
-                                {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
-                                <TouchableOpacity style={{marginBottom: 5, marginLeft: '25%'}} onPress={() => { setChapter(`${data.next.id}`) }}>
-                                    {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
-                                    <AntDesign name="leftcircle" size={30} />
-                                </TouchableOpacity>
+                                    {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
+                                    <TouchableOpacity style={{paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
+                                        <AntDesign name="leftcircle" size={30} />
+                                    </TouchableOpacity>
+                                </View>
 
                             </ScrollView>
                         }

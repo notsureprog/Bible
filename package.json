@@ -28,7 +28,8 @@
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-render-html": "^6.3.4",
     "react-native-web": "~0.19.6",
-    "scripture-styles": "^1.6.0"
+    "scripture-styles": "^1.6.0",
+    "expo-constants": "~14.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
