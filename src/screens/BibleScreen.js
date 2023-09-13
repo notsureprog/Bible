@@ -5,7 +5,7 @@ import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-ren
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
+// import "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
 // import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
 
 // console.log(scriptureStyles)
@@ -135,7 +135,8 @@ const BibleScreen = ({ navigation, route }) => {
             const result = await axios(options);
             console.log(result.data.data); //not an array
             setData(result.data.data);
-            // const test = document.getElementById('verseId').innerHTML
+            const test = document.getElementsByTagName('p').outerHTML
+            console.log(test);
         } catch (err) {
             console.log(err)
         }

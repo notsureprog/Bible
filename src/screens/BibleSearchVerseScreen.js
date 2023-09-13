@@ -47,6 +47,17 @@ const BibleSearchVerseScreen = ({ navigation }) => {
         // { label: 'WMB', value: 'f72b840c855f362c-04' },
         // { label: 'WMBBE', value: '04da588535d2f823-04' },
     ]);
+    const inputRef = React.useRef(null);
+
+    const ClearInput = () => {
+        inputRef.current.value = "";
+    }
+
+    const InputFunction = () => {
+        return (
+            <TextInput ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => {setQuery(text.nativeEvent.text); ClearInput(); setLoading(true);}} />
+        )
+    }
 
     // repetition
     const handleTheme = () => {
@@ -170,7 +181,8 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             </View>
             }
             {/* problem for onchangetext. it will run the api once, and then does the text default back to nothing? */}
-            <TextInput placeholder='Search for a verse' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); setLoading(true) }} />
+            {/* <TextInput placeholder='Search for a verse' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); setLoading(true) }} /> */}
+            <InputFunction />
             {data !== null && !loading &&
                 <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                     <TouchableOpacity onPress={() => handleTheme()}>
