@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 // console.log(NgrokClient)
 
 function Home({ navigation }) {
+    console.log(process.env.EXPO_PUBLIC_API_URL)
     // const [loading, setLoading] = React.useState(false);
     // if (loading) {
     //     const GetNgrok = async () => {

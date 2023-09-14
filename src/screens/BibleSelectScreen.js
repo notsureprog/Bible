@@ -4,6 +4,9 @@ import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import {BIBLE_API_KEY} from '@env'
+
+
 // import { ScrollView } from 'react-native-web'
 // do not use semi colon on import due to errors, but yes everywhere else.
 
@@ -159,7 +162,7 @@ const BibleSelectScreen = ({ navigation }) => {
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
                     headers: {
                         // EXPO_PRIVATE
-                        'api-key': ''
+                        'api-key': `${BIBLE_API_KEY}`
                     }
                 }
                 const result = await axios(options);

@@ -6,8 +6,12 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "development",
       "env": {
-        "REACT_APP_BIBLE_API_KEY": "SECRET"
+        "EXPO_PUBLIC_API_URL": "www.google.com"
       }
     },
     "test": {

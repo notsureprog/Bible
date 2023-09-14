@@ -1,21 +1,15 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, SafeAreaView, Platform } from 'react-native'
 import axios from 'axios'
 import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-// import "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
-// import * as scriptureStyles from "../../node_modules/scripture-styles/dist/css/scripture-styles.css"
+import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY } from '@env'
 
-// console.log(scriptureStyles)
-// import "/scripture-styles/dist/css/scripture-styles.css"
-// import DropdownButton from 'react-bootstrap/DropdownButton'
-// import Form from 'react-bootstrap/Form'
 
-// so really the only buttons i will be pressing - in terms of data changing - is next and previous. and setData (function) changes according to that. I want to cache data (state variable) if i visit that same verse.
+console.log(BIBLE_API_KEY)
 
-// in order to go from search screen into this one and pass the verse that was selected into here, I will have to break down the customHTMLElementModel in a way to obtain the data-id class
 const BibleScreen = ({ navigation, route }) => {
     const fontReducer = (state, action) => {
         if (action.type === "INCREASE_FONT") {
@@ -71,7 +65,7 @@ const BibleScreen = ({ navigation, route }) => {
             mixedUAStyles: {
                 color: darkMode ? styles.dark.color : styles.light.color,
                 fontSize: fontState.size,
-                
+
             },
             contentModel: HTMLContentModel.block
         })
@@ -124,19 +118,19 @@ const BibleScreen = ({ navigation, route }) => {
         try {
             const options = {
                 method: 'GET',
-                // url: 'https://f0207add-c929-4273-85cd-7030e30c0a8a.mock.pstmn.io/Bibles' // taken off :)
+
                 url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
                 // // url: `https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/chapters/GEN.1/`,
                 headers: {
-                    'api-key': '' //regenerated :)
+                    'api-key': `${BIBLE_API_KEY}`
                 }
             }
 
             const result = await axios(options);
             console.log(result.data.data); //not an array
             setData(result.data.data);
-            const test = document.getElementsByTagName('p').outerHTML
-            console.log(test);
+            // const test = document.getElementsByTagName('p').outerHTML
+            // console.log(test);
         } catch (err) {
             console.log(err)
         }
@@ -151,9 +145,6 @@ const BibleScreen = ({ navigation, route }) => {
             {data !== null &&
                 <View>
                     <Text style={{ marginLeft: '25%', marginRight: '25%', color: darkMode ? styles.dark.color : styles.light.color, fontSize: 35 }}>{data.reference}</Text>
-                    {/* it is not really even white space. I think it is a p tag with a style to put space. it is <p class="p"></p> */}
-                    {/* onChangeText={(text) => searchData(text.nativeEvent.text)} onSubmitEditing={(text) => console.log('I kind of would not mind onChangeText suggesting a verse on each keystroke, but the api calls could rack up more (5000 limit)')} but either way I am going to have to have a baseUrl in axios, and then maybe switch a view for the search and the actual chapter being read. OR I could redirect the user to an entirely different page, and then redirect back here (since it does have route.params.whatever (which needs an OR)) */}
-                    {/* <TextInput style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color, borderColor: darkMode ? styles.dark.color : styles.light.color }} placeholder='Search for a verse' /> */}
                     <VersionSelectMenu />
                     <TouchableOpacity style={{ height: 30, width: 125, borderColor: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => onClick()}>
                         <MaterialCommunityIcons name="theme-light-dark" style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
@@ -165,7 +156,7 @@ const BibleScreen = ({ navigation, route }) => {
                     <TouchableOpacity style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.popToTop()}>
                         <Text style={{ height: 30, width: 125, color: darkMode ? styles.dark.color : styles.light.color }}>Home Page</Text>
                     </TouchableOpacity>
-                    <Text>Change the Font Size:</Text>
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Change the Font Size:</Text>
 
                     <TouchableOpacity style={{ paddingBottom: 0, paddingLeft: 30 }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                         <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
@@ -174,62 +165,163 @@ const BibleScreen = ({ navigation, route }) => {
                         <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                     </TouchableOpacity>
 
-{/* This below needs to be scrollview probably. ngrok doesnt care, but expo qr does. */}
-                    <View>
-                        {data.id === 'GEN.intro' &&
-                            <View>
-                                <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
-                                    <Text>{data.next.bookId} {data.next.number}</Text>
-                                </TouchableOpacity>
-                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
-                            </View>
-                        }
-                        {data.id === 'REV.22' &&
-                            <ScrollView>
-                                <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
-                                    <Text>{data.previous.bookId} {data.previous.number}</Text>
-                                </TouchableOpacity>
-                                {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
-                            </ScrollView>
-                        }
-                        {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
+                    {/* This below needs to be scrollview probably. ngrok doesnt care, but expo qr does. */}
+                    {Platform.OS === 'android' &&
+                        <ScrollView>
+                            {data.id === 'GEN.intro' &&
+                                <View>
+                                    <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        <Text>{data.next.bookId} {data.next.number}</Text>
+                                    </TouchableOpacity>
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View>
+                                    <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
+                                        <Text>{data.previous.bookId} {data.previous.number}</Text>
+                                    </TouchableOpacity>
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
-                            <ScrollView style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-                                {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
+                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                                     <Text>Increase</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
                                     <Text>Decrease</Text>
                                 </TouchableOpacity> */}
-                                {/* idk if this is right, but setChapter is a function i do know */}
+                                    {/* idk if this is right, but setChapter is a function i do know */}
 
 
-                                {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
-                                {/* classesStyles={classesStyles.scriptureStyles} */}
-                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
-                                {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
-                                <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    {/* classesStyles={classesStyles.scriptureStyles} */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
+                                    {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
+                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
 
-                                    <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
-                                        {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
-                                        <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                    </TouchableOpacity>
+                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
 
-                                    {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
-                                    <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
-                                        {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
-                                        <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                    </TouchableOpacity>
-
-
-
+                                        {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
+                                        <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
+                            }
+                        </ScrollView>
+                    }
+                    {Platform.OS === 'ios' &&
+                        <SafeAreaView>
+                            {data.id === 'GEN.intro' &&
+                                <View>
+                                    <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        <Text>{data.next.bookId} {data.next.number}</Text>
+                                    </TouchableOpacity>
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View>
+                                    <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
+                                        <Text>{data.previous.bookId} {data.previous.number}</Text>
+                                    </TouchableOpacity>
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
-                            </ScrollView>
-                        }
-                    </View>
+                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
+                                    <Text>Increase</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
+                                    <Text>Decrease</Text>
+                                </TouchableOpacity> */}
+                                    {/* idk if this is right, but setChapter is a function i do know */}
 
+
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    {/* classesStyles={classesStyles.scriptureStyles} */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
+                                    {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
+                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+
+                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
+
+                                        {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
+                                        <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            }
+                        </SafeAreaView>
+                    }
+                    {Platform.OS === 'web' &&
+                        <View>
+                            {data.id === 'GEN.intro' &&
+                                <View>
+                                    <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        <Text>{data.next.bookId} {data.next.number}</Text>
+                                    </TouchableOpacity>
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View>
+                                    <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
+                                        <Text>{data.previous.bookId} {data.previous.number}</Text>
+                                    </TouchableOpacity>
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font-color>${data.content}</dynamic-font-color>` }} />
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
+
+                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
+                                    <Text>Increase</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
+                                    <Text>Decrease</Text>
+                                </TouchableOpacity> */}
+                                    {/* idk if this is right, but setChapter is a function i do know */}
+
+
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                    {/* classesStyles={classesStyles.scriptureStyles} */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
+                                    {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
+                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+
+                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
+
+                                        {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
+                                        <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            }
+                        </View>
+                    }
                 </View>
             }
         </View>

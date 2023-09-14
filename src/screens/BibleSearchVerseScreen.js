@@ -1,8 +1,9 @@
 import React from 'react'
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Platform, ScrollView, SafeAreaView } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
+import { BIBLE_API_KEY } from '@env'
 // import { render } from 'react-dom'
 // import { FlatList } from 'react-native-web'
 
@@ -55,7 +56,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
 
     const InputFunction = () => {
         return (
-            <TextInput ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => {setQuery(text.nativeEvent.text); ClearInput(); setLoading(true);}} />
+            <TextInput ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
         )
     }
 
@@ -85,7 +86,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                     method: 'GET',
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/search?query=${query}&offset=${limitState.limit}`,
                     headers: {
-                        'api-key': ''
+                        'api-key': `${BIBLE_API_KEY}`
                     }
                 }
                 const result = await axios(options, {
@@ -176,31 +177,77 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     return (
         <View>
             {loading && data !== null &&
-            <View>
-                <Text>Loading, please wait...</Text>
-            </View>
+                <View>
+                    <Text>Loading, please wait...</Text>
+                </View>
             }
-            {/* problem for onchangetext. it will run the api once, and then does the text default back to nothing? */}
-            {/* <TextInput placeholder='Search for a verse' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); setLoading(true) }} /> */}
+
             <InputFunction />
             {data !== null && !loading &&
-                <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                    <TouchableOpacity onPress={() => handleTheme()}>
-                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                    </TouchableOpacity>
-                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
-                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
-                    <FlatList
-                        data={[data]}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={renderItem}
-                    />
-                    <TouchableOpacity onPress={() => {limitDispatch({ type: "NEXT_PAGE" }); setLoading(true);}}>
-                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true);}}>
-                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
-                    </TouchableOpacity>
+                <View>
+                    {Platform.OS === 'android' &&
+
+                        <ScrollView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                            <TouchableOpacity onPress={() => handleTheme()}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
+                            </TouchableOpacity>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
+                            <FlatList
+                                data={[data]}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItem}
+                            />
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    }
+                    {Platform.OS === 'ios' &&
+
+                        <SafeAreaView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                            <TouchableOpacity onPress={() => handleTheme()}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
+                            </TouchableOpacity>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
+                            <FlatList
+                                data={[data]}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItem}
+                            />
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
+                            </TouchableOpacity>
+                        </SafeAreaView>
+                    }
+                    {Platform.OS === 'web' &&
+
+                        <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                            <TouchableOpacity onPress={() => handleTheme()}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
+                            </TouchableOpacity>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
+                            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
+                            <FlatList
+                                data={[data]}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItem}
+                            />
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
                 </View>
             }
         </View>
