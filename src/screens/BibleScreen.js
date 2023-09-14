@@ -6,9 +6,11 @@ import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY } from '@env'
+import VersionSelectMenu from '../../VersionSelectMenu'
 
 
 console.log(BIBLE_API_KEY)
+console.log(VersionSelectMenu)
 
 const BibleScreen = ({ navigation, route }) => {
     const fontReducer = (state, action) => {
@@ -31,29 +33,29 @@ const BibleScreen = ({ navigation, route }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
-    const [open, setOpen] = React.useState(false);
-    const [haveVersion, setHaveVersion] = React.useState();
-    const [version, setVersion] = React.useState([
-        { label: 'KJV', value: 'de4e12af7f28f599-01' },
-        { label: 'ASV', value: '06125adad2d5898a-01' },
-        { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
-        { label: 'WEBBE', value: '7142879509583d59-04' },
-        // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
-        // { label: 'BSB', value: 'bba9f40183526463-01' },
-        // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
-        // { label: 'DRA', value: '179568874c45066f-01' },
-        // { label: 'EMTV', value: '55ec700d9e0d77ea-01' },
-        // { label: 'GNV', value: 'c315fa9f71d4af3a-01' },
-        // { label: 'LSV', value: '01b29f4b342acc35-01' },
-        // { label: 'RV', value: '40072c4a5aba4022-01' },
-        // { label: 'TCENT', value: '32339cf2f720ff8e-01' },
-        // { label: 'TOJB', value: 'c89622d31b60c444-02' },
-        // { label: 'WMB', value: 'f72b840c855f362c-04' },
-        // { label: 'WMBBE', value: '04da588535d2f823-04' },
-    ]);
+    // const [open, setOpen] = React.useState(false);
+    // const [haveVersion, setHaveVersion] = React.useState();
+    // const [version, setVersion] = React.useState([
+    //     { label: 'KJV', value: 'de4e12af7f28f599-01' },
+    //     { label: 'ASV', value: '06125adad2d5898a-01' },
+    //     { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
+    //     { label: 'WEBBE', value: '7142879509583d59-04' },
+    //     // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
+    //     // { label: 'BSB', value: 'bba9f40183526463-01' },
+    //     // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
+    //     // { label: 'DRA', value: '179568874c45066f-01' },
+    //     // { label: 'EMTV', value: '55ec700d9e0d77ea-01' },
+    //     // { label: 'GNV', value: 'c315fa9f71d4af3a-01' },
+    //     // { label: 'LSV', value: '01b29f4b342acc35-01' },
+    //     // { label: 'RV', value: '40072c4a5aba4022-01' },
+    //     // { label: 'TCENT', value: '32339cf2f720ff8e-01' },
+    //     // { label: 'TOJB', value: 'c89622d31b60c444-02' },
+    //     // { label: 'WMB', value: 'f72b840c855f362c-04' },
+    //     // { label: 'WMBBE', value: '04da588535d2f823-04' },
+    // ]);
     const [chapter, setChapter] = React.useState(route.params.chapter);
     const [bible, setBible] = React.useState(route.params.version);
-    const [data, setData] = React.useState(null); //data is an array of objects and not a fn which i could use deps of something other than chapter because chapter changes all the time
+    const [data, setData] = React.useState(0); //data is an array of objects and not a fn which i could use deps of something other than chapter because chapter changes all the time
 
     if (data !== null) {
         console.log(Object.values(data)) //array
@@ -76,9 +78,9 @@ const BibleScreen = ({ navigation, route }) => {
     //     scriptureStyles: scriptureStyles
     // }
 
-    const onOpen = React.useCallback(() => {
-        setOpen(!open);
-    })
+    // const onOpen = React.useCallback(() => {
+    //     setOpen(!open);
+    // })
 
     const onClick = () => {
         if (darkMode) {
@@ -89,31 +91,32 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
-    const VersionSelectMenu = () => {
-        return (
-            // flex if only not 1, but idk. I may be able to pull off without flexing.
-            <View style={{ width: 175, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                <DropDownPicker
-                    placeholder='Select a Version'
-                    open={open}
-                    value={haveVersion}
-                    items={version}
-                    setOpen={() => onOpen()}
-                    // i guess it will be undefined on the first iteration
-                    setValue={(val) => setBible(val)}
-                // setItems={setVersion}
-                />
-            </View>
+    // const VersionSelectMenu = () => {
+    //     return (
+    //         // flex if only not 1, but idk. I may be able to pull off without flexing.
+    //         <View style={{ width: 175, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+    //             <DropDownPicker
+    //                 placeholder='Select a Version'
+    //                 open={open}
+    //                 value={haveVersion}
+    //                 items={version}
+    //                 setOpen={() => onOpen()}
+    //                 // i guess it will be undefined on the first iteration
+    //                 setValue={(val) => setBible(val)}
+    //             // setItems={setVersion}
+    //             />
+    //         </View>
 
-        )
-    }
+    //     )
+    // }
 
 
-    console.log(chapter)
+    // console.log(chapter)
     console.log(darkMode)
-    console.log(bible)
-    console.log(haveVersion)
+    // console.log(bible)
+    // console.log(haveVersion)
     // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/chapters/GEN.1/verses
+
     const GetVerse = async () => {
         try {
             const options = {
@@ -157,14 +160,14 @@ const BibleScreen = ({ navigation, route }) => {
                         <Text style={{ height: 30, width: 125, color: darkMode ? styles.dark.color : styles.light.color }}>Home Page</Text>
                     </TouchableOpacity>
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Change the Font Size:</Text>
-
-                    <TouchableOpacity style={{ paddingBottom: 0, paddingLeft: 30 }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
-                        <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{ paddingBottom: -30, paddingLeft: 0 }} onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
-                        <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                    </TouchableOpacity>
-
+                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                        <TouchableOpacity onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
+                            <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
+                            <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
+                        </TouchableOpacity>
+                    </View>
                     {/* This below needs to be scrollview probably. ngrok doesnt care, but expo qr does. */}
                     {Platform.OS === 'android' &&
                         <ScrollView>
@@ -273,7 +276,7 @@ const BibleScreen = ({ navigation, route }) => {
                     {Platform.OS === 'web' &&
                         <View>
                             {data.id === 'GEN.intro' &&
-                                <View>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                     <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
                                         <Text>{data.next.bookId} {data.next.number}</Text>
                                     </TouchableOpacity>
@@ -281,7 +284,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 </View>
                             }
                             {data.id === 'REV.22' &&
-                                <View>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                                     <TouchableOpacity style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                         <Text>{data.previous.bookId} {data.previous.number}</Text>
                                     </TouchableOpacity>
@@ -291,7 +294,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
-                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
                                     {/* <TouchableOpacity style={{ backgroundColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                                     <Text>Increase</Text>
                                 </TouchableOpacity>
@@ -305,18 +308,18 @@ const BibleScreen = ({ navigation, route }) => {
                                     {/* classesStyles={classesStyles.scriptureStyles} */}
                                     <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font-color>${data.content}</dynamic-font-color></div>` }} />
                                     {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
-                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 
-                                        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                        <TouchableOpacity onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             {/* <Text>{data.previous.bookId} {data.previous.number}</Text> */}
-                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </TouchableOpacity>
 
                                         {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(200,0,30,0.3)' }} */}
-                                        <TouchableOpacity style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
-                                            {/* <Text>{data.next.bookId} {data.next.number}</Text> */}
-                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             }

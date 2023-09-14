@@ -1,6 +1,9 @@
-make functions for repetitive code (like dropdown) or custom hooks
+make functions for repetitive code (like dropdown) or custom hooks - kind of check. Theme on home in header possibly
 
-work on styling
+work on styling - looking good in a way (at least on web). i think after theme button is handled it will be ok. work on ios and android platforms.
 
-eas config for dev and prod keys and whatnot.
+eas config for dev and prod keys and whatnot. - apk build ready for successful exec. could do all platforms before build. 
 
+unit testing
+
+performance (ngrok is quicker than the expo qr code)

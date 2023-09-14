@@ -4,6 +4,7 @@ import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { BIBLE_API_KEY } from '@env'
+import VersionSelectMenu from '../../VersionSelectMenu'
 // import { render } from 'react-dom'
 // import { FlatList } from 'react-native-web'
 
@@ -30,33 +31,38 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     const [loading, setLoading] = React.useState(false);
     const [limitState, limitDispatch] = React.useReducer(limitReducer, { limit: 0 });
     // a lot of repetition... make a function
-    const [version, setVersion] = React.useState([
-        { label: 'KJV', value: 'de4e12af7f28f599-01' },
-        { label: 'ASV', value: '06125adad2d5898a-01' },
-        { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
-        { label: 'WEBBE', value: '7142879509583d59-04' },
-        // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
-        // { label: 'BSB', value: 'bba9f40183526463-01' },
-        // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
-        // { label: 'DRA', value: '179568874c45066f-01' },
-        // { label: 'EMTV', value: '55ec700d9e0d77ea-01' },
-        // { label: 'GNV', value: 'c315fa9f71d4af3a-01' },
-        // { label: 'LSV', value: '01b29f4b342acc35-01' },
-        // { label: 'RV', value: '40072c4a5aba4022-01' },
-        // { label: 'TCENT', value: '32339cf2f720ff8e-01' },
-        // { label: 'TOJB', value: 'c89622d31b60c444-02' },
-        // { label: 'WMB', value: 'f72b840c855f362c-04' },
-        // { label: 'WMBBE', value: '04da588535d2f823-04' },
-    ]);
+    // const [version, setVersion] = React.useState([
+    //     { label: 'KJV', value: 'de4e12af7f28f599-01' },
+    //     { label: 'ASV', value: '06125adad2d5898a-01' },
+    //     { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
+    //     { label: 'WEBBE', value: '7142879509583d59-04' },
+    //     // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
+    //     // { label: 'BSB', value: 'bba9f40183526463-01' },
+    //     // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
+    //     // { label: 'DRA', value: '179568874c45066f-01' },
+    //     // { label: 'EMTV', value: '55ec700d9e0d77ea-01' },
+    //     // { label: 'GNV', value: 'c315fa9f71d4af3a-01' },
+    //     // { label: 'LSV', value: '01b29f4b342acc35-01' },
+    //     // { label: 'RV', value: '40072c4a5aba4022-01' },
+    //     // { label: 'TCENT', value: '32339cf2f720ff8e-01' },
+    //     // { label: 'TOJB', value: 'c89622d31b60c444-02' },
+    //     // { label: 'WMB', value: 'f72b840c855f362c-04' },
+    //     // { label: 'WMBBE', value: '04da588535d2f823-04' },
+    // ]);
     const inputRef = React.useRef(null);
 
+    // clear the search input after i search for a word/verse
     const ClearInput = () => {
         inputRef.current.value = "";
+    }
+    //focus on the text input. little blue outline
+    const OnFocus = () => {
+        inputRef.current.focus()
     }
 
     const InputFunction = () => {
         return (
-            <TextInput ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
+            <TextInput onFocus={OnFocus} ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
         )
     }
 
@@ -183,6 +189,8 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             }
 
             <InputFunction />
+            {/* setBible is not defined */}
+            <VersionSelectMenu />
             {data !== null && !loading &&
                 <View>
                     {Platform.OS === 'android' &&

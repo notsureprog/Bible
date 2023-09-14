@@ -4,7 +4,7 @@ import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import {BIBLE_API_KEY} from '@env'
+import { BIBLE_API_KEY } from '@env'
 
 
 // import { ScrollView } from 'react-native-web'
@@ -14,7 +14,7 @@ import {BIBLE_API_KEY} from '@env'
 
 
 const BibleSelectScreen = ({ navigation }) => {
-    
+
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [data, setData] = React.useState(null);
@@ -22,9 +22,24 @@ const BibleSelectScreen = ({ navigation }) => {
     const [bible, setBible] = React.useState('de4e12af7f28f599-01'); //de4e12af7f28f599-01 de4e12af7f28f599-02
     const [book, setBook] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
-    
+
 
     console.log(darkMode)
+
+    // const dummyGrid = [
+    //     { name: "PSA.intro", id: 'intro' },
+    //     { name: "PSA.1", number: 1 },
+    //     { name: "PSA.2", number: 2 },
+    //     { name: "PSA.3", number: 3 },
+    //     { name: "PSA.4", number: 4 },
+    //     { name: "PSA.5", number: 5 },
+    //     { name: "PSA.6", number: 6 },
+    //     { name: "PSA.7", number: 7 },
+    //     { name: "PSA.8", number: 8 },
+    //     { name: "PSA.9", number: 9 },
+    //     { name: "PSA.10", number: 10 },
+
+    // ]
 
     // de4e12af7f28f599-02 - KJV
     // bba9f40183526463-01 - BSB
@@ -135,7 +150,7 @@ const BibleSelectScreen = ({ navigation }) => {
                 <TouchableOpacity onPress={() => onClick()}>
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
                 </TouchableOpacity>
-                <View style={{ display: 'flex', }}>
+                <View style={{ display: 'flex' }}>
 
                     <FlatList
                         data={selection}
@@ -186,7 +201,8 @@ const BibleSelectScreen = ({ navigation }) => {
             {view === 'BookSelect' && !loading && data === null && book === null &&
                 <BibleBooks />
             }
-            {view === 'ChapterSelect' && book !== null && data !== null &&
+            {/* data !== null && */}
+            {view === 'ChapterSelect' && book !== null &&
                 <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                     {/* touchableopacity is a direct child element which flex manipulates */}
                     <TouchableOpacity onPress={() => onClick()}>
@@ -197,20 +213,24 @@ const BibleSelectScreen = ({ navigation }) => {
                     {/* data.id is the chapterId to pass into the next screen. */}
                     {/* view is a direct child element, but does double view/div conflict? i dont think */}
                     {/* <View style={{ borderColor: darkMode ? styles.dark.color : styles.light.color }}> */}
+
                     <FlatList
                         data={data}
+                        numColumns={4}
+                        keyExtractor={(item) => item.number}
                         renderItem={({ item }) => (
                             // console.log(item)
                             // flexDirection defaults to column in react native instead of row like css
-                            <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                            <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 5 }}>
                                 {/* I am starting to think that styling this touchable opacity would be the right thing for direct child element manipulation */}
-                                <TouchableOpacity style={{ flexDirection: 'row', flexWrap: 'wrap', margin: '10px', padding: '20px' }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
+                                <TouchableOpacity style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
 
                                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
                     />
+
                     {/* </View> */}
                     <TouchableOpacity onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
