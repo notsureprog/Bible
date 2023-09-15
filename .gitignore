@@ -35,4 +35,6 @@ yarn-error.*
 *.tsbuildinfo
 
 .env
+.env.development
+.env.production
 .eas.env
