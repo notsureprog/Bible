@@ -3,14 +3,14 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import BibleSelectScreen from './src/screens/BibleSelectScreen'
-import { NavigationContainer } from '@react-navigation/native'
+import { DarkTheme, NavigationContainer } from '@react-navigation/native'
 import Home from './src/screens/Home'
 import BibleScreen from './src/screens/BibleScreen'
-import Dummy from './src/screens/Dummy'
 import { ThemeProvider } from './src/screens/context/ThemeContext'
 // import { ThemeContext } from './src/screens/context/ThemeContext'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import BibleSearchVerseScreen from './src/screens/BibleSearchVerseScreen'
+import ThemeButton from './ThemeButton'
 
 
 // 64a594186127bbd1c9dba6e9f71d58f6
@@ -21,6 +21,8 @@ const Stack = createNativeStackNavigator();
 
 
 const App = () => {
+  // const theme = React.useContext(ThemeContext);
+  // const darkMode = theme.state.darkMode;
   // const onClick = () => {
   //   if (darkMode) {
   //     theme.dispatch({ type: "LIGHTMODE" })
@@ -29,8 +31,6 @@ const App = () => {
   //     theme.dispatch({ type: "DARKMODE" })
   //   }
   // }
-  // const theme = React.useContext(ThemeContext);
-  // const darkMode = theme.state.darkMode;
   // const theme = useContext(ThemeContext);
   // const darkMode = theme.state.darkMode;
 
@@ -39,11 +39,10 @@ const App = () => {
     <ThemeProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ title: 'Select your Book/Chapter' }} />
-          <Stack.Screen name='BibleScreen' component={BibleScreen} />
-          <Stack.Screen name='BibleSearchVerseScreen' component={BibleSearchVerseScreen} />
-          <Stack.Screen name='Dummy' component={Dummy} />
-          <Stack.Screen name='Home' component={Home} />
+          <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center',  headerStyle: { backgroundColor: 'orange' } }} />
+          <Stack.Screen name='BibleScreen' component={BibleScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
+          <Stack.Screen name='BibleSearchVerseScreen' component={BibleSearchVerseScreen} options={{ headerTitle: 'Search the Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
+          <Stack.Screen name='Home' component={Home} options={{headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

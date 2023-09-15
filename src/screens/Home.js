@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 // import {Ngrok} from 'ngrok'
 // import { NgrokClient } from 'ngrok'
 
@@ -31,12 +31,12 @@ function Home({ navigation }) {
     // }, [])
     return (
         <View>
-            <TouchableOpacity onPress={() => { navigation.navigate('BibleSelectScreen') }}>
+            <Pressable onPress={() => { navigation.navigate('BibleSelectScreen') }}>
                 <Text>Click Here to Read the Bible on my fancy Home Page.</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
+            </Pressable>
+            <Pressable onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
                 <Text>Search for a verse</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     )
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native'
+import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import Constants from 'expo-constants'
@@ -44,14 +44,14 @@ const BibleSelectScreen = ({ navigation }) => {
     // de4e12af7f28f599-02 - KJV
     // bba9f40183526463-01 - BSB
 
-    const onClick = () => {
-        if (darkMode) {
-            theme.dispatch({ type: "LIGHTMODE" })
-        }
-        else {
-            theme.dispatch({ type: "DARKMODE" })
-        }
-    }
+    // const onClick = () => {
+    //     if (darkMode) {
+    //         theme.dispatch({ type: "LIGHTMODE" })
+    //     }
+    //     else {
+    //         theme.dispatch({ type: "DARKMODE" })
+    //     }
+    // }
 
     const BibleBooks = () => React.useMemo(() => {
         // I really just need a reset for the view rather than navigation.pop()
@@ -144,12 +144,12 @@ const BibleSelectScreen = ({ navigation }) => {
         return (
 
             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                {/* <TouchableOpacity onPress={() => navigation.navigate('Dummy')}>
+                {/* <Pressable onPress={() => navigation.navigate('Dummy')}>
                     <Text>Dummy</Text>
-                </TouchableOpacity> */}
-                <TouchableOpacity onPress={() => onClick()}>
+                </Pressable> */}
+                {/* <Pressable onPress={() => onClick()}>
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                </TouchableOpacity>
+                </Pressable> */}
                 <View style={{ display: 'flex' }}>
 
                     <FlatList
@@ -158,7 +158,7 @@ const BibleSelectScreen = ({ navigation }) => {
                         renderItem={({ item }) => (
                             <View style={{ alignContent: 'flex-start', flexWrap: 'wrap', overflow: 'scroll', margin: '5px', }}>
 
-                                <TouchableOpacity onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10, color: darkMode ? styles.dark.color : styles.light.color }}>{item.name}</Text></TouchableOpacity>
+                                <Pressable onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10, color: darkMode ? styles.dark.color : styles.light.color }}>{item.name}</Text></Pressable>
                             </View>
 
                         )}
@@ -202,13 +202,11 @@ const BibleSelectScreen = ({ navigation }) => {
                 <BibleBooks />
             }
             {/* data !== null && */}
+            {/* Seems like a few performance issues here. */}
             {view === 'ChapterSelect' && book !== null &&
                 <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                    {/* touchableopacity is a direct child element which flex manipulates */}
-                    <TouchableOpacity onPress={() => onClick()}>
-                        {/* text is not a direct child element */}
-                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                    </TouchableOpacity>
+                    {/* Pressable is a direct child element which flex manipulates */}
+                   
                     {/* data.whatever */}
                     {/* data.id is the chapterId to pass into the next screen. */}
                     {/* view is a direct child element, but does double view/div conflict? i dont think */}
@@ -223,18 +221,18 @@ const BibleSelectScreen = ({ navigation }) => {
                             // flexDirection defaults to column in react native instead of row like css
                             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 5 }}>
                                 {/* I am starting to think that styling this touchable opacity would be the right thing for direct child element manipulation */}
-                                <TouchableOpacity style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
+                                <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
 
                                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
-                                </TouchableOpacity>
+                                </Pressable>
                             </View>
                         )}
                     />
 
                     {/* </View> */}
-                    <TouchableOpacity onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
+                    <Pressable onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                     {/* I like passing a param to another screen with what I need to read the bible... */}
                 </View>
             }

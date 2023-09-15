@@ -1,5 +1,5 @@
 import React from 'react'
-import {View} from 'react-native'
+import { View } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
 
@@ -12,7 +12,9 @@ const VersionSelectMenu = () => {
     const [open, setOpen] = React.useState(false);
     const [haveVersion, setHaveVersion] = React.useState();
     const [bible, setBible] = React.useState('de4e12af7f28f599-02'); //although it could change depending on the version, but I am passing back to bible screen for more bible
+    const [loading, setLoading] = React.useState(false);
     const [version, setVersion] = React.useState([
+        // Have to be label and value... cannot be anything else...
         { label: 'KJV', value: 'de4e12af7f28f599-01' },
         { label: 'ASV', value: '06125adad2d5898a-01' },
         { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
@@ -34,13 +36,15 @@ const VersionSelectMenu = () => {
         // flex if only not 1, but idk. I may be able to pull off without flexing.
         <View >
             <DropDownPicker
+            // black dropdown on black screen. White dropdown on white screen
+                style={{ width: 200, height: 40 }}
                 placeholder='Select a Version'
                 open={open}
                 value={haveVersion}
                 items={version}
                 setOpen={() => onOpen()}
                 // i guess it will be undefined on the first iteration
-                setValue={(val) => setBible(val)}
+                setValue={(val) => {setBible(val); setLoading(true);}}
             // setItems={setVersion}
             />
         </View>

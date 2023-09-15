@@ -7,3 +7,5 @@ eas config for dev and prod keys and whatnot. - apk build ready for successful e
 unit testing
 
 performance (ngrok is quicker than the expo qr code)
+
+redux... I guess I am going to go ahead and put a db, so I can store selected verses with auth.

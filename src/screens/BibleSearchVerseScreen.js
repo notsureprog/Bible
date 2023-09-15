@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Platform, ScrollView, SafeAreaView } from 'react-native'
+import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Platform, ScrollView, SafeAreaView } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -65,6 +65,8 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             <TextInput onFocus={OnFocus} ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
         )
     }
+
+    console.log(bible)
 
     // repetition
     const handleTheme = () => {
@@ -151,9 +153,9 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                     <View style={{ padding: 10 }}>
                         <Text style={{ fontSize: 24, color: darkMode ? styles.dark.color : styles.light.color }}>{result.reference}</Text>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{result.text}</Text>
-                        <TouchableOpacity style={{ borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.navigate({ name: 'BibleScreen', params: { chapter: `${result.chapterId}`, version: `${bible}` } })}>
+                        <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.navigate({ name: 'BibleScreen', params: { chapter: `${result.chapterId}`, version: `${bible}` } })}>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go to verse</Text>
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                 ))}
 
@@ -193,12 +195,13 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             <VersionSelectMenu />
             {data !== null && !loading &&
                 <View>
+                    {/* scrollview renders every single item in the list. (it will be 10 in this case. I am going for more performant though) */}
                     {Platform.OS === 'android' &&
 
-                        <ScrollView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                            <TouchableOpacity onPress={() => handleTheme()}>
+                        <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, marginBottom: 20 }}>
+                            <Pressable onPress={() => handleTheme()}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList
@@ -206,20 +209,20 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
                             />
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                            <Pressable onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                            </Pressable>
+                            <Pressable onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
+                            </Pressable>
+                        </View>
                     }
                     {Platform.OS === 'ios' &&
 
                         <SafeAreaView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                            <TouchableOpacity onPress={() => handleTheme()}>
+                            <Pressable onPress={() => handleTheme()}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList
@@ -227,20 +230,20 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
                             />
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                            <Pressable onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                            </Pressable>
+                            <Pressable onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                         </SafeAreaView>
                     }
                     {Platform.OS === 'web' &&
 
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                            <TouchableOpacity onPress={() => handleTheme()}>
+                            <Pressable onPress={() => handleTheme()}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList
@@ -248,12 +251,12 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
                             />
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
+                            <Pressable onPress={() => { limitDispatch({ type: "NEXT_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Next Page</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
+                            </Pressable>
+                            <Pressable onPress={() => { limitDispatch({ type: "PREVIOUS_PAGE" }); setLoading(true); }}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Previous Page</Text>
-                            </TouchableOpacity>
+                            </Pressable>
                         </View>
                     }
                 </View>
