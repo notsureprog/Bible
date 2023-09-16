@@ -37,6 +37,9 @@ function Home({ navigation }) {
             <Pressable onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
                 <Text>Search for a verse</Text>
             </Pressable>
+            <Pressable onPress={() => { navigation.navigate('Login') }}>
+                <Text>Login</Text>
+            </Pressable>
         </View>
     )
 }
