@@ -1,24 +1,27 @@
 [
     {
-        "__id": "unique",
-        "username": "whatever unique",
-        "password": "whatever",
-        "email": "something@something.com unique",
-        "bio": "I am a person",
-        "highlightedVerses": [
+        "__id": "unique", ObjectId
+        "users": [
             {
-                // removable on second click
-                "verse1": "In the beginning...",
+                "_id": ObjectId,
+                "username": String,
+                "password": String,
+                "email": "something@something.com unique",
+                "bio": String,
+                "highlightedVerses": Array[
 
-            },
-            {
-                "verse2": "The Word is...",
+                    // removable on second click
+                    "verse1": "In the beginning...",
 
-            },
-            {
-                "verse(n)": "Whatever..."
+
+
+                    "verse2": "The Word is...",
+
+
+                    "verse(n)": "Whatever..."
+
+                ],
             }
-        ],
-
+        ]
     }
 ]

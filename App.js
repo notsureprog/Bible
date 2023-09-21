@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import BibleSearchVerseScreen from './src/screens/BibleSearchVerseScreen'
 import ThemeButton from './ThemeButton'
 import Login from './src/screens/Login'
+import Register from './src/screens/Register'
 
 
 
@@ -35,18 +36,21 @@ const App = () => {
   // }
   // const theme = useContext(ThemeContext);
   // const darkMode = theme.state.darkMode;
-
+const linking = {
+  prefixes: ['Bible://']
+}
   // I would not mind exporting a function and placing app inside and putting it in the provider 
   return (
 
     <ThemeProvider>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='BibleScreen' component={BibleScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='BibleSearchVerseScreen' component={BibleSearchVerseScreen} options={{ headerTitle: 'Search the Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='Home' component={Home} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='Login' component={Login} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
+          <Stack.Screen name='Register' component={Register} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

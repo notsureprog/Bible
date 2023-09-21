@@ -30,32 +30,14 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     const [query, setQuery] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [limitState, limitDispatch] = React.useReducer(limitReducer, { limit: 0 });
-    // a lot of repetition... make a function
-    // const [version, setVersion] = React.useState([
-    //     { label: 'KJV', value: 'de4e12af7f28f599-01' },
-    //     { label: 'ASV', value: '06125adad2d5898a-01' },
-    //     { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
-    //     { label: 'WEBBE', value: '7142879509583d59-04' },
-    //     // { label: 'ASVBT', value: '685d1470fe4d5c3b-01' },
-    //     // { label: 'BSB', value: 'bba9f40183526463-01' },
-    //     // { label: 'KJVCPB', value: '55212e3cf5d04d49-01' },
-    //     // { label: 'DRA', value: '179568874c45066f-01' },
-    //     // { label: 'EMTV', value: '55ec700d9e0d77ea-01' },
-    //     // { label: 'GNV', value: 'c315fa9f71d4af3a-01' },
-    //     // { label: 'LSV', value: '01b29f4b342acc35-01' },
-    //     // { label: 'RV', value: '40072c4a5aba4022-01' },
-    //     // { label: 'TCENT', value: '32339cf2f720ff8e-01' },
-    //     // { label: 'TOJB', value: 'c89622d31b60c444-02' },
-    //     // { label: 'WMB', value: 'f72b840c855f362c-04' },
-    //     // { label: 'WMBBE', value: '04da588535d2f823-04' },
-    // ]);
+    
     const inputRef = React.useRef(null);
 
     // clear the search input after i search for a word/verse
     const ClearInput = () => {
         inputRef.current.value = "";
     }
-    //focus on the text input. little blue outline
+    
     const OnFocus = () => {
         inputRef.current.focus()
     }
@@ -68,7 +50,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
 
     console.log(bible)
 
-    // repetition
+    
     const handleTheme = () => {
 
         if (darkMode) {
@@ -78,12 +60,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
         }
     }
 
-    // const testQuery = (obj, phrase) => {
-    //     const testObj = obj
-    //     if (obj in phrase === query) {
-    //         return 
-    //     }
-    // }
+    
 
     console.log(limitState.limit)
 
@@ -105,7 +82,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                 setData(result.data.data);
                 setLoading(false);
                 console.log(result.data.data);
-                // if result.data.data.something.matches(query)
+                
             }
             catch (err) {
                 if (err.response) {
@@ -120,30 +97,6 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             }
         }
     }
-
-    // i may need a sum instead and compare it to total in 
-    // const computeDifference = (num1, num2) => {
-    //     const difference = num2 - num1;
-    //     // if (num1 + num2) >= data.total -- then go back button only
-    //     // if num2 - num1 <= 0 then go forward button only...
-    //     return (
-    //         difference
-    //     )
-    // }
-
-    // const computeSum = (num1, num2) => {
-    //     const sum = num1 + num2;
-    //     return (
-    //         sum
-    //     )
-    // }
-
-    // if (data !== null) {
-    //     if (computeDifference(limitState.limit, data.total) <= )
-    //         const pageResult = computeDifference(limitState.limit, data.total);
-    //     return pageResult
-    //     // console.log(computeDifference(limitState.limit, data.total))
-    // }
 
     const VerseDisplay = ({ main }) => {
         return (
@@ -168,16 +121,11 @@ const BibleSearchVerseScreen = ({ navigation }) => {
         // whatever else?
     )
 
-    // const VersionSelect = () => {
-    //     // brain fog
-    // }
-
-    // I dont even think I need to compute the difference. It will just display whatever. like if there is only 8 results, and the limit is 10, then it will display 8, but it could be handy for 11-20, 21- 30
 
 
     console.log(darkMode);
 
-    // console.log(computeDifference(limitState.limit, data.total))
+    
 
     React.useEffect(() => {
         SearchVerse()
@@ -191,11 +139,11 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             }
 
             <InputFunction />
-            {/* setBible is not defined */}
+            
             <VersionSelectMenu />
             {data !== null && !loading &&
                 <View>
-                    {/* scrollview renders every single item in the list. (it will be 10 in this case. I am going for more performant though) */}
+                    
                     {Platform.OS === 'android' &&
 
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, marginBottom: 20 }}>

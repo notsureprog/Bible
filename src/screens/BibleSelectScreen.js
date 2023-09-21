@@ -6,12 +6,7 @@ import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BIBLE_API_KEY } from '@env'
 
-
-// import { ScrollView } from 'react-native-web'
-// do not use semi colon on import due to errors, but yes everywhere else.
-
-
-
+console.log(localStorage.getItem('username'))
 
 const BibleSelectScreen = ({ navigation }) => {
 
@@ -26,38 +21,8 @@ const BibleSelectScreen = ({ navigation }) => {
 
     console.log(darkMode)
 
-    // const dummyGrid = [
-    //     { name: "PSA.intro", id: 'intro' },
-    //     { name: "PSA.1", number: 1 },
-    //     { name: "PSA.2", number: 2 },
-    //     { name: "PSA.3", number: 3 },
-    //     { name: "PSA.4", number: 4 },
-    //     { name: "PSA.5", number: 5 },
-    //     { name: "PSA.6", number: 6 },
-    //     { name: "PSA.7", number: 7 },
-    //     { name: "PSA.8", number: 8 },
-    //     { name: "PSA.9", number: 9 },
-    //     { name: "PSA.10", number: 10 },
-
-    // ]
-
-    // de4e12af7f28f599-02 - KJV
-    // bba9f40183526463-01 - BSB
-
-    // const onClick = () => {
-    //     if (darkMode) {
-    //         theme.dispatch({ type: "LIGHTMODE" })
-    //     }
-    //     else {
-    //         theme.dispatch({ type: "DARKMODE" })
-    //     }
-    // }
-
     const BibleBooks = () => React.useMemo(() => {
-        // I really just need a reset for the view rather than navigation.pop()
-        // api key... I want private... maybe eas.json config...
-        // 2073974de941e662df81167f889be71e
-        // Like Genesis, Exodus, etc.. I figured it is better hard coded because it saves calling external resources.. plus it never changes.
+
         const selection = [
 
             { id: 'GEN', name: 'Genesis' },
@@ -144,12 +109,7 @@ const BibleSelectScreen = ({ navigation }) => {
         return (
 
             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                {/* <Pressable onPress={() => navigation.navigate('Dummy')}>
-                    <Text>Dummy</Text>
-                </Pressable> */}
-                {/* <Pressable onPress={() => onClick()}>
-                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                </Pressable> */}
+
                 <View style={{ display: 'flex' }}>
 
                     <FlatList
@@ -176,7 +136,7 @@ const BibleSelectScreen = ({ navigation }) => {
                     method: 'GET',
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
                     headers: {
-                        // EXPO_PRIVATE
+
                         'api-key': `${BIBLE_API_KEY}`
                     }
                 }
@@ -191,36 +151,28 @@ const BibleSelectScreen = ({ navigation }) => {
         }
     }
 
-    console.log(data) //if it is null for garbage, I could handle. However, it seems like garbage is handled, but something that returns 400 or 401 is breaking.
+    console.log(data)
     React.useEffect(() => {
         GetSelectOptions()
-    }, [view, book]) //should only fire once... I hard code the books of the bible, and the view will fire up the url for the api
+    }, [view, book])
 
     return (
         <View>
             {view === 'BookSelect' && !loading && data === null && book === null &&
                 <BibleBooks />
             }
-            {/* data !== null && */}
-            {/* Seems like a few performance issues here. */}
+
             {view === 'ChapterSelect' && book !== null &&
                 <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                    {/* Pressable is a direct child element which flex manipulates */}
-                   
-                    {/* data.whatever */}
-                    {/* data.id is the chapterId to pass into the next screen. */}
-                    {/* view is a direct child element, but does double view/div conflict? i dont think */}
-                    {/* <View style={{ borderColor: darkMode ? styles.dark.color : styles.light.color }}> */}
 
                     <FlatList
                         data={data}
                         numColumns={4}
                         keyExtractor={(item) => item.number}
                         renderItem={({ item }) => (
-                            // console.log(item)
-                            // flexDirection defaults to column in react native instead of row like css
+
                             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 5 }}>
-                                {/* I am starting to think that styling this touchable opacity would be the right thing for direct child element manipulation */}
+
                                 <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
 
                                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
@@ -229,11 +181,11 @@ const BibleSelectScreen = ({ navigation }) => {
                         )}
                     />
 
-                    {/* </View> */}
+
                     <Pressable onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </Pressable>
-                    {/* I like passing a param to another screen with what I need to read the bible... */}
+
                 </View>
             }
 

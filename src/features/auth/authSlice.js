@@ -1,45 +1,73 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-// import server from '../../../database/server';
+import axios from 'axios'
+// import GetDatabase from '../../../database/server'
+// mongodb uri somehow...
+const uri = 'https://jsonplaceholder.typicode.com/posts';
 // createAsyncThunk will deal with the backend
-
-const register = createAsyncThunk('auth/register', async (user, thunkApi) => {
+export const putUser = createAsyncThunk('/api/register', async () => {
+    // on idle the dispatch will run through the thunk, try to post or get from the uri
     try {
-        // return await authService
-        return await server.register(user);
-    } catch(err) {
-        console.log(err) //for now.
-        return thunkApi.rejectWithValue(message);
+        const response = await axios.get(uri)
+        return [...response.data]
+    } catch (err) {
+        return err.message
     }
-});
+})
+
+// createSlice uses immer library internally
 export const authSlice = createSlice({
     name: 'authenticate',
-    // array. do not mutate directly, so this is safe
-    initialState: [{
+    
+    initialState: {
+        users: [], 
         username: null,
-        password: null
-    }],
-    reducers: {
+        password: null,
+        email: null,
+        confirmPassword: null,
+        loading: 'idle',
         
-        submitUser(state, action){
-            state.push(action.payload)
-        },
-        logout: state => {
-            state.username = false,
-                state.password = false
-        },
-        isLoggedIn: (state, action) => {
-            
-            state.username = action.payload.username,
-                state.password = action.payload.password
+    },
+    
+    reducers: {
 
+        submitUser(state, action) {
+            state.users.push(action.payload)
+        },
+
+        getUser(state, action) {
+            state.username = action.payload
+            state.password = action.payload
         }
+
+        
+        // The recommended way of using extraReducers is to use a callback and (thunk or createAction) that receives a ActionReducerMapBuilder instance.
     }, extraReducers: (builder) => {
-        // builder
+        builder
+        
+            .addCase(putUser.pending, getAllUsers)
+            .addCase(putUser.fulfilled, userReceived)
+            .addCase(putUser.rejected, getUserFailed)
+        // builder.addCase()
         // addCase1
         // addCase2, etc... read after work
     }
 })
 
-export const { submitUser, logout, isLoggedIn } = authSlice.actions
+
+export const userReceived = (state, action) => {
+    state.loading = 'success'
+    
+    
+}
+
+export const getAllUsers = (state, action) => {return state.loading = 'loading'}
+export const getUserFailed = (state, action) => {return state.loading = 'failed'}
+// export const getAllPassword = (state) => state.authenticate.password
+// export const getAllEmail = (state) => state.authenticate.email
+export const getLoadingStatus = (state) => state.loading
+
+export const { submitUser, getUser } = authSlice.actions
 
 export default authSlice.reducer
+
+export const selectUser = (state, username) => state.authenticate.users.find(user => user.username === username)
