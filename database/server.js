@@ -1,10 +1,13 @@
 
 const express = require('express');
 const env = require('dotenv').config();
+const bcrypt = require('bcrypt');
+
 const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
 const app = express();
+app.use(express.json())
 const router = express.Router();
-const cors = require('cors')
+const cors = require('cors');
 const Server = require('mongodb').Server;
 const { ServerApiVersion } = require('mongodb');
 const Joi = require('joi');
@@ -25,14 +28,22 @@ const client = new MongoClient(uri, {
 //     email: String
 // })
 
-app.get('/api/register/:username/:password/:email', async (req, res) => {
-    // bad, but simple
-    const username = req.params.username
-    const password = req.params.password
-    const email = req.params.email
+
+app.get('/api/register/:username/:password/:confirmPassword/:email', async (req, res) => {
+    const saltRounds = 10;
     await client.connect()
+    // bad, but simple
+    const password = req.params.password
+    const username = req.params.username
+    const email = req.params.email
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+        bcrypt.hash(req.params.password, salt, (err, hash) => {
+            console.log(hash)
+            
+        })
+    })
+    const coll = await client.db().collection('collections').insertOne({ username: username, password: password, email: email })
     console.log('connected')
-    const coll = await client.db().collection('collections').insertOne({username: username, password: password, email: email})
     console.log(coll)
     res.send(JSON.stringify(username + " has been submitted"))
 
@@ -42,8 +53,17 @@ app.get('/api/register/:username/:password/:email', async (req, res) => {
 })
 
 app.get('/api/login/:username/:password', (req, res) => {
-  console.log('cors errors...coming back')  
+    console.log(req.params.username)
+    console.log(req.params.password)
+    console.log('cors errors...coming back')
+    // bcrypt.compare(req.params.password === client.db().collection('collections').)
 })
+
+app.get('/api/delete/:username', (req, res) => {
+
+})
+
+// app.get('/users/storeverse')
 
 // router.get
 // const GetDatabase = async () => {

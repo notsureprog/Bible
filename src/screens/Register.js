@@ -1,12 +1,14 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { submitUser, putUser } from '../features/auth/authSlice'
+import { submitUser, registerUsers } from '../features/auth/authSlice'
 
 const Register = () => {
     const user = useSelector(state => state.authenticate)
     const putUserInDatabase = submitUser()
-    console.log(user)
+    // const putUsersIdle = putUserIdle()
+    // console.log(putUserIdle.state)
+    console.log(user.loading)
     console.log(user.users.map(u => console.log(u)))
     const [username, setUsername] = React.useState(null);
     const [email, setEmail] = React.useState(null);
@@ -18,7 +20,7 @@ const Register = () => {
         console.log("Dispatch error")
 
         dispatch(
-            putUser({
+            registerUsers({
                 username,
                 password,
                 confirmPassword,
@@ -35,6 +37,9 @@ const Register = () => {
     React.useEffect(() => {
         if (user.loading === 'success') {
             dispatch(putUserInDatabase())
+        }
+        if (user.loading === 'loading') {
+            dispatch(putUsersIdle()) //problem here because idle
         }
     }, [dispatch, user.loading])
 

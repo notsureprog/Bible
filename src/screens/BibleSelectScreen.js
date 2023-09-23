@@ -6,7 +6,7 @@ import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BIBLE_API_KEY } from '@env'
 
-console.log(localStorage.getItem('username'))
+// console.log(localStorage.getItem('username'))
 
 const BibleSelectScreen = ({ navigation }) => {
 
