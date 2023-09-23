@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable } from 'react-native'
 import store from '../app/store'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { submitUser } from '../features/auth/authSlice'
+import { submitUser, getUser } from '../features/auth/authSlice'
 
 // This should be retreive
 // builder.addMatcher?
