@@ -3,13 +3,13 @@ import { View, Text, TextInput, Pressable } from 'react-native'
 import store from '../app/store'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { submitUser, loginUsers } from '../features/auth/authSlice'
+import { getUser, loginUsers } from '../features/auth/authSlice'
 
 // This should be retreive
 // builder.addMatcher?
 const Login = () => {
     console.log(store.getState())
-    const getUserFromDatabase = submitUser();
+    const getUserFromDatabase = getUser();
     const user = useSelector((state) => state.authenticate);
     // const [username, setUsername] = React.useState(state => state.authenticate.username);
     // const [password, setPassword] = React.useState(state => state.authenticate.password);
@@ -26,7 +26,6 @@ const Login = () => {
 
         dispatch(
             loginUsers({
-                // __id: 'mongodb', -- automatically generated on a register.
                 username,
                 password,
             })
@@ -38,7 +37,11 @@ const Login = () => {
 
     React.useEffect(() => {
         if (user.loading === 'success') {
+            const stateBefore = store.getState()
+            console.log(stateBefore)
             dispatch(getUserFromDatabase())
+            const stateAfter = store.getState()
+            console.log(stateAfter)
         }
     }, [dispatch, user.loading])
 

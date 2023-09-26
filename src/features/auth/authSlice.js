@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import axios from 'axios'
 import fetch from 'node-fetch'
 // import http from 'http'
@@ -17,10 +17,10 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
     try {
         const response = await fetch(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
             method: 'POST', 
-            body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email}
+            // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email}
         })
         if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
-        const body = await response.body.json()
+        const body = await response.json()
         console.log('body')
         console.log(body)
         console.log('end body')
@@ -70,13 +70,21 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
 })
 
 export const loginUsers = createAsyncThunk(`/api/login`, async (thunkApi) => {
-    const options = {
-        method: 'GET',
-        url: `http://localhost:3000/api/login/${thunkApi.username}/${thunkApi.password}`
-    }
     try {
-        const response = await axios(options)
-        return response.data
+        const response = await fetch(`${uri}/api/login/${thunkApi.username}/${thunkApi.password}`, {
+            method: 'GET',
+            // body: {username: thunkApi.username, password: thunkApi.password}
+        })
+
+        const result = response.json()
+        return result
+        // const options = {
+        //     method: 'GET',
+        //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`
+        // }
+        // const response = await axios(options)
+        // console.log(response.data)
+        // return response.data
     } catch (err) {
         console.log(err)
     }
@@ -92,19 +100,30 @@ export const authSlice = createSlice({
         password: null,
         email: null,
         confirmPassword: null,
-        loading: 'idle'
+        loading: 'idle',
+        isLoggedIn: false
     },
 
     reducers: {
         submitUser(state, action) {
             console.log(action.payload)
+            console.log(current(state))
             state.users.push(action.payload)
+            console.log(current(state))
         },
 
         getUser(state, action) {
-            state.username = action.payload
-            state.password = action.payload
-        }
+            console.log(current(state))
+            state.username = action.payload.username
+            state.password = action.payload.password
+            console.log(current(state))
+        },
+        // deleteUser(state, action) {
+        //     console.log('something')
+        // },
+        // updateUser(state, action) {
+
+        // }
 
     }, extraReducers: (builder) => {
         builder
@@ -115,6 +134,8 @@ export const authSlice = createSlice({
             .addCase(loginUsers.fulfilled, (state, action) => {
                 // we test against db
                 state.users.push(action.payload)
+                state.username = action.payload
+                state.password = action.payload
                 // state.users.map((userdata) => {
                 //     userdata === action.payload ? state.users.push(userdata) : state.loading = 'error'
                 // })
@@ -125,7 +146,7 @@ export const authSlice = createSlice({
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
 
 // const getUserFromDB = (registerUser.pending)
-
+// deleteUser, updateUser
 export const { submitUser, getUser } = authSlice.actions
 
 export default authSlice.reducer
