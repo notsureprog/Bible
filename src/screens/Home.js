@@ -18,6 +18,9 @@ function Home({ navigation }) {
             <Pressable onPress={() => { navigation.navigate('Register') }}>
                 <Text>Register</Text>
             </Pressable>
+            <Pressable onPress={() => { navigation.navigate('Test') }}>
+                <Text>Test</Text>
+            </Pressable>
         </View>
     )
 }

@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Platform, Scrol
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BIBLE_API_KEY } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 // import { render } from 'react-dom'
@@ -30,27 +31,30 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     const [query, setQuery] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [limitState, limitDispatch] = React.useReducer(limitReducer, { limit: 0 });
-    
+
     const inputRef = React.useRef(null);
 
     // clear the search input after i search for a word/verse
     const ClearInput = () => {
         inputRef.current.value = "";
     }
-    
+
     const OnFocus = () => {
         inputRef.current.focus()
     }
 
     const InputFunction = () => {
         return (
-            <TextInput onFocus={OnFocus} ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
+            <View style={{ flexDirection: 'row' }}>
+                <MaterialCommunityIcons name='magnify' size={50} />
+                <TextInput style={{width: '100%'}} onFocus={OnFocus} ref={inputRef} placeholder='Enter a phrase' onSubmitEditing={(text) => { setQuery(text.nativeEvent.text); ClearInput(); setLoading(true); }} />
+            </View>
         )
     }
 
     console.log(bible)
 
-    
+
     const handleTheme = () => {
 
         if (darkMode) {
@@ -60,7 +64,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
         }
     }
 
-    
+
 
     console.log(limitState.limit)
 
@@ -82,7 +86,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                 setData(result.data.data);
                 setLoading(false);
                 console.log(result.data.data);
-                
+
             }
             catch (err) {
                 if (err.response) {
@@ -125,7 +129,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
 
     console.log(darkMode);
 
-    
+
 
     React.useEffect(() => {
         SearchVerse()
@@ -139,11 +143,11 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             }
 
             <InputFunction />
-            
+
             <VersionSelectMenu />
             {data !== null && !loading &&
                 <View>
-                    
+
                     {Platform.OS === 'android' &&
 
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, marginBottom: 20 }}>

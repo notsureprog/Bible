@@ -16,6 +16,7 @@ import Register from './src/screens/Register'
 
 
 
+
 // 64a594186127bbd1c9dba6e9f71d58f6
 // import {BibleSelectScreen} from './src/screens/BibleSelectScreen'
 
@@ -51,6 +52,7 @@ const linking = {
           <Stack.Screen name='Home' component={Home} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='Login' component={Login} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='Register' component={Register} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

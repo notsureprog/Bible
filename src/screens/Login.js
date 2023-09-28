@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
@@ -49,14 +49,31 @@ const Login = () => {
     // console.log(credintials);
 
     return (
-        <View>
-            <TextInput placeholder='Enter your username' onChangeText={setUsername} />
-            <TextInput placeholder='Enter your password' onChangeText={setPassword} />
-            <Pressable onPress={onSubmitUser}>
-                <Text>submit</Text>
+        <View style={{alignItems: 'center', padding: 5}}>
+            
+
+             <MaterialCommunityIcons name='login' size={100} />
+            <TextInput style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
+            
+            <TextInput style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
+            <Pressable style={styles.buttonStyles} onPress={onSubmitUser}>
+                <Text>Submit</Text>
             </Pressable>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    inputStyles: {
+        height: 50,
+        width: '80%',
+        borderColor: 'black'
+    },
+    buttonStyles: {
+        height: 50,
+        width: 100,
+        backgroundColor: 'green',
+    }
+})
 
 export default Login

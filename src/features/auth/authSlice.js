@@ -6,40 +6,45 @@ import { Platform } from 'react-native'
 // import { HttpsProxyAgent } from 'https-proxy-agent'
 // 
 
-const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000'
+const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://192.168.1.140:8081'
 // const httpsAgent = new HttpsProxyAgent({host: 'http://localhost:3000'})
 // createAsyncThunk will deal with the backend
 // accepts a Redux action type string (/api/users) and a call back fn 
 // when the api responds back to middleware it is pending, fulfilled, or rejected
 export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) => {
-    console.log(thunkApi)
+    console.log(typeof(thunkApi))
 
     try {
         const response = await fetch(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
-            method: 'POST', 
-            // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email}
+            method: 'POST',
+            // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email},
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
+        // console.log(response)
         if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
         const body = await response.json()
         console.log('body')
+        // console.log(typeof(body))
         console.log(body)
         console.log('end body')
         return body;
-    }catch(err) {
+    } catch (err) {
         console.log(err)
     }
-        // returns a promise
+    // returns a promise
     //     const response = await axios.post(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
     //         validateStatus: (status) => {
     //             return status < 500
     //         },
-            
+
     //         // proxy: {
     //         //     protocol: 'http',
     //         //     host: '10.0.2.2/api/register',
     //         //     port: 3000
     //         // },
-            
+
 
     //     })
     //     console.log(response.data)
@@ -125,7 +130,9 @@ export const authSlice = createSlice({
 
         // }
 
-    }, extraReducers: (builder) => {
+    },
+
+    extraReducers: (builder) => {
         builder
             .addCase(registerUsers.fulfilled, (state, action) => {
                 state.users.push(action.payload)
@@ -141,6 +148,7 @@ export const authSlice = createSlice({
                 // })
             })
     }
+
 });
 
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
