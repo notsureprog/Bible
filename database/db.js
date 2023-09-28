@@ -27,6 +27,7 @@ const postUserToDatabase = async (username, password, email) => {
                 if (err) { throw err }
                 console.log(match)
                 if (match) { 
+                    const user = new User({ username: username, password: hash, email: email });
                     await user.save()
                     
                     // user is all of the object but no hash
