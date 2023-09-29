@@ -22,9 +22,7 @@ const BibleSelectScreen = ({ navigation }) => {
     console.log(darkMode)
 
     const BibleBooks = () => React.useMemo(() => {
-
         const selection = [
-
             { id: 'GEN', name: 'Genesis' },
             { id: 'EXO', name: 'Exodus' },
             { id: 'LEV', name: 'Leviticus' },
@@ -136,7 +134,6 @@ const BibleSelectScreen = ({ navigation }) => {
                     method: 'GET',
                     url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
                     headers: {
-
                         'api-key': `${BIBLE_API_KEY}`
                     }
                 }

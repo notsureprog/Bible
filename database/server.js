@@ -1,8 +1,9 @@
-
 require('../models/userSchema');
+const requireAuth = require('../middleware/requireAuth')
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 // const authRoutes = require('../routes/authRoutes')
@@ -18,23 +19,42 @@ app.use((req, res, next) => {
     next()
 })
 
+app.get('/', requireAuth, (req, res) => {
+    console.log(res)
+
+    // res.redirect('http://localhost:19006/Home');
+})
+
 app.post('/api/register/:username/:password/:confirmPassword/:email', async (req, res) => {
     console.log(req.body)
     const username = req.params.username
     const password = req.params.password
     const email = req.params.email
-    postUserToDatabase(username, password, email)
-    
+    const userData = postUserToDatabase(username, password, email)
+    // res.send(await userData.token)
+    const token = jwt.sign({ userId: userData._id }, password)
+    res.send({ token: token });
+    // const token = jwt.sign({ userId: userData._id }, 'MY_SECRET_KEY')
+
+    // res.send({ token: token });
+
 })
 
-app.get('/api/login/:username/:password', (req, res) => {
+app.post('/api/login/:username/:password', async (req, res) => {
+    // console.log("begin req")
+    // console.log(req)
+    // console.log("end req")
     const username = req.params.username
     const password = req.params.password
-    console.log(req.params.username)
-    console.log(req.params.password)
-    console.log('cors errors...coming back')
-    const userData = getUserFromDatabase(username, password);
-    console.log(userData)
+    // console.log(req.params.username)
+    // console.log(req.params.password)
+    // console.log('cors errors...coming back')
+    getUserFromDatabase(username, password);
+
+    // const token = jwt.sign({ userId: userData._id }, password)
+    // res.send({ token: token });
+
+    // console.log(userData)
     // bcrypt.compare(req.params.password === getUser.collection('collections').findOne({password: password}))
 })
 

@@ -3,14 +3,15 @@ import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUser, loginUsers } from '../features/auth/authSlice'
+import { getUser, loginUsers, submitUser } from '../features/auth/authSlice'
 
 // This should be retreive
 // builder.addMatcher?
 const Login = () => {
     console.log(store.getState())
-    const getUserFromDatabase = getUser();
+    const getUserFromDatabase = submitUser();
     const user = useSelector((state) => state.authenticate);
+    console.log(user.loading)
     // const [username, setUsername] = React.useState(state => state.authenticate.username);
     // const [password, setPassword] = React.useState(state => state.authenticate.password);
 
@@ -42,7 +43,11 @@ const Login = () => {
             dispatch(getUserFromDatabase())
             const stateAfter = store.getState()
             console.log(stateAfter)
+            
         }
+         if(user.loading === 'failed') {
+            console.log(store.getState())
+         }
     }, [dispatch, user.loading])
 
     // const credintials = { lusername, lpassword };
@@ -54,7 +59,6 @@ const Login = () => {
 
              <MaterialCommunityIcons name='login' size={100} />
             <TextInput style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
-            
             <TextInput style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
             <Pressable style={styles.buttonStyles} onPress={onSubmitUser}>
                 <Text>Submit</Text>

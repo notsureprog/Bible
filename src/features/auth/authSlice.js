@@ -12,14 +12,15 @@ const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3
 // accepts a Redux action type string (/api/users) and a call back fn 
 // when the api responds back to middleware it is pending, fulfilled, or rejected
 export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) => {
-    console.log(typeof(thunkApi))
+    console.log(typeof (thunkApi))
 
     try {
         const response = await fetch(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
             method: 'POST',
             // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email},
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+
             }
         })
         // console.log(response)
@@ -76,16 +77,24 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
 
 export const loginUsers = createAsyncThunk(`/api/login`, async (thunkApi) => {
     try {
+        console.log(thunkApi)
         const response = await fetch(`${uri}/api/login/${thunkApi.username}/${thunkApi.password}`, {
-            method: 'GET',
+            method: 'POST',
             // body: {username: thunkApi.username, password: thunkApi.password}
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU5NTI3MzB9.VxKVCMEynCFNWDAI7vUlrduS8aO0uFbHiSi_VEu2OGs'
+            }
         })
 
-        const result = response.json()
-        return result
+        const body = await response.text()
+        console.log(body)
+        return body
         // const options = {
         //     method: 'GET',
-        //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`
+        //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`,
+        //     headers: {
+        //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU5NTI3MzB9.VxKVCMEynCFNWDAI7vUlrduS8aO0uFbHiSi_VEu2OGs'
+        //     }
         // }
         // const response = await axios(options)
         // console.log(response.data)
@@ -141,8 +150,8 @@ export const authSlice = createSlice({
             .addCase(loginUsers.fulfilled, (state, action) => {
                 // we test against db
                 state.users.push(action.payload)
-                state.username = action.payload
-                state.password = action.payload
+                // state.username = action.payload
+                // state.password = action.payload
                 // state.users.map((userdata) => {
                 //     userdata === action.payload ? state.users.push(userdata) : state.loading = 'error'
                 // })
