@@ -1,0 +1,4 @@
+- change redux state to guest to allow user to read the bible, but not highlight verses.
+- figure out auth in full with error handling in full
+- unit testing
+- 

@@ -63,6 +63,9 @@ const Login = () => {
             <Pressable style={styles.buttonStyles} onPress={onSubmitUser}>
                 <Text>Submit</Text>
             </Pressable>
+            {/* <Pressable style={styles.buttonStyles} onPress={dispatch(loginUsers({username: 'set state to guest', password: 'not needed'}))}>
+                <Text>Continue as Guest</Text>
+            </Pressable> */}
         </View>
     )
 }

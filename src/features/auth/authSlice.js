@@ -6,7 +6,9 @@ import { Platform } from 'react-native'
 // import { HttpsProxyAgent } from 'https-proxy-agent'
 // 
 
-const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://192.168.1.140:8081'
+// Killed my ngrok server to get a new url, but this solves the android to express api network error issue. May just invest in ngrok now.
+
+const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3000' : 'https://c3ad-2603-6010-3500-c272-d970-7211-dba7-39b5.ngrok-free.app'
 // const httpsAgent = new HttpsProxyAgent({host: 'http://localhost:3000'})
 // createAsyncThunk will deal with the backend
 // accepts a Redux action type string (/api/users) and a call back fn 
@@ -29,6 +31,7 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
         console.log('body')
         // console.log(typeof(body))
         console.log(body)
+        console.log(body.token)
         console.log('end body')
         return body;
     } catch (err) {
@@ -75,25 +78,23 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
     // on idle the dispatch will run through the thunk, try to post or get from the uri
 })
 
-export const loginUsers = createAsyncThunk(`/api/login`, async (thunkApi) => {
+export const loginUsers = createAsyncThunk(`/login`, async (thunkApi) => {
     try {
         console.log(thunkApi)
-        const response = await fetch(`${uri}/api/login/${thunkApi.username}/${thunkApi.password}`, {
+        const response = await fetch(`${uri}/login/${thunkApi.username}/${thunkApi.password}`, {
             method: 'POST',
             // body: {username: thunkApi.username, password: thunkApi.password}
-            headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU5NTI3MzB9.VxKVCMEynCFNWDAI7vUlrduS8aO0uFbHiSi_VEu2OGs'
-            }
+            
         })
 
-        const body = await response.text()
+        const body = await response.json()
         console.log(body)
         return body
         // const options = {
         //     method: 'GET',
         //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`,
         //     headers: {
-        //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU5NTI3MzB9.VxKVCMEynCFNWDAI7vUlrduS8aO0uFbHiSi_VEu2OGs'
+        
         //     }
         // }
         // const response = await axios(options)
@@ -123,13 +124,14 @@ export const authSlice = createSlice({
             console.log(action.payload)
             console.log(current(state))
             state.users.push(action.payload)
+            const data = state.users;
             console.log(current(state))
         },
 
         getUser(state, action) {
             console.log(current(state))
-            state.username = action.payload.username
-            state.password = action.payload.password
+            // state.username = action.payload.username
+            // state.password = action.payload.password
             console.log(current(state))
         },
         // deleteUser(state, action) {
@@ -144,12 +146,26 @@ export const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(registerUsers.fulfilled, (state, action) => {
-                state.users.push(action.payload)
+                // console.log(data)
+                console.log(action.payload)
+                // return {
+                //     ...state,
+                //     username: action.payload.username
+                // }
             })
+                
+            //     (state, action) => {
+            //     // repitition
+            //     console.log(current(state))
+            //     // state.loading === 'success'
+                
+            //     console.log(current(state))
+            // })
             // .addCase(registerUser.pending, registerUserIdle)
             .addCase(loginUsers.fulfilled, (state, action) => {
                 // we test against db
                 state.users.push(action.payload)
+                
                 // state.username = action.payload
                 // state.password = action.payload
                 // state.users.map((userdata) => {
@@ -161,7 +177,7 @@ export const authSlice = createSlice({
 });
 
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
-
+const putUserInDatabase = (state, action) => { return {username: action.payload.username}}
 // const getUserFromDB = (registerUser.pending)
 // deleteUser, updateUser
 export const { submitUser, getUser } = authSlice.actions
