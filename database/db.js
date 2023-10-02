@@ -16,28 +16,12 @@ const postUserToDatabase = async (username, password, email) => {
     try {
         await connect
         const User = mongoose.model('User')
-        // const user = new User({ username: username, password: password, email: email });
-        // maybe only connect once outside of the func
-        // const postToDb = await mongoose.createConnection(uri)
-
-        // second test
-        // user.password
+        
         bcrypt.hash(password, 10, async (err, hash) => {
-
             if (err) { throw err }
-
-
             const user = new User({ username: username, password: hash, email: email });
             await user.save()
-
-
-
-
-            // user is all of the object but no hash
-            // await postToDb.collection('collections').insertOne({username: username, password: hash, email: email})
-            console.log('good')
-
-
+            console.log('User Submitted')
         })
     } catch (error) {
         console.log(error)
@@ -45,62 +29,39 @@ const postUserToDatabase = async (username, password, email) => {
 }
 
 const getUserFromDatabase = async (username, password) => {
-    // the register form took care of the check password before submit. 
+    console.log(password) //not null here
 
     try {
         await connect
         const User = mongoose.model('User')
         const result = await User.findOne({ username: username })
-        // here is where i am
-        // console.log(result.password)
-        const pword = result.password
-
-        // await connect
-        // const getUser = await mongoose.createConnection(uri)
-        // // 
-        bcrypt.hash(password, 10, async (err, hash) => {
-            console.log(hash)
-            bcrypt.compare(password, pword, async (err, match) => {
+        if (result === null) {
+            alert("User was not found in the database")
+        } else {
+            // I need to set the state of username in redux
+            const pword = result.password
+            bcrypt.hash(password, 10, async (err, hash) => {
                 console.log(hash)
-                console.log(pword)
-                if (err) { throw err }
-                console.log(match)
-                if (match) {
-                    // const user = new User({ username: username, password: password })
-                    console.log('Yes')
-                    // const result = await user.find()
-                    console.log(result)
-                } else {
-                    console.log('error')
-                }
+                bcrypt.compare(password, pword, async (err, match) => {
+                    console.log("Password and Hash")
+                    console.log(hash)
+                    console.log(pword)
+                    console.log("End password and hash")
+                    if (err) { throw err }
+                    console.log(match)
+                    // match already compares the two passwords
+                    if (match) {
+                        // i need to set the state down here
+                        console.log('Yes')
+                        console.log(result) //this is the object in mongodb
+                        return result.username
+
+                    } else {
+                        console.log('error')
+                    }
+                })
             })
-        })
-        // const passInDb = result.password
-        // console.log(passInDb)
-        // const user = userData.username
-        // const pass = userData.password
-
-        // console.log(await getUser.collection('collections').findOne({ username: username, password: password }))
-        // bcrypt.hash(password, 10, async (err, hash) => {
-        //     bcrypt.compare(password, hash, (err, match) => {
-        //         if (match) {
-        //             // const userData = await getUser.collection('collections').findOne({ username: username, password: hash })
-
-        //         } else {
-        //             console.log(err)
-        //         }
-        //     })
-        //     const passSubmitted = hash
-        //     // const passInDb = await bcrypt.compare(result.password, hash)
-        //     if (passSubmitted) {
-        //         // bcrypt.compare()
-
-        //     } else {
-        //         console.log('error')
-        //     }
-        // })
-        // console.log(await getUser.collection('collections').findOne({ username: username, password: password }))
-
+        }
     } catch (error) {
         console.log(error);
     }
@@ -109,30 +70,7 @@ const getUserFromDatabase = async (username, password) => {
 const dropUserFromDatabase = async (username, password) => {
     await connect
     const dropUser = await mongoose.createConnection(uri)
-    // if the username and password are in the database, 
-    // then execute the below command
     await dropUser.collection('collections').deleteOne({ username: username, password: password })
-}
-
-// change password
-const updatePassword = async (username, password, newPassword, confirmNewPassword) => {
-
-    await connect
-
-    const saltRounds = 10
-    const updateUser = await mongoose.createConnection(uri)
-    const genSaltForNewPassword = bcrypt.hash(newPassword, saltRounds, (err, hash) => {
-        const newPassHash = hash
-        console.log(newPassHash)
-
-    })
-    const genSaltForNewConfirmPassword = bcrypt.hash(confirmNewPassword, saltRounds, (err, hash) => {
-        const newConfirmPassHash = hash
-        console.log(newConfirmPassHash)
-
-    })
-
-    await updateUser.collection('collections').updateOne({ username: username, password: password }, { $set: { username: username, password: newPassword } })
 }
 
 module.exports = { postUserToDatabase, getUserFromDatabase }

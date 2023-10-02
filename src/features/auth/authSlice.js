@@ -1,14 +1,16 @@
+
 import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import axios from 'axios'
 import fetch from 'node-fetch'
 // import http from 'http'
 import { Platform } from 'react-native'
+import { REACT_APP_EXPRESS_URL } from '@env'
 // import { HttpsProxyAgent } from 'https-proxy-agent'
 // 
 
 // Killed my ngrok server to get a new url, but this solves the android to express api network error issue. May just invest in ngrok now.
-
-const uri = Platform.OS === 'web' || Platform.OS === 'ios' ? 'http://localhost:3000' : 'https://c3ad-2603-6010-3500-c272-d970-7211-dba7-39b5.ngrok-free.app'
+// I get an undefined pushed to the users array on first iteration... It needs to stop
+const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRESS_URL}`
 // const httpsAgent = new HttpsProxyAgent({host: 'http://localhost:3000'})
 // createAsyncThunk will deal with the backend
 // accepts a Redux action type string (/api/users) and a call back fn 
@@ -17,6 +19,7 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
     console.log(typeof (thunkApi))
 
     try {
+        // const response = await fetch(`${uri}/api/register/`, {
         const response = await fetch(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
             method: 'POST',
             // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email},
@@ -32,8 +35,10 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
         // console.log(typeof(body))
         console.log(body)
         console.log(body.token)
+        // const username = body.username
+        // const token = body.token
         console.log('end body')
-        return body;
+        return body
     } catch (err) {
         console.log(err)
     }
@@ -84,8 +89,9 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi) => {
         const response = await fetch(`${uri}/login/${thunkApi.username}/${thunkApi.password}`, {
             method: 'POST',
             // body: {username: thunkApi.username, password: thunkApi.password}
-            
+
         })
+        console.log(response.headers.get('Authorization'));
 
         const body = await response.json()
         console.log(body)
@@ -94,7 +100,7 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi) => {
         //     method: 'GET',
         //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`,
         //     headers: {
-        
+
         //     }
         // }
         // const response = await axios(options)
@@ -111,12 +117,14 @@ export const authSlice = createSlice({
     name: 'authenticate',
     initialState: {
         users: [],
+        // I may be able to omit some of the below if this works
         username: null,
         password: null,
         email: null,
         confirmPassword: null,
         loading: 'idle',
-        isLoggedIn: false
+        isLoggedIn: false,
+        authenticatedUser: {}
     },
 
     reducers: {
@@ -134,6 +142,9 @@ export const authSlice = createSlice({
             // state.password = action.payload.password
             console.log(current(state))
         },
+        logoutUser(state, action) {
+            state.authenticatedUser = {} //i think...
+        }
         // deleteUser(state, action) {
         //     console.log('something')
         // },
@@ -145,42 +156,51 @@ export const authSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
+            // register user cases
             .addCase(registerUsers.fulfilled, (state, action) => {
                 // console.log(data)
                 console.log(action.payload)
+                // state.authenticate = action.payload.body.username
                 // return {
                 //     ...state,
                 //     username: action.payload.username
                 // }
             })
-                
-            //     (state, action) => {
-            //     // repitition
-            //     console.log(current(state))
-            //     // state.loading === 'success'
-                
-            //     console.log(current(state))
-            // })
-            // .addCase(registerUser.pending, registerUserIdle)
+            .addCase(registerUsers.pending, (state, action) => {
+
+            })
+            .addCase(registerUsers.rejected, (state, action) => {
+
+            })
+            // end register users submit cases
+            
+            // begin login user submit cases
             .addCase(loginUsers.fulfilled, (state, action) => {
                 // we test against db
-                state.users.push(action.payload)
+                // state.users.push(action.payload)
+                // state = action.payload //will it write to the state, or is it immutable?
+                state.authenticatedUser = action.payload
+                state.isLoggedIn = true
+
                 
-                // state.username = action.payload
-                // state.password = action.payload
-                // state.users.map((userdata) => {
-                //     userdata === action.payload ? state.users.push(userdata) : state.loading = 'error'
-                // })
             })
+            .addCase(loginUsers.pending, (state, action) => {
+                state.isLoggedIn = false
+            })
+            .addCase(loginUsers.rejected, (state, action) => {
+                state.isLoggedIn = false
+            })
+            // end login users submit cases
     }
 
 });
 
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
-const putUserInDatabase = (state, action) => { return {username: action.payload.username}}
+const putUserInDatabase = (state, action) => { return { username: action.payload.username } }
 // const getUserFromDB = (registerUser.pending)
 // deleteUser, updateUser
-export const { submitUser, getUser } = authSlice.actions
+
+export const { submitUser, getUser, logoutUser } = authSlice.actions
 
 export default authSlice.reducer
 

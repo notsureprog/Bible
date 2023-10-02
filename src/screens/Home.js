@@ -12,15 +12,14 @@ function Home({ navigation }) {
             <Pressable onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
                 <Text>Search for a verse</Text>
             </Pressable>
+            
             <Pressable onPress={() => { navigation.navigate('Login') }}>
                 <Text>Login</Text>
             </Pressable>
             <Pressable onPress={() => { navigation.navigate('Register') }}>
                 <Text>Register</Text>
             </Pressable>
-            <Pressable onPress={() => { navigation.navigate('Test') }}>
-                <Text>Test</Text>
-            </Pressable>
+            
         </View>
     )
 }

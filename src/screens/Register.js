@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { submitUser, registerUsers } from '../features/auth/authSlice'
 import { ThemeContext } from './context/ThemeContext'
 
-const Register = () => {
+const Register = ({navigation}) => {
+    // the undefined users first iteration needs to be taken care of in this file.
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode
 
@@ -18,6 +19,7 @@ const Register = () => {
     const [email, setEmail] = React.useState(null);
     const [password, setPassword] = React.useState(null);
     const [confirmPassword, setConfirmPassword] = React.useState(null);
+
     const dispatch = useDispatch()
 
     const registerUser = () => {
@@ -26,6 +28,7 @@ const Register = () => {
             dispatch(
                 registerUsers({
                     // regex will take care of email and all the other stuff
+                    // first iteration, all of this stuff is undefined
                     username,
                     password,
                     confirmPassword,
@@ -44,7 +47,7 @@ const Register = () => {
 
     React.useEffect(() => {
         if (user.loading === 'success') {
-            
+
             dispatch(putUserInDatabase())
         }
         if (user.loading === 'loading') {
@@ -52,22 +55,37 @@ const Register = () => {
         }
     }, [dispatch, user.loading])
 
-// const styles = {}
+    // const styles = {}
     return (
-        // ugly
-        <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Username</Text>
-            <TextInput style={{color: darkMode ? styles.dark.color : styles.light.color,borderWidth: 2,  fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10}}  onChangeText={setUsername} />
-            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Email</Text>
-            <TextInput style={{color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setEmail} />
-            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Password</Text>
-            <TextInput style={{color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setPassword} />
-            <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Confirm Password</Text>
-            <TextInput style={{color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setConfirmPassword} />
+        // ugly styles
 
-            <Pressable style={styles.buttonStyles} onPress={registerUser}>
-                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 40, fontWeight: '900', fontFamily: 'serif', borderRadius: 5 }}>Submit</Text>
-            </Pressable>
+        <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+            {!user.isLoggedIn &&
+                <View>
+
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Username</Text>
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setUsername} />
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Email</Text>
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setEmail} />
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Password</Text>
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setPassword} />
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Confirm Password</Text>
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setConfirmPassword} />
+
+                    <Pressable style={styles.buttonStyles} onPress={registerUser}>
+                        <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 40, fontWeight: '900', fontFamily: 'serif', borderRadius: 5 }}>Submit</Text>
+                    </Pressable>
+                </View>
+            }
+            
+            {user.isLoggedIn && 
+            <View>
+                <Text>{user.authenticatedUser.username} is Logged in. You will need to sign out.</Text>
+                <Pressable onPress={() => navigation.navigate({name: 'Home'})}>
+                    <Text>Go Back</Text>
+                </Pressable>
+            </View>
+            }
         </View>
     )
 }

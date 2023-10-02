@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Platform, ScrollView, SafeAreaView } from 'react-native'
 import axios from 'axios'
+import store from '../app/store'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -10,6 +11,7 @@ import VersionSelectMenu from '../../VersionSelectMenu'
 // import { FlatList } from 'react-native-web'
 
 const BibleSearchVerseScreen = ({ navigation }) => {
+    
     const limitReducer = (state, action) => {
         if (action.type === "NEXT_PAGE") {
             return {

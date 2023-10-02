@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Pressable, StyleSheet } from 'react-native'
-import { ThemeContext } from './src/screens/context/ThemeContext'
+import { ThemeContext } from '../src/screens/context/ThemeContext'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 const ThemeButton = () => {

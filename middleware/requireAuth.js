@@ -44,11 +44,10 @@ module.exports = async (req, res, next) => {
         const {userData} = decoded
         console.log(userData)
         
-        
         console.log(userData)
         
         const user = await User.findById(userData)
-        console.log(user)
+        console.log(user) 
         req.user = user
         // req.header = header
         next()
