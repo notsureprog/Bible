@@ -2,3 +2,5 @@
 - figure out auth in full with error handling in full
 - unit testing
 - 
+
+From the server, I will get the notinthedb message. no user is being pulled from mongo. All of that is good. However, on the login page, I do not get an error and It says i am logged in

@@ -5,6 +5,7 @@
   "proxy": "http://192.168.1.140:8081",
   "scripts": {
     "start": "expo start",
+    "test": "./src/features/auth/authSlice.test.js",
     "server": "nodemon --exec npm start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -45,7 +46,8 @@
     "react-native-render-html": "^6.3.4",
     "react-native-web": "~0.19.6",
     "react-redux": "^8.1.2",
-    "scripture-styles": "^1.6.0"
+    "scripture-styles": "^1.6.0",
+    "@react-native-async-storage/async-storage": "1.18.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

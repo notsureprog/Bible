@@ -2,13 +2,17 @@ import React from 'react'
 import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
-import Constants from 'expo-constants'
+// import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BIBLE_API_KEY } from '@env'
+import useJwt from '../../hooks/useJwt'
+// import { getUser } from '../features/auth/authSlice'
 
 // console.log(localStorage.getItem('username'))
 
 const BibleSelectScreen = ({ navigation }) => {
+    useJwt('access-token')
 
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
@@ -17,9 +21,13 @@ const BibleSelectScreen = ({ navigation }) => {
     const [bible, setBible] = React.useState('de4e12af7f28f599-01'); //de4e12af7f28f599-01 de4e12af7f28f599-02
     const [book, setBook] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    
 
 
     console.log(darkMode)
+
+    
+    
 
     const BibleBooks = () => React.useMemo(() => {
         const selection = [
@@ -154,7 +162,9 @@ const BibleSelectScreen = ({ navigation }) => {
     }, [view, book])
 
     return (
+
         <View>
+            
             {view === 'BookSelect' && !loading && data === null && book === null &&
                 <BibleBooks />
             }

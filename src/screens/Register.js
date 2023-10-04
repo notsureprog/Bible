@@ -47,7 +47,6 @@ const Register = ({navigation}) => {
 
     React.useEffect(() => {
         if (user.loading === 'success') {
-
             dispatch(putUserInDatabase())
         }
         if (user.loading === 'loading') {

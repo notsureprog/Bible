@@ -1,6 +1,7 @@
 
 import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import fetch from 'node-fetch'
 // import http from 'http'
 import { Platform } from 'react-native'
@@ -32,8 +33,10 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
         if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
         const body = await response.json()
         console.log('body')
+        console.log(body)
         // console.log(typeof(body))
         console.log(body)
+        await AsyncStorage.setItem('access-token', body.token)
         console.log(body.token)
         // const username = body.username
         // const token = body.token
@@ -83,33 +86,62 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
     // on idle the dispatch will run through the thunk, try to post or get from the uri
 })
 
-export const loginUsers = createAsyncThunk(`/login`, async (thunkApi) => {
+export const loginUsers = createAsyncThunk(`/login`, async ( thunkApi, {rejectWithValue}) => {
+// export const loginUsers = createAsyncThunk(`/login`, async (username, password, thunkApi, { rejectWithValue }) => {
+
+    // console.log(username)
+    // console.log(password)
     try {
         console.log(thunkApi)
-        const response = await fetch(`${uri}/login/${thunkApi.username}/${thunkApi.password}`, {
-            method: 'POST',
-            // body: {username: thunkApi.username, password: thunkApi.password}
+        // I will leave the below code just as a reference
+        // // const response = await fetch(`${uri}/login/${thunkApi.username}/${thunkApi.password}`, {
+        // const response = await fetch(`${uri}/login`, {
+        //     method: 'POST',
+            
 
-        })
-        console.log(response.headers.get('Authorization'));
+        // })
+        // console.log(response.json())
+        // // i suck lol
 
-        const body = await response.json()
-        console.log(body)
-        return body
+        // const body = await response.json()
+        
+        // // if user is in db, then...
+        // // seems kind of spaghetti ish
+        // // await AsyncStorage.setItem('access-token', body.token)
+        // console.log(body)
+        // return body
+        
         // const options = {
-        //     method: 'GET',
-        //     url: `${uri}/api/login/${thunkApi.username}/${thunkApi.password}`,
-        //     headers: {
-
-        //     }
+        //     method: 'POST',
+        //     url: `${uri}/login`,
+        //     thunkApi
         // }
-        // const response = await axios(options)
-        // console.log(response.data)
-        // return response.data
-    } catch (err) {
-        console.log(err)
+        const response = await axios.post(`${uri}/login`, thunkApi)
+        
+        console.log(response.data)
+        return response.data
     }
-})
+     catch (err) {
+        rejectWithValue(err.response.data)
+        // console.log(err)
+    }
+},
+// FORCE CANCELLATION ON EVEN GOOD REQUESTS
+// test commented out...
+//  {
+//     // Canceling Before Execution... No wonder...
+//     condition: (username, { getState, extra }) => {
+//         const data  = getState()
+//         console.log(data)
+//         const fetchStatus = data.requests[username]
+//         console.log(fetchStatus)
+//         if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
+//             // Already fetched or in progress, don't need to re-fetch
+//             return false
+//           }
+//     }
+// }
+)
 
 
 // createSlice uses immer library internally
@@ -118,12 +150,14 @@ export const authSlice = createSlice({
     initialState: {
         users: [],
         // I may be able to omit some of the below if this works
-        username: null,
-        password: null,
+        // guest has no ability to highlight verses.
+        username: null, //guest
+        // password: null, //guest
         email: null,
-        confirmPassword: null,
+        token: null,
+        // confirmPassword: null,
         loading: 'idle',
-        isLoggedIn: false,
+        isLoggedIn: false, //only bool right now
         authenticatedUser: {}
     },
 
@@ -132,7 +166,7 @@ export const authSlice = createSlice({
             console.log(action.payload)
             console.log(current(state))
             state.users.push(action.payload)
-            const data = state.users;
+            
             console.log(current(state))
         },
 
@@ -143,7 +177,8 @@ export const authSlice = createSlice({
             console.log(current(state))
         },
         logoutUser(state, action) {
-            state.authenticatedUser = {} //i think...
+            // getting ahead
+            // state.authenticatedUser.token = await AsyncStorage.clear() //i think...
         }
         // deleteUser(state, action) {
         //     console.log('something')
@@ -167,30 +202,39 @@ export const authSlice = createSlice({
                 // }
             })
             .addCase(registerUsers.pending, (state, action) => {
+                // action.payload = "Submitting User. Please Wait...???" //I think that is how this works.
+                state.loading = 'pending',
+                state.isLoggedIn = false
 
             })
             .addCase(registerUsers.rejected, (state, action) => {
-
+                action.payload = "Something went wrong in the sign up process"
             })
             // end register users submit cases
-            
+
             // begin login user submit cases
             .addCase(loginUsers.fulfilled, (state, action) => {
+                // it acts as fulfilled
                 // we test against db
                 // state.users.push(action.payload)
                 // state = action.payload //will it write to the state, or is it immutable?
-                state.authenticatedUser = action.payload
+                state.username = action.payload.username
+                state.token = action.payload.token
+                // state.authenticatedUser = action.payload
+                state.loading = 'success'
                 state.isLoggedIn = true
 
-                
+
             })
             .addCase(loginUsers.pending, (state, action) => {
                 state.isLoggedIn = false
+                state.loading = 'loading'
             })
             .addCase(loginUsers.rejected, (state, action) => {
                 state.isLoggedIn = false
+                state.loading = 'failed'
             })
-            // end login users submit cases
+        // end login users submit cases
     }
 
 });

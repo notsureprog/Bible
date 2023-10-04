@@ -14,6 +14,7 @@ import BibleSearchVerseScreen from './src/screens/BibleSearchVerseScreen'
 import ThemeButton from './components/ThemeButton'
 import Login from './src/screens/Login'
 import Register from './src/screens/Register'
+import ErrorPage from './src/screens/ErrorPage'
 
 
 console.log("On the app.js")
@@ -27,18 +28,7 @@ const Stack = createNativeStackNavigator();
 
 
 const App = () => {
-  // const theme = React.useContext(ThemeContext);
-  // const darkMode = theme.state.darkMode;
-  // const onClick = () => {
-  //   if (darkMode) {
-  //     theme.dispatch({ type: "LIGHTMODE" })
-  //   }
-  //   else {
-  //     theme.dispatch({ type: "DARKMODE" })
-  //   }
-  // }
-  // const theme = useContext(ThemeContext);
-  // const darkMode = theme.state.darkMode;
+ 
 const linking = {
   prefixes: ['Bible://']
 }
@@ -55,7 +45,7 @@ const linking = {
           {/* {!state.authenticate.isLoggedIn && } */}
           <Stack.Screen name='Login' component={Login} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='Register' component={Register} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
-          
+          <Stack.Screen name='Error' component={ErrorPage}/>
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

@@ -1,17 +1,17 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Platform, ScrollView, SafeAreaView } from 'react-native'
 import axios from 'axios'
-import store from '../app/store'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BIBLE_API_KEY } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
+import useJwt from '../../hooks/useJwt'
 // import { render } from 'react-dom'
 // import { FlatList } from 'react-native-web'
 
 const BibleSearchVerseScreen = ({ navigation }) => {
-    
+    useJwt('access-token')
     const limitReducer = (state, action) => {
         if (action.type === "NEXT_PAGE") {
             return {
