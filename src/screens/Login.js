@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUser, loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
+import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
 
 // This should be retreive
@@ -53,8 +53,6 @@ const Login = ({ navigation }) => {
     const onSubmitUser = async () => {
         try {
             const resultAction = await dispatch(
-            // const resultAction = await dispatch(
-                // slice reducer
                 loginUsers({
                     username,
                     password,
@@ -63,33 +61,41 @@ const Login = ({ navigation }) => {
             console.log(resultAction)
             const unwrappedResultAction = unwrapResult(resultAction)
             console.log(unwrappedResultAction.username)
-            console.log(resultAction.type === '/login/fulfilled') //but still. Even a bad user is fulfilled...
-            console.log(resultAction.type === '/login/fulfilled') //but still. Even a bad user is fulfilled...
-            
-            
-            console.log(resultAction.type === '/login/rejected')
-            console.log(resultAction.type === '/login/rejected')
+            console.log(resultAction.type === '/login/fulfilled')
+            // if (resultAction.type === '/login/fulfilled') {
+            //     if(state.loading === 'pending' && resultAction.meta.requestId)
+            // }
+            //but still. Even a bad user is fulfilled...
+            // console.log(resultAction.type === '/login/fulfilled') //but still. Even a bad user is fulfilled...
+            console.log(resultAction.type === '/login/rejected') //the redux docs said to handle with the result action... or i could anyways
             // if (resultAction.type === '/login/rejected') {
             //     resultAction.abort()
             // }
             console.log(resultAction.type === '/login/pending')
-            if(resultAction.type === '/login/pending') {
-                
-                {!user.isLoggedIn && user.loading === 'pending' 
-                ?'Fetching user'
-                :user.username !== null
-                ?`Logged in as ${user.username}`
-                : 'Could not find the user in db'
-                }
-                // : user.username !== null //i would have update this instead of authenticatedUsers. Something I looked at suggested that an object may be easier
-                }
-            }
-            // if (result.type = '/login/fulfilled') { 
-            //     const fulfilledResult = unwrapResult(result)
-            //     console.log(fulfilledResult)
-            // }
+            console.log(user.username)
+            if (resultAction.type === '/login/pending') {
+                // I have no idea
+                dispatch(getUserFromDatabase) // if the result back from this is username: null password: null, then reject. otherwise, process...
 
-         catch (error) {
+                // {user.token === null && user.loading === 'pending' 
+                // ?'Fetching user'
+                // :user.username !== null
+                // // user.username
+                // ?`Logged in as ${user.username}`
+                // : 'Could not find the user in db'
+                // }
+                // : user.username !== null //i would have update this instead of authenticatedUsers. Something I looked at suggested that an object may be easier
+            }
+            // if (username === null && password === null) {
+            //     console.log("Could not find the user")
+            // }
+        }
+        // if (result.type = '/login/fulfilled') { 
+        //     const fulfilledResult = unwrapResult(result)
+        //     console.log(fulfilledResult)
+        // }
+
+        catch (error) {
             console.log(error)
         }
         setUsername('')
@@ -102,22 +108,23 @@ const Login = ({ navigation }) => {
         if (user.loading === 'success') {
             const stateBefore = store.getState()
             console.log(stateBefore)
-            
-            const result = dispatch(getUserFromDatabase)
-            console.log(result)
+            // dispatch(getUserFromDatabase) //i think this should go in pending
+            // console.log(result)
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
         // I have to switch the status to failed in auth slice
         if (user.loading === 'failed') {
+            console.log("Failed")
             console.log(store.getState())
-            console.log("Failed to get user")
-            // dispatch()
+
         }
         if (user.loading === 'loading') {
             console.log("Pending")
-            // check user in db would make sense
             console.log(store.getState())
+        }
+        if (user.loading === 'pending') {
+            dispatch(getUserFromDatabase)
         }
     }, [dispatch, user.loading])
 
@@ -151,9 +158,9 @@ const Login = ({ navigation }) => {
 
 
             {/* I would really rather take login off when i login */}
-            {user.isLoggedIn &&
+            {user.token !== null &&
                 <View>
-                    <Text>{user.authenticatedUser.username} is logged in</Text>
+                    <Text>{user.username} is logged in</Text>
                     <Pressable onPress={() => navigation.navigate({ name: 'Home' })} >
                         <Text>Go Back</Text>
                     </Pressable>

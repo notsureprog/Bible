@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const env = require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 // const { Alert } = require('react-native');
 // require('../models/userSchema');
@@ -29,28 +30,21 @@ const postUserToDatabase = async (username, password, email) => {
     }
 }
 
-const getUserFromDatabase = async (username, password) => {
-    console.log(password) //not null here
+const getUserFromDatabase = async (username, password, callback) => {
 
     try {
         await connect
         const User = mongoose.model('User')
         const result = await User.findOne({ username: username })
-        console.log("result in the db")
-        console.log(result) //null
-        console.log("End result in the db")
         if (result === null) {
             console.log("No user was found")
-            // they are null if the user is not found in db... but how do i stop the user from logging in
             return { username: null, password: null }
         }
-        
+
         const pword = result.password
         bcrypt.hash(password, 10, async (err, hash) => {
-            console.log(hash)
             bcrypt.compare(password, pword, async (err, match) => {
                 console.log("Password and Hash")
-                console.log(hash)
                 console.log(pword)
                 console.log("End password and hash")
                 if (err) { throw err }
@@ -58,9 +52,11 @@ const getUserFromDatabase = async (username, password) => {
                 // match already compares the two passwords
                 if (match) {
                     // i need to set the state down here
-                    console.log('Yes')
-                    console.log(result) //this is the object in mongodb
-                    return result.username
+                    const token = jwt.sign({ username: result.username }, pword)
+                    console.log(token)
+                    // console.log(result) //this is the object in mongodb
+                    // return { username: result.username, token: token }
+                    callback(null, {username: result.username, token: token})
                 } else {
                     return "User not Found"
                 }

@@ -3,7 +3,7 @@ import {test, expect} from '@jest/globals'
 
 test('should return the initial state', () => {
     expect(authReducer(undefined, {type: undefined})).toEqual({
-        username: null, completed: false
+        username: null, isLoggedIn: false
     })
 })
 

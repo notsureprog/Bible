@@ -53,29 +53,38 @@ app.post('/api/register/:username/:password/:confirmPassword/:email', (req, res,
 // i will make it just login, and extract the body. Because of sensitive information.
 app.post('/login', async (req, res, next) => {
     console.log("Hello server")
-    // app.post('/login/:username/:password', async (req, res, next) => {
-    console.log(req.body)
+    // let obj = null
     const username = req.body.username
     const password = req.body.password
-
-    // dont want it to get ugly, but this seems ok
-    // const fetchUser = await getUserFromDatabase(username, password)
-    // console.log("Result from func")
-    // // await fetchUser
-    // console.log(fetchUser)
-    // // console.log(await fet)
-    // if (fetchUser === null) {
-    //     res.status(404).send("User was not found");
-    //     res.send("User was not found");
-    // } 
-    // else {
-    getUserFromDatabase(username, password);
-    const token = jwt.sign({ username: username }, password)
-
-    res.send({ token: token, username: username });
+    // error handle callback
+    await getUserFromDatabase(username, password, (err, data) => {
+        try {
+            console.log("Data from db.js")
+            console.log(data)
+            res.send(data)
+            next()
+        } catch (error) {
+            console.log(error)
+        }
+        // if (err) {
+        //     console.log("Error getting User")
+        // }
+        // else {
+        //     res.send(data)
+        // }   
+    });
+    console.log("Hopefully")
+    // obj is null until second iteration...or if it is sent back null in dbjs
+    // console.log(await dbRes)
+    // I cannot send this without getUserFromDb... but I think it goes in the resultAction.type === '/login/pending'
+    // i could make this guest anyways
+    if (username === 'guest') {
+        const token = jwt.sign({ username: username }, password)
+        res.send({ token: token, username: 'guest' });
+        next()
+    }
     // }
 
-    next()
 })
 
 app.get('/', requireAuth, (req, res) => {

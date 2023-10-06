@@ -86,61 +86,34 @@ export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) 
     // on idle the dispatch will run through the thunk, try to post or get from the uri
 })
 
-export const loginUsers = createAsyncThunk(`/login`, async ( thunkApi, {rejectWithValue}) => {
-// export const loginUsers = createAsyncThunk(`/login`, async (username, password, thunkApi, { rejectWithValue }) => {
-
-    // console.log(username)
-    // console.log(password)
+export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue }) => {
     try {
+        // const { currentRequestId, loading } = store.getState().authenticate
         console.log(thunkApi)
-        // I will leave the below code just as a reference
-        // // const response = await fetch(`${uri}/login/${thunkApi.username}/${thunkApi.password}`, {
-        // const response = await fetch(`${uri}/login`, {
-        //     method: 'POST',
-            
-
-        // })
-        // console.log(response.json())
-        // // i suck lol
-
-        // const body = await response.json()
-        
-        // // if user is in db, then...
-        // // seems kind of spaghetti ish
-        // // await AsyncStorage.setItem('access-token', body.token)
-        // console.log(body)
-        // return body
-        
-        // const options = {
-        //     method: 'POST',
-        //     url: `${uri}/login`,
-        //     thunkApi
-        // }
         const response = await axios.post(`${uri}/login`, thunkApi)
-        
-        console.log(response.data)
+        await AsyncStorage.setItem('access-token', response.data.token)
         return response.data
     }
-     catch (err) {
+    catch (err) {
         rejectWithValue(err.response.data)
-        // console.log(err)
     }
 },
-// FORCE CANCELLATION ON EVEN GOOD REQUESTS
-// test commented out...
-//  {
-//     // Canceling Before Execution... No wonder...
-//     condition: (username, { getState, extra }) => {
-//         const data  = getState()
-//         console.log(data)
-//         const fetchStatus = data.requests[username]
-//         console.log(fetchStatus)
-//         if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
-//             // Already fetched or in progress, don't need to re-fetch
-//             return false
-//           }
-//     }
-// }
+    // FORCE CANCELLATION ON EVEN GOOD REQUESTS
+    // test commented out...
+    //  {
+    //     // Canceling Before Execution... No wonder...
+    // // unreachable thunkApi
+    //     condition: (thunkApi, { getState, extra }) => {
+    //         const data  = getState()
+    //         console.log(data)
+    //         const fetchStatus = data.requests[thunkApi]
+    //         console.log(fetchStatus)
+    //         if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
+    //             // Already fetched or in progress, don't need to re-fetch
+    //             return false
+    //           }
+    //     }
+    // }
 )
 
 
@@ -149,84 +122,72 @@ export const authSlice = createSlice({
     name: 'authenticate',
     initialState: {
         users: [],
-        // I may be able to omit some of the below if this works
-        // guest has no ability to highlight verses.
         username: null, //guest
-        // password: null, //guest
         email: null,
         token: null,
-        // confirmPassword: null,
         loading: 'idle',
         isLoggedIn: false, //only bool right now
-        authenticatedUser: {}
+        authenticatedUser: {},
+        currentRequestId: null
     },
 
     reducers: {
         submitUser(state, action) {
-            console.log(action.payload)
             console.log(current(state))
             state.users.push(action.payload)
-            
             console.log(current(state))
-        },
-
-        getUser(state, action) {
-            console.log(current(state))
-            // state.username = action.payload.username
-            // state.password = action.payload.password
-            console.log(current(state))
-        },
-        logoutUser(state, action) {
-            // getting ahead
-            // state.authenticatedUser.token = await AsyncStorage.clear() //i think...
         }
-        // deleteUser(state, action) {
-        //     console.log('something')
-        // },
-        // updateUser(state, action) {
-
-        // }
-
     },
 
     extraReducers: (builder) => {
         builder
             // register user cases
             .addCase(registerUsers.fulfilled, (state, action) => {
+                // const {requestId} = action.meta
                 // console.log(data)
-                console.log(action.payload)
-                // state.authenticate = action.payload.body.username
-                // return {
-                //     ...state,
-                //     username: action.payload.username
+                // if (state.loading === 'pending' && requestId === currentRequestId) {
+
+                //     console.log(action.payload)
                 // }
+                // state.authenticate = action.payload.body.username
+
             })
             .addCase(registerUsers.pending, (state, action) => {
+                // getUserFromDb
                 // action.payload = "Submitting User. Please Wait...???" //I think that is how this works.
-                state.loading = 'pending',
+                state.loading = 'pending'
                 state.isLoggedIn = false
+                state.token = null
 
             })
             .addCase(registerUsers.rejected, (state, action) => {
                 action.payload = "Something went wrong in the sign up process"
             })
-            // end register users submit cases
-
-            // begin login user submit cases
             .addCase(loginUsers.fulfilled, (state, action) => {
-                // it acts as fulfilled
-                // we test against db
-                // state.users.push(action.payload)
-                // state = action.payload //will it write to the state, or is it immutable?
+                const { requestId } = action.meta
+                console.log(requestId)
+                if (state.loading === 'pending' && requestId === state.currentRequestId) {
+                    console.log("setting back to idle (initial state) and fulfilled")
+                    state.loading = 'idle'
+                    // user gets the token and logged in
+                    state.token = action.payload.token
+                    state.isLoggedIn = true //maybe i should omit if token is present
+                    state.currentRequestId = undefined
+                }
                 state.username = action.payload.username
                 state.token = action.payload.token
-                // state.authenticatedUser = action.payload
                 state.loading = 'success'
                 state.isLoggedIn = true
 
 
             })
             .addCase(loginUsers.pending, (state, action) => {
+                const currentRequestId = action.meta.requestId
+                console.log(currentRequestId)
+                if (state.loading === 'idle') {
+                    state.loading === 'pending'
+                    state.currentRequestId = action.meta.requestId
+                }
                 state.isLoggedIn = false
                 state.loading = 'loading'
             })
@@ -234,9 +195,7 @@ export const authSlice = createSlice({
                 state.isLoggedIn = false
                 state.loading = 'failed'
             })
-        // end login users submit cases
     }
-
 });
 
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
@@ -244,8 +203,8 @@ const putUserInDatabase = (state, action) => { return { username: action.payload
 // const getUserFromDB = (registerUser.pending)
 // deleteUser, updateUser
 
-export const { submitUser, getUser, logoutUser } = authSlice.actions
+export const { submitUser, logoutUser } = authSlice.actions
 
 export default authSlice.reducer
-
+// not needed i do not believe
 export const selectUser = (state, userId) => state.authenticate.users.find(user => user.userId === userId)

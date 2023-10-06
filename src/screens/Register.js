@@ -5,16 +5,10 @@ import { submitUser, registerUsers } from '../features/auth/authSlice'
 import { ThemeContext } from './context/ThemeContext'
 
 const Register = ({navigation}) => {
-    // the undefined users first iteration needs to be taken care of in this file.
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode
-
     const user = useSelector(state => state.authenticate)
     const putUserInDatabase = submitUser()
-    // const putUsersIdle = putUserIdle()
-    // console.log(putUserIdle.state)
-    console.log(user.loading)
-    console.log(user.users.map(u => console.log(u)))
     const [username, setUsername] = React.useState(null);
     const [email, setEmail] = React.useState(null);
     const [password, setPassword] = React.useState(null);
@@ -38,26 +32,23 @@ const Register = ({navigation}) => {
         } else {
             <Text>Passwords do not match</Text>
         }
-        console.log("Dispatch error")
-        // setUsername('')
-        // setPassword('')
-        // setConfirmPassword('')
-        // setEmail('')
+        
+        setUsername('')
+        setPassword('')
+        setConfirmPassword('')
+        setEmail('')
     }
 
     React.useEffect(() => {
         if (user.loading === 'success') {
             dispatch(putUserInDatabase())
         }
-        if (user.loading === 'loading') {
-            dispatch(putUsersIdle()) //problem here because idle
-        }
+        // if (user.loading === 'loading') {
+        //     dispatch(putUsersIdle()) //problem here because idle
+        // }
     }, [dispatch, user.loading])
-
-    // const styles = {}
     return (
-        // ugly styles
-
+        
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
             {!user.isLoggedIn &&
                 <View>
@@ -88,8 +79,7 @@ const Register = ({navigation}) => {
         </View>
     )
 }
-
-// doing this because it is kind of difficult to use on the phone.
+// cannot be used, but I am leaving for now
 const styles = StyleSheet.create({
     textStyles: {
         fontSize: 60,
@@ -100,21 +90,15 @@ const styles = StyleSheet.create({
         height: 50,
         width: '75%',
         borderWidth: 2,
-        // color: darkMode ? styles.dark.color : styles.light.color,
-        // borderColor: darkMode ? styles.dark.color : styles.light.color
     },
-    // borderColor: darkMode ? darkMode.dark.color : dar
+    
     dark: {
         backgroundColor: '#000000',
         color: '#ffffff',
-
-        // borderWidth: 1
     },
     light: {
         backgroundColor: '#ffffff',
         color: '#000000',
-
-        // borderWidth: 1
     },
     buttonStyles: {
         backgroundColor: 'green',
@@ -122,7 +106,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         borderRadius: 10
-        // margin: '50%'
     }
 })
 
