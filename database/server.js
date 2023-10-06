@@ -56,23 +56,24 @@ app.post('/login', async (req, res, next) => {
     // let obj = null
     const username = req.body.username
     const password = req.body.password
-    // error handle callback
-    await getUserFromDatabase(username, password, (err, data) => {
-        try {
+    try {
+        // error handle callback
+        await getUserFromDatabase(username, password, (err, data) => {
             console.log("Data from db.js")
             console.log(data)
             res.send(data)
             next()
-        } catch (error) {
-            console.log(error)
-        }
-        // if (err) {
-        //     console.log("Error getting User")
-        // }
-        // else {
-        //     res.send(data)
-        // }   
-    });
+        })
+    }
+    catch (error) {
+        console.log(error)
+    }
+    // if (err) {
+    //     console.log("Error getting User")
+    // }
+    // else {
+    //     res.send(data)
+    // }   
     console.log("Hopefully")
     // obj is null until second iteration...or if it is sent back null in dbjs
     // console.log(await dbRes)
@@ -83,9 +84,10 @@ app.post('/login', async (req, res, next) => {
         res.send({ token: token, username: 'guest' });
         next()
     }
-    // }
+});
+// }
 
-})
+// })
 
 app.get('/', requireAuth, (req, res) => {
     res.redirect('http://localhost:19006/Home')
