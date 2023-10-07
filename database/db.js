@@ -12,9 +12,8 @@ const connect = mongoose.connect(uri)
 // console.log(connect)
 
 
-const postUserToDatabase = async (username, password, email) => {
+const postUserToDatabase = async(username, password, email, callback) => {
 
-    // console.log(user.password)
     try {
         await connect
         const User = mongoose.model('User')
@@ -23,12 +22,16 @@ const postUserToDatabase = async (username, password, email) => {
             if (err) { throw err }
             const user = new User({ username: username, password: hash, email: email });
             await user.save()
-            console.log('User Submitted')
+            const token = jwt.sign({ username: username }, hash)
+            callback(null, {username: username, token: token})
+            // console.log('User Submitted')
         })
     } catch (error) {
         console.log(error)
     }
 }
+
+// console.log(user.password)
 
 const getUserFromDatabase = async (username, password, callback) => {
 
@@ -56,7 +59,7 @@ const getUserFromDatabase = async (username, password, callback) => {
                     console.log(token)
                     // console.log(result) //this is the object in mongodb
                     // return { username: result.username, token: token }
-                    callback(null, {username: result.username, token: token})
+                    callback(null, { username: result.username, token: token })
                 } else {
                     return "User not Found"
                 }

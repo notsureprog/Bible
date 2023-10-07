@@ -76,8 +76,10 @@ const BibleScreen = ({ navigation, route }) => {
     //     // { label: 'WMB', value: 'f72b840c855f362c-04' },
     //     // { label: 'WMBBE', value: '04da588535d2f823-04' },
     // ]);
-    const [chapter, setChapter] = React.useState(route.params.chapter);
-    const [bible, setBible] = React.useState(route.params.version);
+    const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
+    console.log(chapter)
+    const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
+    console.log(bible)
     const [data, setData] = React.useState(0); //data is an array of objects and not a fn which i could use deps of something other than chapter because chapter changes all the time
 
     if (data !== null) {

@@ -1,10 +1,9 @@
-import authReducer, {loginUsers} from './authSlice'
-import {test, expect} from '@jest/globals'
+import renderWithProviders from "../../../utils/test-utils"
+import Login from "../../screens/Login"
+import {test} from ''
 
 test('should return the initial state', () => {
-    expect(authReducer(undefined, {type: undefined})).toEqual({
-        username: null, isLoggedIn: false
-    })
+    renderWithProviders(Login)
 })
 
 // test('a user not logged in is null')

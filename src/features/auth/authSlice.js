@@ -16,32 +16,34 @@ const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRE
 // createAsyncThunk will deal with the backend
 // accepts a Redux action type string (/api/users) and a call back fn 
 // when the api responds back to middleware it is pending, fulfilled, or rejected
-export const registerUsers = createAsyncThunk(`/api/register`, async (thunkApi) => {
+export const registerUsers = createAsyncThunk(`/register`, async (thunkApi) => {
     console.log(typeof (thunkApi))
 
     try {
+        const response = axios.post(`${uri}/register`, thunkApi)
+        return response.data
         // const response = await fetch(`${uri}/api/register/`, {
-        const response = await fetch(`${uri}/api/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
-            method: 'POST',
-            // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email},
-            headers: {
-                'Content-Type': 'application/json',
+    //     const response = await fetch(`${uri}/register/${thunkApi.username}/${thunkApi.password}/${thunkApi.confirmPassword}/${thunkApi.email}`, {
+    //         method: 'POST',
+    //         // body: {username: thunkApi.username, password: thunkApi.password, confirmPassword: thunkApi.confirmPassword, email: thunkApi.email},
+    //         headers: {
+    //             'Content-Type': 'application/json',
 
-            }
-        })
-        // console.log(response)
-        if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
-        const body = await response.json()
-        console.log('body')
-        console.log(body)
-        // console.log(typeof(body))
-        console.log(body)
-        await AsyncStorage.setItem('access-token', body.token)
-        console.log(body.token)
-        // const username = body.username
-        // const token = body.token
-        console.log('end body')
-        return body
+    //         }
+    //     })
+    //     // console.log(response)
+    //     if (!response.ok) throw new Error(`unexpected response ${response.statusText}`);
+    //     const body = await response.json()
+    //     console.log('body')
+    //     console.log(body)
+    //     // console.log(typeof(body))
+    //     console.log(body)
+    //     await AsyncStorage.setItem('access-token', body.token)
+    //     console.log(body.token)
+    //     // const username = body.username
+    //     // const token = body.token
+    //     console.log('end body')
+    //     return body
     } catch (err) {
         console.log(err)
     }
@@ -136,6 +138,13 @@ export const authSlice = createSlice({
             console.log(current(state))
             state.users.push(action.payload)
             console.log(current(state))
+        },
+        logoutUser(state, action) {
+            state.token = null
+            state.username = null
+            state.loading = 'idle'
+            state.isLoggedIn = false //i will probably take this out... ahtough guest has a token
+            state.currentRequestId = null //maybe undefined
         }
     },
 

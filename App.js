@@ -36,7 +36,7 @@ const linking = {
   return (
 
     <ThemeProvider>
-      <NavigationContainer linking={linking}>
+      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
         <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
           <Stack.Screen name='BibleScreen' component={BibleScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />

@@ -1,13 +1,15 @@
 require('../models/userSchema');
-const requireAuth = require('../middleware/requireAuth')
+const requireAuth = require('../middleware/requireAuth');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(cors());
 
 app.use(bodyParser.json())
+app.use(cookieParser())
 // const jsonParser = bodyParser.json()
 
 // // create application/x-www-form-urlencoded parser
@@ -32,22 +34,41 @@ app.get('/secretpage', requireAuth, (req, res, next) => {
 })
 
 // I could take off the :username/:password and just destructure body on node fetch i think
-app.post('/api/register/:username/:password/:confirmPassword/:email', (req, res, next) => {
+app.post('/register', async (req, res, next) => {
 
-    const username = req.params.username
-    const password = req.params.password
-    const email = req.params.email
-    postUserToDatabase(username, password, email)
-    // res.send(await userData.token)
-    console.log(res.status)
-    const token = jwt.sign({ username: username }, 'MY_SECRET_KEY')
-    res.send({ token: token, });
+
+    const username = req.body.username
+    const password = req.body.password
+    const email = req.body.email
+    // const cookie = res.cookie
+    try {
+        await postUserToDatabase(username, password, email, (err, data) => {
+            // https://github.com/WebReflection/flatted
+            
+                // console.log("Data from db.js")
+                // console.log(data)
+                // console.log(res.status)
+                // cookieParser.JSONCookie(cookie)
+                // const token = jwt.sign({ username: username }, 'MY_SECRET_KEY')
+                // const cookie = res.cookie("token", data, {secure: true})
+                // cookieParser.signedCookie
+                res.send(data) // for now. I will read on it some more
+                // res.send({username: data.username, token: cookie});
+                next()
+                // res.send(`${username} has signed up`)
+            
+        })
+        // res.send(await userData.token)
+
+    } catch (error) {
+        console.log(error)
+    }
     // res.render(`You Have Successfully Registered <br /><button onClick={() => ${res.redirect('http://localhost:19006/Home')}}>Go Back</button`);
 
     // const token = jwt.sign({ userId: userData._id }, 'MY_SECRET_KEY')
 
     // res.send({ token: token });
-
+    // next()
 })
 
 // i will make it just login, and extract the body. Because of sensitive information.
