@@ -1,14 +1,16 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+// import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
 
+// import { test, expect } from 'jest'
 // This should be retreive
 // builder.addMatcher?
 const Login = ({ navigation }) => {
+
     // per the ref docs, i should consider state when using the useRef to clear input text
     // const inputRef = React.useRef()
 
@@ -44,11 +46,6 @@ const Login = ({ navigation }) => {
 
     const [username, setUsername] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    // console.log(uname)
-    // console.log(pword)
-    console.log("User Is Logged In")
-    console.log(user.isLoggedIn)
-    console.log("End User Is Logged In")
 
     const onSubmitUser = async () => {
         try {
@@ -58,6 +55,8 @@ const Login = ({ navigation }) => {
                     password,
                 })
             )
+            setUsername('')
+            setPassword('')
             console.log(resultAction)
             const unwrappedResultAction = unwrapResult(resultAction)
             console.log(unwrappedResultAction.username)
@@ -124,12 +123,9 @@ const Login = ({ navigation }) => {
             console.log(store.getState())
         }
         if (user.loading === 'pending') {
-            dispatch(getUserFromDatabase)
+            // dispatch(getUserFromDatabase)
         }
     }, [dispatch, user.loading])
-
-    // const credintials = { lusername, lpassword };
-    // console.log(credintials);
 
     return (
         <View style={{ alignItems: 'center', padding: 5 }}>
@@ -137,7 +133,7 @@ const Login = ({ navigation }) => {
             {!user.isLoggedIn && user.loading !== 'success' &&
                 <View>
 
-                    <MaterialCommunityIcons name='login' size={100} />
+                    {/* <MaterialCommunityIcons name='login' size={100} /> */}
 
                     <TextInput style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
                     <TextInput style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
@@ -164,11 +160,12 @@ const Login = ({ navigation }) => {
                     <Pressable onPress={() => navigation.navigate({ name: 'Home' })} >
                         <Text>Go Back</Text>
                     </Pressable>
+                    {/* <Pressable onPress={() => AsyncStorage.removeItem('access-token')} >
+                        <Text>Logout</Text>
+                    </Pressable> */}
                 </View>
             }
         </View>
-
-
     )
 }
 

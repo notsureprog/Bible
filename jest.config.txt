@@ -1,0 +1,20 @@
+// const {defaults} = require('jest-config');
+
+// /** @type {import('jest').Config} */
+// const config = {
+//   moduleFileExtensions: [...defaults.moduleFileExtensions, 'mts', 'cts', 'js', 'mjs'],
+// };
+
+// module.exports = config;
+
+// /**
+//  * "jest": {
+//     "preset": "react-native",
+    
+//     "setupFiles": [
+//       "./__mocks__/@react-native-async-storage/async-storage.js"
+//     ]
+//   },
+//  */
+
+"testPathIgnorePatterns": ["/node_modules}\/(?!@expo/vector-icons/MaterialCommunityIcons.js)"]

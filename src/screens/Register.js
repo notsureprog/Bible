@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { submitUser, registerUsers } from '../features/auth/authSlice'
 import { ThemeContext } from './context/ThemeContext'
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode
     const user = useSelector(state => state.authenticate)
@@ -29,10 +29,14 @@ const Register = ({navigation}) => {
                     email
                 })
             )
+            setUsername('')
+            setPassword('')
+            setConfirmPassword('')
+            setEmail('')
         } else {
             <Text>Passwords do not match</Text>
         }
-        
+
         setUsername('')
         setPassword('')
         setConfirmPassword('')
@@ -48,7 +52,7 @@ const Register = ({navigation}) => {
         // }
     }, [dispatch, user.loading])
     return (
-        
+
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
             {!user.isLoggedIn &&
                 <View>
@@ -67,14 +71,14 @@ const Register = ({navigation}) => {
                     </Pressable>
                 </View>
             }
-            
-            {user.isLoggedIn && 
-            <View>
-                <Text>{user.authenticatedUser.username} is Logged in. You will need to sign out.</Text>
-                <Pressable onPress={() => navigation.navigate({name: 'Home'})}>
-                    <Text>Go Back</Text>
-                </Pressable>
-            </View>
+
+            {user.isLoggedIn &&
+                <View>
+                    <Text>{user.username} is Logged in. You will need to sign out.</Text>
+                    <Pressable onPress={() => navigation.navigate({ name: 'Home' })}>
+                        <Text>Go Back</Text>
+                    </Pressable>
+                </View>
             }
         </View>
     )
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
         width: '75%',
         borderWidth: 2,
     },
-    
+
     dark: {
         backgroundColor: '#000000',
         color: '#ffffff',

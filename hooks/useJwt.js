@@ -2,12 +2,13 @@ import React from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { user_detail } from '../controllers/authController'
 
+
 const useJwt = async (name) => {
-// no dispatch
+    // no dispatch
     // const [token, setToken] = React.useState(userToken)
     try {
-// maybe a useEffect rather than memo with a dependency of dispatch (for logout dispatch) or just state.token since it changes on removeitem
-// AsyncStorage.removeItem
+
+        // maybe a useEffect rather than memo with a dependency of dispatch (for logout dispatch) or just state.token since it changes on removeitem
         const token = await AsyncStorage.getItem(name)
         console.log(token)
         if (token) {
@@ -16,6 +17,7 @@ const useJwt = async (name) => {
             const token = null
             return token
         }
+        // AsyncStorage.removeItem
     } catch (err) {
         console.log(err)
     }

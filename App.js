@@ -1,6 +1,7 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react'
 import store from './src/app/store'
+import { Provider } from 'react-redux'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import BibleSelectScreen from './src/screens/BibleSelectScreen'
