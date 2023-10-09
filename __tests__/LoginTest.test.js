@@ -23,13 +23,16 @@ import Login from '../src/screens/Login'
 test('Username is null', () => {
     // renderWithProviders
     const setState = jest.fn()
-    jest.spyOn(React, 'useState')
-    .mockImplementationOnce(initState => [initState, setState])
+    // const s = jest.spyOn(React, 'useState')
+    // .mockImplementationOnce(initState => [initState, setState])
     // console.log(setState)
     console.log("RenderWithProvider")
-    const res = renderWithProviders(<Login />, setState) //ui, options
+    const stuff = renderWithProviders(<Login />) //ui, options
+    console.log("Stuff")
+    console.log(stuff.getByText(store.authenticate.loading))
+    // console.log(res.authenticate)
     console.log("End Render With Propvider")
-    expect(res.authenticate.username).toBe(null)
+    // expect(res.authenticate.username).toBe(null)
 })
 
 

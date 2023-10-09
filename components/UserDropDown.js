@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useJwt from '../hooks/useJwt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserDropDown = () => {
-    const token = useJwt('access-token')
+    // const token = useJwt('access-token')
     const dispatch = useDispatch()
     const user = useSelector((state) => state.authenticate)
 
@@ -19,7 +19,7 @@ const UserDropDown = () => {
     // https://harithsenevi4.medium.com/top-4-react-native-dropdown-components-2023-631dd1d0f0e9
     return (
         <View>
-            {useJwt() !== null &&
+            {useJwt('access-token') !== null &&
                 <View>
                     {/* getting ahead of myself */}
                     <Text>{user.username + "'s Menu"}</Text>
@@ -29,7 +29,7 @@ const UserDropDown = () => {
                     /> */}
                 </View>
             }
-            {useJwt() === null &&
+            {useJwt('access-token') === null &&
                 <Text>Sign in</Text>
             }
         </View>
