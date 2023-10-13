@@ -11,7 +11,9 @@ const UserDropDown = () => {
     // const token = useJwt('access-token')
     const dispatch = useDispatch()
     const user = useSelector((state) => state.authenticate)
-
+    
+    // console.log(useJwt('username'))
+    console.log(useJwt('access-token')) // i got it stored. i just need to extract and put it in the store so i dont have to login when i refresh.
     
     // ui kitten
     // drop down picker
@@ -19,10 +21,10 @@ const UserDropDown = () => {
     // https://harithsenevi4.medium.com/top-4-react-native-dropdown-components-2023-631dd1d0f0e9
     return (
         <View>
-            {useJwt('access-token') !== null &&
+            {useJwt('username') !== null &&
                 <View>
                     {/* getting ahead of myself */}
-                    <Text>{user.username + "'s Menu"}</Text>
+                    <Text>{useJwt('username') + "'s Menu"}</Text>
                     {/* <DropDownPicker
                     placeholder='Logout'
                     onPress={dispatch(logoutUser())}

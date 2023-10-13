@@ -16,7 +16,6 @@
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect"
     ]
-    
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -63,7 +62,8 @@
     "@babel/core": "^7.20.0",
     "@testing-library/jest-native": "^5.4.3",
     "eslint": "^8.49.0",
-    "eslint-plugin-react": "^7.33.2"
+    "eslint-plugin-react": "^7.33.2",
+    "redux-mock-store": "^1.5.4"
   },
   "private": true
 }

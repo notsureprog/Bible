@@ -24,6 +24,7 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWi
         console.log(thunkApi)
         const response = await axios.post(`${uri}/login`, thunkApi)
         await AsyncStorage.setItem('access-token', response.data.token)
+        await AsyncStorage.setItem('username', response.data.username)
         return response.data
     }
     catch (err) {
@@ -52,6 +53,7 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWi
 // createSlice uses immer library internally
 export const authSlice = createSlice({
     name: 'authenticate',
+    // there is an initial state. Which Is kind of needed.
     initialState: {
         users: [],
         username: null, //guest
@@ -109,6 +111,7 @@ export const authSlice = createSlice({
                     console.log("setting back to idle (initial state) and fulfilled")
                     state.loading = 'idle'
                     // user gets the token and logged in
+                    
                     state.token = action.payload.token
                     state.isLoggedIn = true //maybe i should omit if token is present
                     state.currentRequestId = undefined
@@ -127,8 +130,11 @@ export const authSlice = createSlice({
                     state.loading === 'pending'
                     state.currentRequestId = action.meta.requestId
                 }
-                state.isLoggedIn = false
-                state.loading = 'loading'
+                if(state.loading === 'loading') {
+                    state.currentRequestId === undefined
+                    state.isLoggedIn = false
+                    state.loading = 'loading'
+                }
             })
             .addCase(loginUsers.rejected, (state, action) => {
                 state.isLoggedIn = false
