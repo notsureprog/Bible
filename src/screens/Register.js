@@ -45,7 +45,7 @@ const Register = ({ navigation }) => {
 
     React.useEffect(() => {
         if (user.loading === 'success') {
-            dispatch(putUserInDatabase())
+            dispatch(putUserInDatabase)
         }
         // if (user.loading === 'loading') {
         //     dispatch(putUsersIdle()) //problem here because idle

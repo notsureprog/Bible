@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
 
-
+// console.log(store) //not even used. However, it should be state from user...
 // import { test, expect } from 'jest'
 // This should be retreive
 // builder.addMatcher?
@@ -14,8 +14,8 @@ const Login = ({ navigation }) => {
     
 
     const getUserFromDatabase = submitUser();
-
     const user = useSelector((state, action) => state.authenticate);
+    console.log(user)
     const dispatch = useDispatch()
     const [username, setUsername] = React.useState(null);
     const [password, setPassword] = React.useState(null);
@@ -88,6 +88,7 @@ const Login = ({ navigation }) => {
                    </Pressable> */}
                 </View>
             }
+            
             {!user.isLoggedIn && user.loading === 'failed' &&
                 <View>
                     <Text>Could not find the user</Text>

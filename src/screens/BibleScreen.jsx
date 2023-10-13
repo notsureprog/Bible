@@ -248,7 +248,7 @@ const BibleScreen = ({ navigation, route }) => {
 
                                     {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
                                     {/* classesStyles={classesStyles.scriptureStyles} */}
-                                    <RenderHTML allowedStyles={scriptureStyles} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                     {/* style={{ height: 30, width: 125, backgroundColor: 'rgba(30,200,0,0.3)' }} */}
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
 
