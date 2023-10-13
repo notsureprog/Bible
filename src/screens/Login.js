@@ -58,7 +58,6 @@ const Login = ({ navigation }) => {
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
-
         if (user.loading === 'failed') {
             console.log("Failed")
             console.log(store.getState())

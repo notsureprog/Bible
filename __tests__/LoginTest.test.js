@@ -6,16 +6,14 @@ import Login from '../src/screens/Login'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { useDispatch, useSelector } from 'react-redux'
-// import userEvent from "@testing-library/user-event";
-// i was wondering about usedispatch and useselector earlier
-// import userEvent from "@testing-library/user-event"; -- for like click events and stuff...
-// import LoginMock from '../__mocks__/LoginMock'
 import { expect, test } from '@jest/globals'
 import { jest } from '@jest/globals'
 import { cleanup, fireEvent, render as rtlRender, screen } from '@testing-library/react-native'
+import '@testing-library/jest-dom'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import { renderWithProviders } from '../utils/test-utils'
+import DummyComponent from '../components/DummyComponent'
 
 
 let initialState = {
@@ -53,7 +51,7 @@ const mockStore = configureStore({ reducer: authReducer })
 
 test('I Guess Reducer Test lol :)', async () => {
     const store = mockStore(initialState)
-
+    // const RealComponent = jest.requireActual('Text')
     const onPressMock = jest.fn()
 
     console.log("GETTING A USER")
@@ -68,6 +66,18 @@ test('I Guess Reducer Test lol :)', async () => {
 })
 
 test('I want the store to update', async () => {
+    // jest.mock(`${}/src/screens/Login`, () => {
+    //     const mockComponent = require('react-native/jest/mockComponent');
+    //     return mockComponent(`${__dirname}/src/screens/Login`)
+    // })
+
+    // const RealComponent = jest.requireActual('Text');
+
+    // function Text(){
+    //     return React.createElement('Text', this.props, this.props.children)
+    // }
+    // return Text
+
     const reactRedux = { useDispatch, useSelector }
     const useDispatchMock = jest.spyOn(reactRedux, 'useDispatch')
     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector')
@@ -79,9 +89,9 @@ test('I want the store to update', async () => {
     store.dispatch = mockDispatch
     renderWithProviders(
         // I have to use Login...or I should
-        <Login />
+        <DummyComponent />
     )
-    const submitUserButton = screen.getByText('Submit')
+    const submitUserButton = screen.getByLabelText('submit')
     console.log(submitUserButton)
     // expect(submitUserButton).toBeInTheDocument()
     // store contains some functions getState, getactions, etc....

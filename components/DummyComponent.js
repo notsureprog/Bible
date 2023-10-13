@@ -10,7 +10,8 @@ const DummyComponent = () => {
                 method: 'GET',
                 uri: `${uri}`
             }
-            // axios(options)
+            const result = await axios(options)
+            return result.data
         } catch (error) {
             console.log(error)
         }
@@ -22,7 +23,7 @@ const DummyComponent = () => {
         <View>
             <Text>This is a dummy component</Text>
             <Pressable onPress={() => { setLoading(true); setUri('https://jsonplaceholder.typicode.com/posts') }}>
-                <Text>Submit</Text>
+                <Text aria-label='submit'>Submit</Text>
             </Pressable>
         </View>
     )

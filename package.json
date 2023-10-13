@@ -60,6 +60,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/jest-native": "^5.4.3",
     "eslint": "^8.49.0",
     "eslint-plugin-react": "^7.33.2",
