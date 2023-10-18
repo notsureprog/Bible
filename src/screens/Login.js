@@ -74,36 +74,38 @@ const Login = ({ navigation }) => {
 
     }
 
+    
+
     React.useEffect(() => {
         // result.type
-        if (user.loading === 'success') {
+        if (user.reducer.loading === 'success') {
             const stateBefore = store.getState()
             console.log(stateBefore)
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
-        if (user.loading === 'failed') {
+        if (user.reducer.loading === 'failed') {
             console.log("Failed")
             console.log("Denied Access")
             console.log(store.getState())
         }
-        if (user.loading === 'loading') {
+        if (user.reducer.loading === 'loading') {
             console.log("loading")
             console.log(store.getState())
             dispatch(getUserFromDatabase)
         }
-        if (user.loading === 'pending') {
+        if (user.reducer.loading === 'pending') {
             console.log(store.getState())
         }
-        if(user.loading === 'idle') {
+        if(user.reducer.loading === 'idle') {
             console.log(store.getState())
         }
         AsyncStorage.setItem('store', user)
-    }, [dispatch, user.loading])
+    }, [dispatch, user.reducer.loading])
 
     return (
         <View style={{ alignItems: 'center', padding: 5 }}>
-            {!user.isLoggedIn && user.loading !== 'success' &&
+            {!user.reducer.isLoggedIn && user.reducer.loading !== 'success' &&
                 <View>
                     {/* <MaterialCommunityIcons name='login' size={100} /> */}
                     <TextInput testID='username' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
@@ -118,7 +120,7 @@ const Login = ({ navigation }) => {
                 </View>
             }
 
-            {!user.isLoggedIn && user.loading === 'failed' &&
+            {!user.reducer.isLoggedIn && user.reducer.loading === 'failed' &&
                 <View>
                     <Text>Could not find the user</Text>
                 </View>
@@ -126,9 +128,12 @@ const Login = ({ navigation }) => {
             {/* I would really rather take login off when i login */}
             {user.token !== null &&
                 <View>
-                    <Text testID='printed-username'>{user.username} is logged in</Text>
+                    <Text testID='printed-username'>{user.reducer.username} is logged in</Text>
                     <Pressable onPress={() => navigation.navigate( 'HomeScreen' )} >
                         <Text>Go Back</Text>
+                    </Pressable>
+                    <Pressable onPress={() => dispatch(logoutUser({type: 'LOGOUT_USER'}))} >
+                        <Text>Logout</Text>
                     </Pressable>
                 </View>
             }

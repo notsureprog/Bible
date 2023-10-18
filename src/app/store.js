@@ -5,12 +5,13 @@ import { combineReducers } from 'redux'
 // This is the store file already created used in index.js coming from the authslice. 
 import storage from 'redux-persist/lib/storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import persistCombineReducers from 'redux-persist/es/persistCombineReducers'
+// import persistCombineReducers from 'redux-persist/es/persistCombineReducers'
 // this is the configuration of the store
 console.log(authReducer)
 const persistConfig = {
     key: 'root',
-    storage: AsyncStorage
+    storage: AsyncStorage,
+    
 }
 
 // plan for scaling

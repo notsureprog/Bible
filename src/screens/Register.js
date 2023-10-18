@@ -44,17 +44,17 @@ const Register = ({ navigation }) => {
     }
 
     React.useEffect(() => {
-        if (user.loading === 'success') {
+        if (user.reducer.loading === 'success') {
             dispatch(putUserInDatabase)
         }
         // if (user.loading === 'loading') {
         //     dispatch(putUsersIdle()) //problem here because idle
         // }
-    }, [dispatch, user.loading])
+    }, [dispatch, user.reducer.loading])
     return (
 
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-            {!user.isLoggedIn &&
+            {!user.reducer.isLoggedIn &&
                 <View>
 
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Username</Text>
@@ -72,7 +72,7 @@ const Register = ({ navigation }) => {
                 </View>
             }
 
-            {user.isLoggedIn &&
+            {user.reducer.isLoggedIn &&
                 <View>
                     <Text>{user.username} is Logged in. You will need to sign out.</Text>
                     <Pressable onPress={() => navigation.navigate({ name: 'Home' })}>

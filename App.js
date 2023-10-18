@@ -1,7 +1,7 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import store from './src/app/store'
-import { Provider } from 'react-redux'
+import store from './src/app/store' //first iteration of everything would be null
+import { Provider, useSelector } from 'react-redux'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import BibleSelectScreen from './src/screens/BibleSelectScreen'
@@ -17,7 +17,6 @@ import Login from './src/screens/Login'
 import Register from './src/screens/Register'
 import ErrorPage from './src/screens/ErrorPage'
 
-
 console.log("On the app.js")
 
 console.log("End on the app.js")
@@ -32,6 +31,11 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
 
+  const user = useSelector((state) => state.authenticate)
+  console.log(user.reducer)
+  // console.log(store.getState())
+  // const user = store.getState()
+  // console.log(user)
   const linking = {
     prefixes: ['Bible://']
   }
@@ -40,22 +44,24 @@ const App = () => {
 
     <ThemeProvider>
       <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-        <Stack.Navigator>
-          
+        <Stack.Navigator initialRouteName='Home'>
+          {user.reducer.isLoggedIn &&
             <Stack.Group>
               <Stack.Screen name='BibleSelectScreen' component={BibleSelectScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
               <Stack.Screen name='BibleScreen' component={BibleScreen} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
               <Stack.Screen name='BibleSearchVerseScreen' component={BibleSearchVerseScreen} options={{ headerTitle: 'Search the Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
               <Stack.Screen name='Home' component={Home} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
             </Stack.Group>
-          
-          
+          }
+
+          {!user.reducer.isLoggedIn &&
             <Stack.Group>
               <Stack.Screen name='Login' component={Login} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
               <Stack.Screen name='Register' component={Register} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
               <Stack.Screen name='Error' component={ErrorPage} />
+              <Stack.Screen name='Home' component={Home} options={{ headerTitle: 'The Bible', headerRight: () => <ThemeButton />, headerTitleAlign: 'center', headerStyle: { backgroundColor: 'orange' } }} />
             </Stack.Group>
-          
+          }
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

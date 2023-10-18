@@ -4,6 +4,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import http from 'http'
 import { Platform } from 'react-native'
+import { persistor } from '../../app/store'
 import { REACT_APP_EXPRESS_URL } from '@env'
 
 const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRESS_URL}`
@@ -71,13 +72,19 @@ export const authSlice = createSlice({
             state.users.push(action.payload)
             console.log(current(state))
         },
-        logoutUser(state, action) {
-            // state.token = AsyncStorage.removeItem('access-token')
-            state.username = null
-            state.loading = 'idle'
-            state.isLoggedIn = false //i will probably take this out... ahtough guest has a token
-            state.currentRequestId = null //maybe undefined
+        logoutUser(state, action){
+            AsyncStorage.removeItem('persist:root')
+            console.log(state)
+            console.log(action.type)
+            if (action.type === 'authenticate/logoutUser') {
+                console.log("Reached")
+                return {
+                    ...state,
+                    username: state.username = 'loggedout'
+                }
+            }
         }
+        
     },
 
     extraReducers: (builder) => {
