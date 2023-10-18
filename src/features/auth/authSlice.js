@@ -10,7 +10,6 @@ const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRE
 
 export const registerUsers = createAsyncThunk(`/register`, async (thunkApi) => {
     console.log(typeof (thunkApi))
-
     try {
         const response = axios.post(`${uri}/register`, thunkApi)
         return response.data
@@ -20,11 +19,12 @@ export const registerUsers = createAsyncThunk(`/register`, async (thunkApi) => {
 })
 
 export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue }) => {
+    
     try {
         console.log(thunkApi)
         const response = await axios.post(`${uri}/login`, thunkApi)
-        await AsyncStorage.setItem('access-token', response.data.token)
-        await AsyncStorage.setItem('username', response.data.username)
+        // await AsyncStorage.setItem('access-token', response.data.token)
+        // await AsyncStorage.setItem('username', response.data.username)
         return response.data
     }
     catch (err) {
@@ -59,7 +59,7 @@ export const authSlice = createSlice({
         username: null, //guest
         email: null,
         token: null,
-        loading: 'idle',
+        loading: 'idle', //should neveer be undefined. 
         isLoggedIn: false, //only bool right now
         authenticatedUser: {},
         currentRequestId: null
@@ -84,6 +84,7 @@ export const authSlice = createSlice({
         builder
             // register user cases
             .addCase(registerUsers.fulfilled, (state, action) => {
+                console.log(state.loading)
                 // const {requestId} = action.meta
                 // console.log(data)
                 // if (state.loading === 'pending' && requestId === currentRequestId) {
@@ -94,6 +95,7 @@ export const authSlice = createSlice({
 
             })
             .addCase(registerUsers.pending, (state, action) => {
+                console.log(state.loading)
                 // getUserFromDb
                 // action.payload = "Submitting User. Please Wait...???" //I think that is how this works.
                 state.loading = 'pending'
@@ -102,20 +104,16 @@ export const authSlice = createSlice({
 
             })
             .addCase(registerUsers.rejected, (state, action) => {
-                action.payload = "Something went wrong in the sign up process"
+                console.log("Denied Access")
             })
+            // this is an action creator. name tells me it creates an action for the resultAction to perform (set state or whatever)
+            
             .addCase(loginUsers.fulfilled, (state, action) => {
                 const { requestId } = action.meta
                 console.log(requestId)
-                if (state.loading === 'pending' && requestId === state.currentRequestId) {
-                    console.log("setting back to idle (initial state) and fulfilled")
-                    state.loading = 'idle'
-                    // user gets the token and logged in
-                    
-                    state.token = action.payload.token
-                    state.isLoggedIn = true //maybe i should omit if token is present
-                    state.currentRequestId = undefined
-                }
+                console.log(state.loading)
+                console.log(state.currentRequestId)
+                
                 state.username = action.payload.username
                 state.token = action.payload.token
                 state.loading = 'success'
@@ -126,15 +124,17 @@ export const authSlice = createSlice({
             .addCase(loginUsers.pending, (state, action) => {
                 const currentRequestId = action.meta.requestId
                 console.log(currentRequestId)
-                if (state.loading === 'idle') {
-                    state.loading === 'pending'
-                    state.currentRequestId = action.meta.requestId
-                }
-                if(state.loading === 'loading') {
-                    state.currentRequestId === undefined
-                    state.isLoggedIn = false
-                    state.loading = 'loading'
-                }
+                console.log(state.loading)
+                // if (state.loading === 'idle') {
+                //     state.loading === 'loading'
+                //     console.log(state.loading)
+                //     state.currentRequestId = action.meta.requestId
+                // }
+                // if(state.loading === 'loading') {
+                //     state.currentRequestId === undefined
+                //     state.isLoggedIn = false
+                //     state.loading = 'pending'
+                // }
             })
             .addCase(loginUsers.rejected, (state, action) => {
                 state.isLoggedIn = false

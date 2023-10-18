@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Pressable } from 'react-native'
-import store from "../src/app/store";
+import {store} from "../src/app/store";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { logoutUser } from '../src/features/auth/authSlice';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

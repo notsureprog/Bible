@@ -1,7 +1,9 @@
 import React from 'react'
 import App from './App'
 import { Provider } from 'react-redux'
-import store from './src/app/store'
+// import {store, persistor} from './src/app/store'
+import store, {persistor} from './src/app/store'
+import { PersistGate } from 'redux-persist/integration/react'
 // import { configureStore } from '@reduxjs/toolkit'
 
 // export default configureStore({
@@ -12,7 +14,9 @@ import store from './src/app/store'
 const Index = () => {
     return (
         <Provider store={store}>
-            <App />
+            <PersistGate loading={null} persistor={persistor}>
+                <App />
+            </PersistGate>
         </Provider>
     )
 }

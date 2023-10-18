@@ -11,6 +11,7 @@ const useJwt = async (name) => {
         // maybe a useEffect rather than memo with a dependency of dispatch (for logout dispatch) or just state.token since it changes on removeitem
         // const username = await AsyncStorage.getItem(user)
         const token = await AsyncStorage.getItem(name, (err, data) => {
+            // console.log(data)
             return data
         })
         console.log(token)

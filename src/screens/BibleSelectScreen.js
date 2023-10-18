@@ -12,7 +12,7 @@ import useJwt from '../../hooks/useJwt'
 // console.log(localStorage.getItem('username'))
 
 const BibleSelectScreen = ({ navigation }) => {
-    useJwt('access-token')
+    useJwt('store')
 
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
