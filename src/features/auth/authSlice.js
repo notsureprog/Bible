@@ -72,16 +72,17 @@ export const authSlice = createSlice({
             state.users.push(action.payload)
             console.log(current(state))
         },
-        logoutUser(state, action){
-            AsyncStorage.removeItem('persist:root')
-            console.log(state)
+        logoutUser(undefined, action){
+            // console.log(state)
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
+                AsyncStorage.removeItem('persist:root')
+                window.location.reload() //crashes on android for some reason
                 console.log("Reached")
-                return {
-                    ...state,
-                    username: state.username = 'loggedout'
-                }
+                // return {
+                //     ...state,
+                //     username: state.username = 'loggedout'
+                // }
             }
         }
         

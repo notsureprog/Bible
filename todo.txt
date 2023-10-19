@@ -1,6 +1,14 @@
-- change redux state to guest to allow user to read the bible, but not highlight verses.
-- figure out auth in full with error handling in full
-- unit testing
-- 
+- logout button
+- work on highlighting verses.
+- refactor
+- test (find out why user.reducer.loading is undefined on login test, but idle on going to the page.)
+- Error of undefined on bible screen when trying to manipulate the url and messing it up. (maybe get rid of deep linking if it isnt necessary) (maybe a drawer nav or whatever)
+- merge github branches.
+- sign and secure cookies
+
 
 From the server, I will get the notinthedb message. no user is being pulled from mongo. All of that is good. However, on the login page, I do not get an error and It says i am logged in
+
+
+
+------------

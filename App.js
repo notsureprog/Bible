@@ -1,7 +1,7 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react'
 import store from './src/app/store' //first iteration of everything would be null
-import { Provider, useSelector } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import BibleSelectScreen from './src/screens/BibleSelectScreen'
@@ -17,29 +17,16 @@ import Login from './src/screens/Login'
 import Register from './src/screens/Register'
 import ErrorPage from './src/screens/ErrorPage'
 
-console.log("On the app.js")
-
-console.log("End on the app.js")
-
-
-// 64a594186127bbd1c9dba6e9f71d58f6
-// import {BibleSelectScreen} from './src/screens/BibleSelectScreen'
-// console.log(user.authenticate.isLoggedIn)
-
 const Stack = createNativeStackNavigator();
 
-
 const App = () => {
-
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.authenticate)
   console.log(user.reducer)
-  // console.log(store.getState())
-  // const user = store.getState()
-  // console.log(user)
   const linking = {
     prefixes: ['Bible://']
   }
-  // I would not mind exporting a function and placing app inside and putting it in the provider 
+  
   return (
 
     <ThemeProvider>
@@ -66,11 +53,6 @@ const App = () => {
       </NavigationContainer>
     </ThemeProvider>
 
-
-
-
-
-
   );
 }
 
@@ -90,8 +72,6 @@ const styles = StyleSheet.create({
   light: {
     backgroundColor: '#ffffff',
     color: '#000000',
-
-    // borderWidth: 1
   },
 });
 

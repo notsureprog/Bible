@@ -25,7 +25,6 @@ function Home({ navigation }) {
             }
             {!user.reducer.isLoggedIn &&
                 <View>
-
                     <Pressable onPress={() => { navigation.navigate('Login') }}>
                         <Text>Login</Text>
                     </Pressable>
@@ -34,7 +33,6 @@ function Home({ navigation }) {
                     </Pressable>
                 </View>
             }
-
         </View>
     )
 }
