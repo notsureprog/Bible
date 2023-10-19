@@ -126,7 +126,7 @@ const Login = ({ navigation }) => {
                     <Pressable onPress={() => navigation.navigate( 'HomeScreen' )} >
                         <Text>Go Back</Text>
                     </Pressable>
-                    <Pressable onPress={() => store.dispatch(logoutUser({type: 'authenticate/logoutUser'}))} >
+                    <Pressable onPress={() => dispatch(logoutUser({type: 'authenticate/logoutUser'}))} >
                         <Text>Logout</Text>
                     </Pressable>
                 </View>

@@ -68,7 +68,7 @@ const Register = ({ navigation }) => {
 
             {user.reducer.isLoggedIn &&
                 <View>
-                    <Text>{user.username} is Logged in. You will need to sign out.</Text>
+                    <Text>{user.reducer.username} is Logged in. You will need to sign out.</Text>
                     <Pressable onPress={() => navigation.navigate({ name: 'Home' })}>
                         <Text>Go Back</Text>
                     </Pressable>

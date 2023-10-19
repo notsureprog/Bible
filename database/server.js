@@ -56,17 +56,22 @@ app.post('/login', async (req, res, next) => {
     catch (error) {
         console.log(error)
     }
+    
     console.log("Hopefully")
+    
     if (username === 'guest') {
         const token = jwt.sign({ username: username }, password)
         res.send({ token: token, username: 'guest' });
-        res.cookie('auth', token, {secure: true})
         next()
     }
 });
+// }
+
+// })
 
 app.get('/', requireAuth, (req, res) => {
     res.redirect('http://localhost:19006/Home')
 })
-// app.use(Router, '/')
+
+
 app.listen(3000, () => console.log('listening'))

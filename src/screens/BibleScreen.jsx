@@ -247,6 +247,7 @@ const styles = StyleSheet.create({
     light: {
         backgroundColor: '#ffffff',
         color: '#000000',
+
     },
     main: {
         flex: 3

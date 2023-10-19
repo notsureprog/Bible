@@ -1,10 +1,18 @@
 import React from 'react'
 import { View, Text, Pressable } from 'react-native'
+import { store } from "../src/app/store";
+import DropDownPicker from 'react-native-dropdown-picker';
+import { logoutUser } from '../src/features/auth/authSlice';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
+// import useJwt from '../hooks/useJwt';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserDropDown = () => {
-    
+    // const token = useJwt('access-token')
     const dispatch = useDispatch()
     const user = useSelector((state) => state.authenticate.reducer)
+
+    // console.log(useJwt('username'))
     
 
     // ui kitten

@@ -72,7 +72,7 @@ export const authSlice = createSlice({
             state.users.push(action.payload)
             console.log(current(state))
         },
-        logoutUser(undefined, action){
+        logoutUser(state, action){
             // console.log(state)
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
