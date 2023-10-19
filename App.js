@@ -1,6 +1,5 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import store from './src/app/store' //first iteration of everything would be null
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -9,8 +8,6 @@ import { DarkTheme, NavigationContainer } from '@react-navigation/native'
 import Home from './src/screens/Home'
 import BibleScreen from './src/screens/BibleScreen'
 import { ThemeProvider } from './src/screens/context/ThemeContext'
-// import { ThemeContext } from './src/screens/context/ThemeContext'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
 import BibleSearchVerseScreen from './src/screens/BibleSearchVerseScreen'
 import ThemeButton from './components/ThemeButton'
 import Login from './src/screens/Login'

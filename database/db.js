@@ -2,16 +2,8 @@ const mongoose = require('mongoose');
 const env = require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
-// const { Alert } = require('react-native');
-// require('../models/userSchema');
-
-
 const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
-
 const connect = mongoose.connect(uri)
-// console.log(connect)
-
-
 const postUserToDatabase = async(username, password, email, callback) => {
 
     try {
@@ -24,26 +16,24 @@ const postUserToDatabase = async(username, password, email, callback) => {
             await user.save()
             const token = jwt.sign({ username: username }, hash)
             callback(null, {username: username, token: token})
-            // console.log('User Submitted')
+            
         })
     } catch (error) {
         console.log(error)
     }
 }
 
-// console.log(user.password)
-
 const getUserFromDatabase = async (username, password, callback) => {
 
     try {
         await connect
         const User = mongoose.model('User')
+        // probably should find by the id of the user... although it is unique in model.
         const result = await User.findOne({ username: username })
         if (result === null) {
             console.log("No user was found")
             return { username: null, password: null }
         }
-
         const pword = result.password
         bcrypt.hash(password, 10, async (err, hash) => {
             bcrypt.compare(password, pword, async (err, match) => {
@@ -52,13 +42,9 @@ const getUserFromDatabase = async (username, password, callback) => {
                 console.log("End password and hash")
                 if (err) { throw err }
                 console.log(match)
-                // match already compares the two passwords
                 if (match) {
-                    // i need to set the state down here
                     const token = jwt.sign({ username: result.username }, pword)
                     console.log(token)
-                    // console.log(result) //this is the object in mongodb
-                    // return { username: result.username, token: token }
                     callback(null, { username: result.username, token: token })
                 } else {
                     return "User not Found"

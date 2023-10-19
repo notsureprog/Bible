@@ -6,19 +6,16 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { BIBLE_API_KEY } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
-import useJwt from '../../hooks/useJwt'
-// import { render } from 'react-dom'
-// import { FlatList } from 'react-native-web'
 
 const BibleSearchVerseScreen = ({ navigation }) => {
-    useJwt('access-token')
+    
     const limitReducer = (state, action) => {
         if (action.type === "NEXT_PAGE") {
             return {
-                limit: state.limit += 10 //less than data.length or whatever
+                limit: state.limit += 10 
             }
         }
-        if (action.type === "PREVIOUS_PAGE") { //and limit is not 10
+        if (action.type === "PREVIOUS_PAGE") { 
             return {
                 limit: state.limit -= 10
             }
@@ -35,8 +32,6 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     const [limitState, limitDispatch] = React.useReducer(limitReducer, { limit: 0 });
 
     const inputRef = React.useRef(null);
-
-    // clear the search input after i search for a word/verse
     const ClearInput = () => {
         inputRef.current.value = "";
     }
@@ -53,20 +48,15 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             </View>
         )
     }
-
     console.log(bible)
 
-
     const handleTheme = () => {
-
         if (darkMode) {
             theme.dispatch({ type: "LIGHTMODE" })
         } else {
             theme.dispatch({ type: "DARKMODE" })
         }
     }
-
-
 
     console.log(limitState.limit)
 
@@ -124,14 +114,9 @@ const BibleSearchVerseScreen = ({ navigation }) => {
 
     const renderItem = ({ item }) => (
         <VerseDisplay main={item} />
-        // whatever else?
     )
 
-
-
     console.log(darkMode);
-
-
 
     React.useEffect(() => {
         SearchVerse()
@@ -143,15 +128,11 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                     <Text>Loading, please wait...</Text>
                 </View>
             }
-
             <InputFunction />
-
             <VersionSelectMenu />
             {data !== null && !loading &&
                 <View>
-
                     {Platform.OS === 'android' &&
-
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, marginBottom: 20 }}>
                             <Pressable onPress={() => handleTheme()}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
@@ -172,7 +153,6 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                         </View>
                     }
                     {Platform.OS === 'ios' &&
-
                         <SafeAreaView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                             <Pressable onPress={() => handleTheme()}>
                                 <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>

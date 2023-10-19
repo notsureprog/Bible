@@ -1,16 +1,12 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
-// import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// console.log(store) //not even used. However, it should be state from user...
-// import { test, expect } from 'jest'
-// This should be retreive
-// builder.addMatcher?
 const Login = ({ navigation }) => {
 
     const getUserFromDatabase = submitUser();
@@ -107,7 +103,7 @@ const Login = ({ navigation }) => {
         <View style={{ alignItems: 'center', padding: 5 }}>
             {!user.reducer.isLoggedIn && user.reducer.loading !== 'success' &&
                 <View>
-                    {/* <MaterialCommunityIcons name='login' size={100} /> */}
+                    <MaterialCommunityIcons name='login' size={100} />
                     <TextInput testID='username' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
                     <TextInput testID='password' style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
                     {/* Following the React Redux Docs to troubleshoot... When Dispatched, the thunk will dispatch the pending action */}
@@ -119,13 +115,11 @@ const Login = ({ navigation }) => {
                    </Pressable> */}
                 </View>
             }
-
             {!user.reducer.isLoggedIn && user.reducer.loading === 'failed' &&
                 <View>
                     <Text>Could not find the user</Text>
                 </View>
             }
-            {/* I would really rather take login off when i login */}
             {user.token !== null &&
                 <View>
                     <Text testID='printed-username'>{user.reducer.username} is logged in</Text>

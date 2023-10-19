@@ -21,8 +21,6 @@ const Register = ({ navigation }) => {
         if (password === confirmPassword) {
             dispatch(
                 registerUsers({
-                    // regex will take care of email and all the other stuff
-                    // first iteration, all of this stuff is undefined
                     username,
                     password,
                     confirmPassword,
@@ -36,7 +34,6 @@ const Register = ({ navigation }) => {
         } else {
             <Text>Passwords do not match</Text>
         }
-
         setUsername('')
         setPassword('')
         setConfirmPassword('')
@@ -52,11 +49,9 @@ const Register = ({ navigation }) => {
         // }
     }, [dispatch, user.reducer.loading])
     return (
-
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
             {!user.reducer.isLoggedIn &&
                 <View>
-
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Username</Text>
                     <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setUsername} />
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Email</Text>
@@ -65,7 +60,6 @@ const Register = ({ navigation }) => {
                     <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setPassword} />
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Confirm Password</Text>
                     <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setConfirmPassword} />
-
                     <Pressable style={styles.buttonStyles} onPress={registerUser}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 40, fontWeight: '900', fontFamily: 'serif', borderRadius: 5 }}>Submit</Text>
                     </Pressable>

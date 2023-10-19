@@ -2,17 +2,11 @@ import React from 'react'
 import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
-// import Constants from 'expo-constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BIBLE_API_KEY } from '@env'
-import useJwt from '../../hooks/useJwt'
-// import { getUser } from '../features/auth/authSlice'
-
-// console.log(localStorage.getItem('username'))
 
 const BibleSelectScreen = ({ navigation }) => {
-    useJwt('store')
 
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
@@ -21,16 +15,11 @@ const BibleSelectScreen = ({ navigation }) => {
     const [bible, setBible] = React.useState('de4e12af7f28f599-01'); //de4e12af7f28f599-01 de4e12af7f28f599-02
     const [book, setBook] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
-    
-
-
     console.log(darkMode)
-
-    
-    
 
     const BibleBooks = () => React.useMemo(() => {
         const selection = [
+            // What if the API changes the id? I guess I could just call it down... Just feeding my thoughts
             { id: 'GEN', name: 'Genesis' },
             { id: 'EXO', name: 'Exodus' },
             { id: 'LEV', name: 'Leviticus' },
@@ -113,26 +102,20 @@ const BibleSelectScreen = ({ navigation }) => {
             { id: 'REV', name: 'Revelation' },
         ]
         return (
-
             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-
                 <View style={{ display: 'flex' }}>
-
                     <FlatList
                         data={selection}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View style={{ alignContent: 'flex-start', flexWrap: 'wrap', overflow: 'scroll', margin: '5px', }}>
-
                                 <Pressable onPress={() => { setBook(item.id); setLoading(true); setView('ChapterSelect') }}><Text style={{ fontSize: 30, margin: 10, color: darkMode ? styles.dark.color : styles.light.color }}>{item.name}</Text></Pressable>
                             </View>
-
                         )}
                     />
                 </View>
             </View>
         )
-
     }, [])
 
     const GetSelectOptions = async () => {
@@ -164,38 +147,28 @@ const BibleSelectScreen = ({ navigation }) => {
     return (
 
         <View>
-            
             {view === 'BookSelect' && !loading && data === null && book === null &&
                 <BibleBooks />
             }
-
             {view === 'ChapterSelect' && book !== null &&
                 <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-
                     <FlatList
                         data={data}
                         numColumns={4}
                         keyExtractor={(item) => item.number}
                         renderItem={({ item }) => (
-
                             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 5 }}>
-
                                 <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
-
                                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
                                 </Pressable>
                             </View>
                         )}
                     />
-
-
                     <Pressable onPress={() => { setView('BookSelect'); setData(null); setBook(null); }}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </Pressable>
-
                 </View>
             }
-
         </View>
     )
 }
@@ -204,7 +177,6 @@ const styles = StyleSheet.create({
     dark: {
         backgroundColor: '#000000',
         color: '#ffffff',
-
     },
     light: {
         backgroundColor: '#ffffff',
@@ -219,7 +191,6 @@ const styles = StyleSheet.create({
         alignContent: 'flex-start',
         overflow: 'scroll'
     },
-
 })
 
 export default BibleSelectScreen

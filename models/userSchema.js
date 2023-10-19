@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-// const Joi = require('joi');
-// const env = require('dotenv').config();
-// const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -26,8 +23,6 @@ const userSchema = new mongoose.Schema({
     ]
     
 });
-
-
 
 mongoose.model('User', userSchema);
 

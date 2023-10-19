@@ -27,7 +27,6 @@ const ThemeButton = () => {
 }
 
 const styles = StyleSheet.create({
-    // leave it out of every file, and put it in header in app
     dark: {
         backgroundColor: '#000000',
         color: '#ffffff',
@@ -37,8 +36,6 @@ const styles = StyleSheet.create({
     light: {
         backgroundColor: '#ffffff',
         color: '#000000',
-
-        // borderWidth: 1
     },
     main: {
         flex: 3
