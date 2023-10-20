@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+// import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
@@ -14,7 +14,7 @@ const Login = ({ navigation }) => {
     const user = useSelector((state, action) => state.authenticate); //idle initially but is undefined on test...
     // console.log(user.loading)
     // user.loading === 'idle'
-    console.log(user)
+    console.log(user.reducer)
     const dispatch = useDispatch()
     const [username, setUsername] = React.useState(null);
     const [password, setPassword] = React.useState(null);
@@ -37,14 +37,14 @@ const Login = ({ navigation }) => {
             console.log(resultAction.type === '/login/fulfilled')
             // this is an action... so it needs to do some mutating
             if (resultAction.type === '/login/fulfilled') {
-                console.log(user.loading)
+                console.log(user.reducer.loading)
                 // if(resultAction.type === 'idle' ) {
                 //     console.log("Switch to loading")
                 // }
             }
             // this is the actiion creator 
             if (resultAction.type === '/login/pending') {
-                console.log(user.loading)
+                console.log(user.reducer.loading)
                 if(resultAction.type === 'idle') {
                     console.log("Thunk Dispatched and made the pending")
                 }
@@ -53,7 +53,7 @@ const Login = ({ navigation }) => {
                 console.log("Denued access")
             }
             if (resultAction.type === '/login/loading') {
-                console.log(user.loading)
+                console.log(user.reducer.loading)
             }
             console.log(resultAction.type === '/login/rejected') //the redux docs said to handle with the result action... or i could anyways
             console.log(resultAction.type === '/login/pending')
@@ -102,12 +102,12 @@ const Login = ({ navigation }) => {
     return (
         <View style={{ alignItems: 'center', padding: 5 }}>
             {!user.reducer.isLoggedIn && user.reducer.loading !== 'success' &&
-                <View>
-                    <MaterialCommunityIcons name='login' size={100} />
-                    <TextInput testID='username' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
-                    <TextInput testID='password' style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
+                <View testID='form'>
+                    {/* <MaterialCommunityIcons name='login' size={100} /> */}
+                    <TextInput style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
+                    <TextInput style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
                     {/* Following the React Redux Docs to troubleshoot... When Dispatched, the thunk will dispatch the pending action */}
-                    <Pressable testID='submit' style={styles.buttonStyles} onPress={onSubmitUser}>
+                    <Pressable style={styles.buttonStyles} onPress={onSubmitUser}>
                         <Text>Submit</Text>
                     </Pressable>
                     {/* <Pressable style={styles.buttonStyles} onPress={dispatch(loginUsers({username: 'set state to guest', password: 'not needed'}))}>
@@ -120,7 +120,7 @@ const Login = ({ navigation }) => {
                     <Text>Could not find the user</Text>
                 </View>
             }
-            {user.token !== null &&
+            {user.reducer.token !== null &&
                 <View>
                     <Text testID='printed-username'>{user.reducer.username} is logged in</Text>
                     <Pressable onPress={() => navigation.navigate( 'HomeScreen' )} >

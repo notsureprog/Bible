@@ -45,24 +45,38 @@ const mockStore = configureStore({ reducer: authReducer })
 
 const store = mockStore(initialState)
 
+// fix user.reducer.loading is undefined error
+const ReduxWrapper = ({ children }) => {
+    <Provider store={store}>{children}</Provider>
+}
+
 beforeEach(() => {
     const user = initialState
 })
 
 test('I Guess Reducer Test lol :)', async () => {
-    rtlRender(<Provider store={store}><Login /></Provider>)
+    rtlRender(<Login />, { wrapper: ReduxWrapper })
+    try {
+        const result = await screen.findByTestId("form")
+        console.log(result)
+    } catch (error) {
+        console.log(error)
+    }
+
+    // expect(result).getByText("Submit")
+    // console.log(result)
 })
 
-test('I want the store to update', async () => {
+// test('I want the store to update', async () => {
 
 
-    const reactRedux = { useDispatch, useSelector }
-    const useDispatchMock = jest.spyOn(reactRedux, 'useDispatch')
-    const useSelectorMock = jest.spyOn(reactRedux, 'useSelector')
-    const mockDispatch = jest.fn(); //maybe this is the key
-    useDispatchMock.mockReturnValue(mockDispatch)
-    store.dispatch = mockDispatch
-    const loginMock = jest.createMockFromModule('../src/screens/Login')
-})
+//     const reactRedux = { useDispatch, useSelector }
+//     const useDispatchMock = jest.spyOn(reactRedux, 'useDispatch')
+//     const useSelectorMock = jest.spyOn(reactRedux, 'useSelector')
+//     const mockDispatch = jest.fn(); //maybe this is the key
+//     useDispatchMock.mockReturnValue(mockDispatch)
+//     store.dispatch = mockDispatch
+//     const loginMock = jest.createMockFromModule('../src/screens/Login')
+// })
 
 

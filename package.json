@@ -56,7 +56,9 @@
     "react-native-web": "~0.19.6",
     "react-redux": "^8.1.2",
     "react-test-renderer": "^18.2.0",
+    "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.2",
     "scripture-styles": "^1.6.0"
   },
   "devDependencies": {

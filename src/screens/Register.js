@@ -42,11 +42,11 @@ const Register = ({ navigation }) => {
 
     React.useEffect(() => {
         if (user.reducer.loading === 'success') {
-            dispatch(putUserInDatabase)
+            console.log("Success")
         }
-        // if (user.loading === 'loading') {
-        //     dispatch(putUsersIdle()) //problem here because idle
-        // }
+        if (user.loading === 'loading') {
+            // dispatch(putUserInDatabase)
+        }
     }, [dispatch, user.reducer.loading])
     return (
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>

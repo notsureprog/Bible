@@ -1,7 +1,9 @@
 import authReducer, { submitUser } from '../features/auth/authSlice'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
+import thunk from 'redux-thunk'
+import logger from 'redux-logger'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 console.log(authReducer)
 const persistConfig = {
@@ -10,13 +12,19 @@ const persistConfig = {
     
 }
 
+// const getDefaultMiddleware = () => {
+    
+
+// }
+
 const reducers = combineReducers({
     reducer: 
          authReducer
 })
 const persistedReducer = persistReducer(persistConfig, reducers)
 const store =  configureStore({
-    reducer: {authenticate: persistedReducer}
+    reducer: {authenticate: persistedReducer},
+    middleware: [thunk, logger]
 })
     
 export default store
