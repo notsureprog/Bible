@@ -19,24 +19,25 @@ export const registerUsers = createAsyncThunk(`/register`, async (thunkApi) => {
     }
 })
 
-export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue }) => {
-    
+export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue, signal }) => {
+
     try {
         console.log(thunkApi)
         const response = await axios.post(`${uri}/login`, thunkApi)
-        // await AsyncStorage.setItem('access-token', response.data.token)
-        // await AsyncStorage.setItem('username', response.data.username)
+        console.log(signal.aborted)
         return response.data
     }
     catch (err) {
+        console.log(err.name)
+        // if (err.name === 'AbortError') {}
         rejectWithValue(err.response.data)
     }
 },
     // FORCE CANCELLATION ON EVEN GOOD REQUESTS
     // test commented out...
     //  {
-    //     // Canceling Before Execution... No wonder...
-    // // unreachable thunkApi
+    // //     // Canceling Before Execution... No wonder...
+    // // // unreachable thunkApi
     //     condition: (thunkApi, { getState, extra }) => {
     //         const data  = getState()
     //         console.log(data)
@@ -54,7 +55,6 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWi
 // createSlice uses immer library internally
 export const authSlice = createSlice({
     name: 'authenticate',
-    // there is an initial state. Which Is kind of needed.
     initialState: {
         users: [],
         username: null, //guest
@@ -63,7 +63,8 @@ export const authSlice = createSlice({
         loading: 'idle', //should neveer be undefined. 
         isLoggedIn: false, //only bool right now
         authenticatedUser: {},
-        currentRequestId: null
+        currentRequestId: null,
+        errorMessage: null
     },
 
     reducers: {
@@ -72,7 +73,7 @@ export const authSlice = createSlice({
             state.users.push(action.payload)
             console.log(current(state))
         },
-        logoutUser(state, action){
+        logoutUser(state, action) {
             // console.log(state)
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
@@ -85,7 +86,7 @@ export const authSlice = createSlice({
                 // }
             }
         }
-        
+
     },
 
     extraReducers: (builder) => {
@@ -115,13 +116,14 @@ export const authSlice = createSlice({
                 console.log("Denied Access")
             })
             // this is an action creator. name tells me it creates an action for the resultAction to perform (set state or whatever)
-            
+
             .addCase(loginUsers.fulfilled, (state, action) => {
-                const { requestId } = action.meta
+                const { requestId, signal } = action.meta
+                console.log(signal)
                 console.log(requestId)
                 console.log(state.loading)
                 console.log(state.currentRequestId)
-                
+
                 state.username = action.payload.username
                 state.token = action.payload.token
                 state.loading = 'success'
@@ -131,23 +133,37 @@ export const authSlice = createSlice({
             })
             .addCase(loginUsers.pending, (state, action) => {
                 const currentRequestId = action.meta.requestId
+                // console.log(action.meta.condition)
+                // console.log(action.meta.aborted)
                 console.log(currentRequestId)
                 console.log(state.loading)
-                // if (state.loading === 'idle') {
-                //     state.loading === 'loading'
-                //     console.log(state.loading)
-                //     state.currentRequestId = action.meta.requestId
-                // }
-                // if(state.loading === 'loading') {
-                //     state.currentRequestId === undefined
-                //     state.isLoggedIn = false
-                //     state.loading = 'pending'
-                // }
+                if (action.type === '/login/pending' && state.username === null) {
+                    console.log(action.meta.aborted)
+                    console.log('user is being submitted')
+                    //     state.loading === 'loading'
+                    //     console.log(state.loading)
+                    //     state.currentRequestId = action.meta.requestId
+                    // }
+                    // if(state.loading === 'loading') {
+                    //     state.currentRequestId === undefined
+                    //     state.isLoggedIn = false
+                    //     state.loading = 'pending'
+                    // }
+                }
+
+                // payloadCreator({})
+                if (action.type === '/login/pending' && state.username !== null) {
+                    // console.log("user going")
+                }
+
             })
             .addCase(loginUsers.rejected, (state, action) => {
+
                 state.isLoggedIn = false
                 state.loading = 'failed'
+                state.errorMessage = action.error
             })
+
     }
 });
 

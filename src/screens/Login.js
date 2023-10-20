@@ -12,8 +12,6 @@ const Login = ({ navigation }) => {
     const getUserFromDatabase = submitUser();
     // I honestly think this entire store is undefinee somehow on the first iteration.
     const user = useSelector((state, action) => state.authenticate); //idle initially but is undefined on test...
-    // console.log(user.loading)
-    // user.loading === 'idle'
     console.log(user.reducer)
     const dispatch = useDispatch()
     const [username, setUsername] = React.useState(null);
@@ -44,6 +42,8 @@ const Login = ({ navigation }) => {
             }
             // this is the actiion creator 
             if (resultAction.type === '/login/pending') {
+                console.log(resultAction)
+                console.log("user being submitted has entered this block in Login")
                 console.log(user.reducer.loading)
                 if(resultAction.type === 'idle') {
                     console.log("Thunk Dispatched and made the pending")

@@ -56,12 +56,8 @@ beforeEach(() => {
 
 test('I Guess Reducer Test lol :)', async () => {
     rtlRender(<Login />, { wrapper: ReduxWrapper })
-    try {
-        const result = await screen.findByTestId("form")
-        console.log(result)
-    } catch (error) {
-        console.log(error)
-    }
+    const login = screen.findAllByTestId('submit')
+    console.log(Promise.resolve(login))
 
     // expect(result).getByText("Submit")
     // console.log(result)
