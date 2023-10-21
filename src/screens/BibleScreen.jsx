@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native'
 import axios from 'axios'
-import { HTMLElementModel, TRenderEngine, RenderHTML, HTMLContentModel } from 'react-native-render-html'
+import { HTMLElementModel, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -125,7 +125,11 @@ const BibleScreen = ({ navigation, route }) => {
                         <View>
                             {data.id === 'GEN.intro' &&
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                         <Text>{data.next.bookId} {data.next.number}</Text>
                                     </Pressable>
@@ -134,7 +138,11 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id === 'REV.22' &&
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                     {/* data.content is like <p class='p'></p><p class='Gen'></p><p id='GEN.1.1'></p> etc... and scripture styles hits those */}
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                         <Text>{data.previous.bookId} {data.previous.number}</Text>
                                     </Pressable>
@@ -144,7 +152,11 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
@@ -165,7 +177,11 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                         <Text>{data.next.bookId} {data.next.number}</Text>
                                     </Pressable>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                 </View>
                             }
                             {data.id === 'REV.22' &&
@@ -173,19 +189,27 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                         <Text>{data.previous.bookId} {data.previous.number}</Text>
                                     </Pressable>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                 </View>
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
 
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                         </Pressable>
-                                        
+
                                         <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                         </Pressable>
@@ -198,7 +222,11 @@ const BibleScreen = ({ navigation, route }) => {
                         <View>
                             {data.id === 'GEN.intro' &&
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
@@ -208,7 +236,11 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id === 'REV.22' &&
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
@@ -219,7 +251,11 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
@@ -239,7 +275,7 @@ const BibleScreen = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
-    
+
     dark: {
         backgroundColor: '#000000',
         color: '#ffffff',

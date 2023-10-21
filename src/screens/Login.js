@@ -106,6 +106,7 @@ const Login = ({ navigation }) => {
         // AsyncStorage.setItem('store', user)
     }, [dispatch, user.reducer.loading])
 
+    // https://meliorence.github.io/react-native-render-html/api/renderhtml
     return (
         <View aria-label='main' style={{ alignItems: 'center', padding: 5 }}>
             
