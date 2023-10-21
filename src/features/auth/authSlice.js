@@ -4,7 +4,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import http from 'http'
 import { Platform } from 'react-native'
-import { persistor } from '../../app/store'
+import { store, persistor } from '../../app/store'
 import { REACT_APP_EXPRESS_URL } from '@env'
 
 const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRESS_URL}`
@@ -24,7 +24,6 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWi
     try {
         console.log(thunkApi)
         const response = await axios.post(`${uri}/login`, thunkApi)
-        console.log(signal.aborted)
         return response.data
     }
     catch (err) {
@@ -74,19 +73,12 @@ export const authSlice = createSlice({
             console.log(current(state))
         },
         logoutUser(state, action) {
-            // console.log(state)
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
                 AsyncStorage.removeItem('persist:root')
-                window.location.reload() //crashes on android for some reason
-                console.log("Reached")
-                // return {
-                //     ...state,
-                //     username: state.username = 'loggedout'
-                // }
+                window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices.
             }
         }
-
     },
 
     extraReducers: (builder) => {
@@ -94,79 +86,54 @@ export const authSlice = createSlice({
             // register user cases
             .addCase(registerUsers.fulfilled, (state, action) => {
                 console.log(state.loading)
-                // const {requestId} = action.meta
-                // console.log(data)
-                // if (state.loading === 'pending' && requestId === currentRequestId) {
-
-                //     console.log(action.payload)
-                // }
-                // state.authenticate = action.payload.body.username
-
+                console.log(action)
+                // for the register, I would not really need to update the global state.
             })
+
             .addCase(registerUsers.pending, (state, action) => {
                 console.log(state.loading)
-                // getUserFromDb
-                // action.payload = "Submitting User. Please Wait...???" //I think that is how this works.
-                state.loading = 'pending'
-                state.isLoggedIn = false
-                state.token = null
+                console.log(action)
+                state.loading = "pending"
+            })
 
-            })
             .addCase(registerUsers.rejected, (state, action) => {
-                console.log("Denied Access")
+                state.errorMessage = action.error
+                state.loading = "rejected"
             })
-            // this is an action creator. name tells me it creates an action for the resultAction to perform (set state or whatever)
 
             .addCase(loginUsers.fulfilled, (state, action) => {
                 const { requestId, signal } = action.meta
                 console.log(signal)
                 console.log(requestId)
-                console.log(state.loading)
-                console.log(state.currentRequestId)
-
                 state.username = action.payload.username
                 state.token = action.payload.token
                 state.loading = 'success'
                 state.isLoggedIn = true
-
-
             })
+
             .addCase(loginUsers.pending, (state, action) => {
                 const currentRequestId = action.meta.requestId
-                // console.log(action.meta.condition)
-                // console.log(action.meta.aborted)
                 console.log(currentRequestId)
-                console.log(state.loading)
-                if (action.type === '/login/pending' && state.username === null) {
-                    console.log(action.meta.aborted)
-                    console.log('user is being submitted')
-                    //     state.loading === 'loading'
-                    //     console.log(state.loading)
-                    //     state.currentRequestId = action.meta.requestId
-                    // }
-                    // if(state.loading === 'loading') {
-                    //     state.currentRequestId === undefined
-                    //     state.isLoggedIn = false
-                    //     state.loading = 'pending'
-                    // }
+                if (action.type === '/login/pending' && action.meta.requestId !== currentRequestId) {
+                    // signal.abort()
+                    state.loading = "pending" // I need this tested and handled iin the pending. because the thunk completes with rejected or fulfilled
+                    // the user will or will not be in the db...
                 }
-
-                // payloadCreator({})
-                if (action.type === '/login/pending' && state.username !== null) {
-                    // console.log("user going")
+                if (!state.isLoggedIn && action.type === '/login/pending') {
+                    state.loading = 'rejected'
                 }
-
             })
+
             .addCase(loginUsers.rejected, (state, action) => {
-
-                state.isLoggedIn = false
-                state.loading = 'failed'
                 state.errorMessage = action.error
+                state.loading = "rejected"
             })
-
     }
 });
 
+function logoutRefresh() {
+    this.forceUpdate()
+}
 // export const registerUserIdle = (state, action) => {return {...state, loading: 'loading'}}
 const putUserInDatabase = (state, action) => { return { username: action.payload.username } }
 // const getUserFromDB = (registerUser.pending)

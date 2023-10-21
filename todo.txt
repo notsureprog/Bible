@@ -6,6 +6,8 @@
 - merge github branches.
 - sign and secure cookies
 
+Since the store is global, I might be able to use a piece of it as a dependence to the logout function to fireup on a useEffect dependency.
+
 
 From the server, I will get the notinthedb message. no user is being pulled from mongo. All of that is good. However, on the login page, I do not get an error and It says i am logged in
 

@@ -27,7 +27,7 @@ const App = () => {
   return (
 
     <ThemeProvider>
-      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
+      <NavigationContainer >
         <Stack.Navigator initialRouteName='Home'>
           {user.reducer.isLoggedIn &&
             <Stack.Group>

@@ -19,49 +19,55 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = React.useState(false)
 
     const onSubmitUser = async () => {
-        try {
-            
-            const resultAction = await dispatch(
-                loginUsers({
-                    username,
-                    password,
-                })
-            )
-            setUsername('')
-            setPassword('')
-            console.log(resultAction)
-            const unwrappedResultAction = unwrapResult(resultAction)
-            console.log(unwrappedResultAction)
-            console.log(resultAction.type === '/login/fulfilled')
-            // this is an action... so it needs to do some mutating
-            if (resultAction.type === '/login/fulfilled') {
-                console.log(user.reducer.loading)
-                // if(resultAction.type === 'idle' ) {
-                //     console.log("Switch to loading")
-                // }
+        
+            try {
+// abortsignal here and listener in thunk?
+                const resultAction = await dispatch(
+                    loginUsers({
+                        username,
+                        password,
+                    })
+                )
+                setUsername('')
+                setPassword('')
+                setLoading(false)
+                console.log(resultAction.type)
+            } catch (error) {
+                console.log(error)
             }
-            // this is the actiion creator 
-            if (resultAction.type === '/login/pending') {
-                console.log(resultAction)
-                console.log("user being submitted has entered this block in Login")
-                console.log(user.reducer.loading)
-                if(resultAction.type === 'idle') {
-                    console.log("Thunk Dispatched and made the pending")
-                }
-            }
-            if (resultAction.type === '/login/rejected') {
-                console.log("Denued access")
-            }
-            if (resultAction.type === '/login/loading') {
-                console.log(user.reducer.loading)
-            }
-            console.log(resultAction.type === '/login/rejected') //the redux docs said to handle with the result action... or i could anyways
-            console.log(resultAction.type === '/login/pending')
-            console.log(resultAction.type === '/login/loading')
-        }
-        catch (error) {
-            console.log(error)
-        }
+        
+        //     if (resultAction.type === '/login/pending') {
+        //         const unwrappedResultAction = unwrapResult(resultAction)
+        //         console.log(unwrappedResultAction)
+        //         console.log(resultAction)
+        //         console.log("user being submitted has entered this block in Login")
+        //         console.log(user.reducer.loading)
+        //         if(resultAction.type === 'idle') {
+        //             console.log("Thunk Dispatched and made the pending")
+        //         }
+        //     }
+        //     console.log(resultAction.type === '/login/fulfilled')
+        //     // this is an action... so it needs to do some mutating
+        //     if (resultAction.type === '/login/fulfilled') {
+        //         console.log(user.reducer.loading)
+        //         // if(resultAction.type === 'idle' ) {
+        //         //     console.log("Switch to loading")
+        //         // }
+        //     }
+        //     // this is the actiion creator 
+        //     if (resultAction.type === '/login/rejected') {
+        //         console.log("Denued access")
+        //     }
+        //     if (resultAction.type === '/login/loading') {
+        //         console.log(user.reducer.loading)
+        //     }
+        //     console.log(resultAction.type === '/login/rejected') //the redux docs said to handle with the result action... or i could anyways
+        //     console.log(resultAction.type === '/login/pending')
+        //     console.log(resultAction.type === '/login/loading')
+        // }
+        // catch (error) {
+        //     console.log(error)
+        // }
 
         // if (result.type = '/login/fulfilled') { 
         //     const fulfilledResult = unwrapResult(result)
@@ -69,8 +75,6 @@ const Login = ({ navigation }) => {
         // }
 
     }
-
-    
 
     React.useEffect(() => {
         // result.type
@@ -80,7 +84,7 @@ const Login = ({ navigation }) => {
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
-        if (user.reducer.loading === 'failed') {
+        if (user.reducer.loading === 'rejected') {
             console.log("Failed")
             console.log("Denied Access")
             console.log(store.getState())
@@ -88,15 +92,16 @@ const Login = ({ navigation }) => {
         if (user.reducer.loading === 'loading') {
             console.log("loading")
             console.log(store.getState())
-            dispatch(getUserFromDatabase)
         }
         if (user.reducer.loading === 'pending') {
+            dispatch(getUserFromDatabase)
+            console.log(store.getState())
+            
+        }
+        if (user.reducer.loading === 'idle') {
             console.log(store.getState())
         }
-        if(user.reducer.loading === 'idle') {
-            console.log(store.getState())
-        }
-        AsyncStorage.setItem('store', user)
+        // AsyncStorage.setItem('store', user)
     }, [dispatch, user.reducer.loading])
 
     return (
@@ -123,10 +128,10 @@ const Login = ({ navigation }) => {
             {user.reducer.token !== null &&
                 <View>
                     <Text testID='printed-username'>{user.reducer.username} is logged in</Text>
-                    <Pressable onPress={() => navigation.navigate( 'HomeScreen' )} >
+                    <Pressable onPress={() => navigation.navigate('HomeScreen')} >
                         <Text>Go Back</Text>
                     </Pressable>
-                    <Pressable onPress={() => dispatch(logoutUser({type: 'authenticate/logoutUser'}))} >
+                    <Pressable onPress={() => dispatch(logoutUser({ type: 'authenticate/logoutUser' }))} >
                         <Text>Logout</Text>
                     </Pressable>
                 </View>
