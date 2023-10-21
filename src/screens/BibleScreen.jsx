@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native'
 import axios from 'axios'
-import { HTMLElementModel, RenderHTML, HTMLContentModel } from 'react-native-render-html'
+import { HTMLElementModel, TRenderEngine, RenderHTML, HTMLContentModel } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'

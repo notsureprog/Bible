@@ -3,13 +3,11 @@ import React from 'react'
 import Login from '../src/screens/Login'
 import { useDispatch, useSelector } from 'react-redux'
 import { expect, test } from '@jest/globals'
-import { jest } from '@jest/globals'
-import { cleanup, fireEvent, render as rtlRender, screen, userEvent } from '@testing-library/react-native'
-import '@testing-library/jest-dom'
+import DummyComponent from '../components/DummyComponent'
+import { cleanup, fireEvent, render, screen, userEvent } from '@testing-library/react-native'
+// import '@testing-library/jest-dom'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
-import { renderWithProviders } from '../utils/test-utils'
-import DummyComponent from '../components/DummyComponent'
 
 let initialState = {
     users: [],
@@ -50,17 +48,19 @@ const ReduxWrapper = ({ children }) => {
     <Provider store={store}>{children}</Provider>
 }
 
-beforeEach(() => {
-    const user = initialState
+// beforeEach(() => {
+//     const user = initialState
+// })
+
+test('The Component Works', () => {
+    const username = 'notsure'
+    render(<Login />, { wrapper: ReduxWrapper })
 })
 
-test('I Guess Reducer Test lol :)', async () => {
-    rtlRender(<Login />, { wrapper: ReduxWrapper })
-    const login = screen.findAllByTestId('submit')
-    console.log(Promise.resolve(login))
-
-    // expect(result).getByText("Submit")
-    // console.log(result)
+test('Getting something from the component', () => {
+    const {queryByText} = render(<Login />, {wrapper: ReduxWrapper})
+    screen.queryByText('submit')
+    console.log(screen.queryAllByRole('Button'))
 })
 
 // test('I want the store to update', async () => {

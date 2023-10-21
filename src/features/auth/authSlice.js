@@ -116,17 +116,23 @@ export const authSlice = createSlice({
                 console.log(currentRequestId)
                 if (action.type === '/login/pending' && action.meta.requestId !== currentRequestId) {
                     // signal.abort()
+                    state.currentRequestId = action.meta.requestId
                     state.loading = "pending" // I need this tested and handled iin the pending. because the thunk completes with rejected or fulfilled
                     // the user will or will not be in the db...
+                    console.log(state.isLoggedIn)
                 }
-                if (!state.isLoggedIn && action.type === '/login/pending') {
+                if (!state.isLoggedIn && state.currentRequestId !== action.meta.requestId) {
+                    state.currentRequestId = undefined
                     state.loading = 'rejected'
+                    console.log(action)
                 }
             })
 
             .addCase(loginUsers.rejected, (state, action) => {
+                state.loading = "idle"
                 state.errorMessage = action.error
-                state.loading = "rejected"
+                
+                // i do need to refresh the store on submit if i get rejected.
             })
     }
 });

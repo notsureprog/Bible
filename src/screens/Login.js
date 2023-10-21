@@ -19,23 +19,23 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = React.useState(false)
 
     const onSubmitUser = async () => {
-        
-            try {
-// abortsignal here and listener in thunk?
-                const resultAction = await dispatch(
-                    loginUsers({
-                        username,
-                        password,
-                    })
-                )
-                setUsername('')
-                setPassword('')
-                setLoading(false)
-                console.log(resultAction.type)
-            } catch (error) {
-                console.log(error)
-            }
-        
+
+        try {
+            // abortsignal here and listener in thunk?
+            const resultAction = await dispatch(
+                loginUsers({
+                    username,
+                    password,
+                })
+            )
+            setUsername('')
+            setPassword('')
+            setLoading(false)
+            console.log(resultAction.type)
+        } catch (error) {
+            console.log(error)
+        }
+
         //     if (resultAction.type === '/login/pending') {
         //         const unwrappedResultAction = unwrapResult(resultAction)
         //         console.log(unwrappedResultAction)
@@ -84,6 +84,7 @@ const Login = ({ navigation }) => {
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
+        // on the second iteration (bad user) of submitting a user, I am going to be at user.reducer.loading === 'rejected' I want to be idle
         if (user.reducer.loading === 'rejected') {
             console.log("Failed")
             console.log("Denied Access")
@@ -92,11 +93,12 @@ const Login = ({ navigation }) => {
         if (user.reducer.loading === 'loading') {
             console.log("loading")
             console.log(store.getState())
+            dispatch(getUserFromDatabase)
         }
         if (user.reducer.loading === 'pending') {
-            dispatch(getUserFromDatabase)
+            // when it is pending, the dispatch is already in progress. when it is pending, it comes back true or false of logged in or not.
             console.log(store.getState())
-            
+
         }
         if (user.reducer.loading === 'idle') {
             console.log(store.getState())
@@ -105,14 +107,15 @@ const Login = ({ navigation }) => {
     }, [dispatch, user.reducer.loading])
 
     return (
-        <View style={{ alignItems: 'center', padding: 5 }}>
+        <View aria-label='main' style={{ alignItems: 'center', padding: 5 }}>
+            
             {!user.reducer.isLoggedIn && user.reducer.loading !== 'success' &&
-                <View testID='form'>
+                <View>
                     {/* <MaterialCommunityIcons name='login' size={100} /> */}
-                    <TextInput style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
-                    <TextInput style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
+                    <TextInput testID='usernam' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
+                    <TextInput aria-aria-label='password' style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
                     {/* Following the React Redux Docs to troubleshoot... When Dispatched, the thunk will dispatch the pending action */}
-                    <Pressable style={styles.buttonStyles} onPress={onSubmitUser}>
+                    <Pressable accessibilityRole='button' style={styles.buttonStyles} onPress={onSubmitUser}>
                         <Text>Submit</Text>
                     </Pressable>
                     {/* <Pressable style={styles.buttonStyles} onPress={dispatch(loginUsers({username: 'set state to guest', password: 'not needed'}))}>
@@ -120,15 +123,15 @@ const Login = ({ navigation }) => {
                    </Pressable> */}
                 </View>
             }
-            {!user.reducer.isLoggedIn && user.reducer.loading === 'failed' &&
-                <View>
+            {!user.reducer.isLoggedIn && user.reducer.loading === 'rejected' &&
+                <View testID='nouser'>
                     <Text>Could not find the user</Text>
                 </View>
             }
             {user.reducer.token !== null &&
                 <View>
-                    <Text testID='printed-username'>{user.reducer.username} is logged in</Text>
-                    <Pressable onPress={() => navigation.navigate('HomeScreen')} >
+                    <Text>{user.reducer.username} is logged in</Text>
+                    <Pressable onPress={() => navigation.navigate('Home')} >
                         <Text>Go Back</Text>
                     </Pressable>
                     <Pressable onPress={() => dispatch(logoutUser({ type: 'authenticate/logoutUser' }))} >
