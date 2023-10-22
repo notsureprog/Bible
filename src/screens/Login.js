@@ -7,6 +7,7 @@ import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
 import { unwrapResult } from '@reduxjs/toolkit'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+
 const Login = ({ navigation }) => {
 
     const getUserFromDatabase = submitUser();

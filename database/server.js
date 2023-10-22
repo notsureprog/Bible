@@ -3,27 +3,29 @@ const requireAuth = require('../middleware/requireAuth');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+
+const router = express.Router()
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(cors());
 app.use(bodyParser.json())
 app.use(cookieParser())
-const { postUserToDatabase, getUserFromDatabase } = require('./db');
+const { postUserToDatabase, getUserFromDatabase, putVerseInDatabase } = require('./db');
 
-app.use((req, res, next) => {
+router.use((req, res, next) => {
     res.header({ 'Access-Control-Allow-Origin': 'http://localhost:19006' });
     next()
 })
 
-app.get('/secretpage', requireAuth, (req, res, next) => {
+router.get('/secretpage', requireAuth, (req, res, next) => {
     const username = req.user.username
     console.log(res)
     res.redirect('http://localhost:19006/Home');
 
 })
 
-app.post('/register', async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
 
     const username = req.body.username
     const password = req.body.password
@@ -38,10 +40,10 @@ app.post('/register', async (req, res, next) => {
     } catch (error) {
         console.log(error)
     }
-    
+
 })
 
-app.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res, next) => {
     console.log("Hello server")
     const username = req.body.username
     const password = req.body.password
@@ -56,9 +58,9 @@ app.post('/login', async (req, res, next) => {
     catch (error) {
         console.log(error)
     }
-    
+
     console.log("Hopefully")
-    
+
     if (username === 'guest') {
         const token = jwt.sign({ username: username }, password)
         res.send({ token: token, username: 'guest' });
@@ -68,10 +70,25 @@ app.post('/login', async (req, res, next) => {
 // }
 
 // })
-
-app.get('/', requireAuth, (req, res) => {
-    res.redirect('http://localhost:19006/Home')
+router.post('/verse', async (req, res, next) => {
+    const verse = req.body.verse
+    const username = req.body.username
+    try {
+        // I need to push into an array in db 
+        await putVerseInDatabase(verse, username, (err, data) => {
+            res.send(data) //reflects from the db into the ui and persisted...
+        })
+        next()
+    } catch (error) {
+        console.log(error)
+    }
 })
+
+app.use('/', router)
+
+// app.get('/', requireAuth, (req, res) => {
+//     res.redirect('http://localhost:19006/Home')
+// })
 
 
 app.listen(3000, () => console.log('listening'))

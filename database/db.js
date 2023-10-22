@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const env = require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+
+
 const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
 const connect = mongoose.connect(uri)
-const postUserToDatabase = async(username, password, email, callback) => {
+const postUserToDatabase = async (username, password, email, callback) => {
 
     try {
         await connect
@@ -15,8 +17,8 @@ const postUserToDatabase = async(username, password, email, callback) => {
             const user = new User({ username: username, password: hash, email: email });
             await user.save()
             const token = jwt.sign({ username: username }, hash)
-            callback(null, {username: username, token: token})
-            
+            callback(null, { username: username, token: token })
+
         })
     } catch (error) {
         console.log(error)
@@ -57,10 +59,24 @@ const getUserFromDatabase = async (username, password, callback) => {
     }
 }
 
+// this will have to be persisted in the store too.
+const putVerseInDatabase = async (verse, username, callback) => {
+    try {
+
+        await connect
+        const User = mongoose.model('User')
+        await User.updateOne({ username: username }, { $set: { highlightedVerses: verse } })
+        callback(null, verse)
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
 const dropUserFromDatabase = async (username, password) => {
     await connect
     const dropUser = await mongoose.createConnection(uri)
     await dropUser.collection('collections').deleteOne({ username: username, password: password })
 }
 
-module.exports = { postUserToDatabase, getUserFromDatabase }
+module.exports = { postUserToDatabase, getUserFromDatabase, putVerseInDatabase}

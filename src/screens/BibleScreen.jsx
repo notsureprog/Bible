@@ -1,14 +1,22 @@
 import React from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native'
 import axios from 'axios'
-import { HTMLElementModel, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
+import store from '../app/store'
+// import HTMLView from 'react-native-htmlview'
+import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
+// import * as scriptureStyles from '../../css/scriptureConverted'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY } from '@env'
+import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { selectVerse } from '../features/verse/verseSlice'
+// import { putVerseInDatabase } from '../../database/db'
 // import * as scriptureStyles from '../../css/scripture.css'
+
+import { useDispatch, useSelector } from 'react-redux'
+
 
 // https://www.w3schools.com/react/react_jsx.asp
 /*
@@ -27,8 +35,13 @@ JSX makes it easier to write and add HTML in React.
 
 console.log(BIBLE_API_KEY)
 console.log(VersionSelectMenu)
-
-const BibleScreen = ({ navigation, route }) => {
+console.log(store.getState())
+// const Props = () => {
+    //     RenderHTMLProps
+    // }
+    const BibleScreen = ({ navigation, route }) => {
+    const verse = useSelector((state) => state.verseReducer)
+    const dispatch = useDispatch()
 
     const fontReducer = (state, action) => {
         if (action.type === "INCREASE_FONT") {
@@ -48,6 +61,17 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
+    // const verseReducer = (state, action) => {
+
+    //     if (action.type === "POST_VERSE") {
+    //         return {
+    //             ...state,
+
+    //         }
+    //     }
+    // }
+    // }
+
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
@@ -61,13 +85,14 @@ const BibleScreen = ({ navigation, route }) => {
         console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
     }
 
+
+
     const customHTMLElementModels = {
         'dynamic-font': HTMLElementModel.fromCustomModel({
             tagName: 'dynamic-font',
             mixedUAStyles: {
                 color: darkMode ? styles.dark.color : styles.light.color,
                 fontSize: fontState.size,
-
             },
             contentModel: HTMLContentModel.block
         })
@@ -128,6 +153,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
@@ -224,6 +250,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
+                                            <CSSPropertyNameList></CSSPropertyNameList>
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
@@ -249,19 +276,25 @@ const BibleScreen = ({ navigation, route }) => {
                                 </View>
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
-
+                                // ReactDOM.render()
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
-                                    <TRenderEngineProvider>
-                                        <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
-                                        </RenderHTMLConfigProvider>
-                                    </TRenderEngineProvider>
+
+                                    {/* <HTMLView 
+                                            value={data.content}
+                                            // stylesheet={scriptureStyles}
+                                            /> */}
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                    {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
+
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                        </Pressable>
+                                        <Pressable onPress={() => { dispatch(selectVerse(data.next.id))}}>
+                                            <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
                                     </View>
                                 </View>

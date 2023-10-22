@@ -19,7 +19,9 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.authenticate)
+  const verse = useSelector((state) => state)
   console.log(user.reducer)
+  console.log(verse)
   const linking = {
     prefixes: ['Bible://']
   }

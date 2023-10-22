@@ -61,7 +61,7 @@ export const authSlice = createSlice({
         token: null,
         loading: 'idle', //should neveer be undefined. 
         isLoggedIn: false, //only bool right now
-        authenticatedUser: {},
+        // authenticatedUser: {},
         currentRequestId: null,
         errorMessage: null
     },

@@ -1,4 +1,5 @@
 import authReducer, { submitUser } from '../features/auth/authSlice'
+import verseReducer from '../features/verse/verseSlice'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
@@ -18,8 +19,9 @@ const persistConfig = {
 // }
 
 const reducers = combineReducers({
-    reducer: 
-         authReducer
+    reducer: authReducer,
+    verseReducer: verseReducer
+    // themeReducer: themeReducer
 })
 const persistedReducer = persistReducer(persistConfig, reducers)
 const store =  configureStore({

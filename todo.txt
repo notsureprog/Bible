@@ -1,9 +1,8 @@
 - logout button - works on web, but maybe not ios. it does not on andrdoid
 - work on highlighting verses.
 - refactor
-- test (find out why user.reducer.loading is undefined on login test, but idle on going to the page.) - the wrapper took care of it
-- Error of undefined on bible screen when trying to manipulate the url and messing it up. (maybe get rid of deep linking if it isnt necessary) (maybe a drawer nav or whatever)
-- merge github branches.
+- test (find out why user.reducer.loading is undefined on login test, but idle on going to the page.) - the wrapper took care of it, but still kind of...
+- Error of undefined on bible screen when trying to manipulate the url and messing it up. (maybe get rid of deep linking if it isnt necessary) (maybe a drawer nav or whatever) -- kind if fixed with removing deep linking
 - sign and secure cookies
 
 Since the store is global, I might be able to use a piece of it as a dependence to the logout function to fireup on a useEffect dependency.
@@ -11,6 +10,187 @@ Since the store is global, I might be able to use a piece of it as a dependence 
 
 From the server, I will get the notinthedb message. no user is being pulled from mongo. All of that is good. However, on the login page, I do not get an error and It says i am logged in
 
+
+
+
+<View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }}>
+
+            {data !== null &&
+                <View>
+                    <Text style={{ marginLeft: '25%', marginRight: '25%', color: darkMode ? styles.dark.color : styles.light.color, fontSize: 35 }}>{data.reference}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        {/* This version select menu buttons do not like being clicked */}
+                        <VersionSelectMenu style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} />
+                    </View>
+                    <Pressable style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
+                        <Text style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 30, width: 100, color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
+                    </Pressable>
+                    <Pressable style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.popToTop()}>
+                        <Text style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 30, width: 100, color: darkMode ? styles.dark.color : styles.light.color }}>Home Page</Text>
+                    </Pressable>
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Change the Font Size:</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                        <Pressable onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
+                            <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
+                        </Pressable>
+                        <Pressable onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
+                            <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
+                        </Pressable>
+                    </View>
+
+                    {Platform.OS === 'android' &&
+                        <View>
+                            {data.id === 'GEN.intro' &&
+                                <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        <Text>{data.next.bookId} {data.next.number}</Text>
+                                    </Pressable>
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                    {/* data.content is like <p class='p'></p><p class='Gen'></p><p id='GEN.1.1'></p> etc... and scripture styles hits those */}
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
+                                        <Text>{data.previous.bookId} {data.previous.number}</Text>
+                                    </Pressable>
+                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
+
+                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                        <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </Pressable>
+
+                                        <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            }
+                        </View>
+                    }
+                    {Platform.OS === 'ios' &&
+                        <SafeAreaView>
+                            {data.id === 'GEN.intro' &&
+                                <View>
+                                    <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
+                                        <Text>{data.next.bookId} {data.next.number}</Text>
+                                    </Pressable>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View>
+                                    <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
+                                        <Text>{data.previous.bookId} {data.previous.number}</Text>
+                                    </Pressable>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
+
+                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+
+                                        <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </Pressable>
+
+                                        <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            }
+                        </SafeAreaView>
+                    }
+                    {Platform.OS === 'web' &&
+                        <View>
+                            {data.id === 'GEN.intro' &&
+                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <CSSPropertyNameList></CSSPropertyNameList>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                        <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
+                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            }
+                            {data.id === 'REV.22' &&
+                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            }
+                            {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
+// ReactDOM.render()
+                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                     <TRenderEngineProvider>
+                                         <RenderHTMLConfigProvider>
+                                             <RenderHTML  customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                             {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
+                                         </RenderHTMLConfigProvider>
+                                     </TRenderEngineProvider>
+                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                         </Pressable>
+                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
+                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
+                                         </Pressable>
+                                     </View>
+                                 </View>
+                            }
+                        </View>
+                    }
+                </View>
+            }
+        </View>
 
 
 ------------
