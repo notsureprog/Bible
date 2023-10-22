@@ -40,7 +40,8 @@ console.log(store.getState())
     //     RenderHTMLProps
     // }
     const BibleScreen = ({ navigation, route }) => {
-    const verse = useSelector((state) => state.verseReducer)
+    const verse = useSelector((state) => state.authenticate.verseReducer)
+    console.log(verse)
     const dispatch = useDispatch()
 
     const fontReducer = (state, action) => {
@@ -84,8 +85,6 @@ console.log(store.getState())
     if (data !== null) {
         console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
     }
-
-
 
     const customHTMLElementModels = {
         'dynamic-font': HTMLElementModel.fromCustomModel({

@@ -26,11 +26,11 @@ export const verseSlice = createSlice({
     },
     reducers: {
         selectVerse(state, action) {
-            if (action.type === '/verse/selectVerse') {
+            // if (action.type === '/verse/selectVerse') {
                 console.log("I got hit")
 
                 state.highlightedVerses.push(action.payload) //or something like that
-            }
+            // }
         }
     },
     // extraReducers (builder) {
