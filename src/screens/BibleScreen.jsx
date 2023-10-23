@@ -289,7 +289,8 @@ const BibleScreen = ({ navigation, route }) => {
                                             /> */}
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider GenericPressable={data.content} pressableHightlightColor='yellow'>
-                                            <Pressable onPress={() => console.log(data.id+document.getElementsByTagName('span').innerHTML)}>
+                                            {/* or something like this */}
+                                            <Pressable onPress={() => console.log(data.id+document.getElementsByTagName('span').namedItem('data-sid'))}>
                                                 <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                             </Pressable>
                                         </RenderHTMLConfigProvider>
