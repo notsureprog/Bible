@@ -23,6 +23,7 @@ const reducers = combineReducers({
     verseReducer: verseReducer
     // themeReducer: themeReducer
 })
+
 const persistedReducer = persistReducer(persistConfig, reducers)
 const store =  configureStore({
     reducer: {authenticate: persistedReducer},

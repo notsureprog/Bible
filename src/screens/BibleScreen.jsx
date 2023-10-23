@@ -16,6 +16,7 @@ import { selectVerse } from '../features/verse/verseSlice'
 // import * as scriptureStyles from '../../css/scripture.css'
 
 import { useDispatch, useSelector } from 'react-redux'
+// import { putVerseInDatabase } from '../../database/db'
 
 
 // https://www.w3schools.com/react/react_jsx.asp
@@ -25,6 +26,8 @@ JSX stands for JavaScript XML.
 JSX allows us to write HTML in React.
 
 JSX makes it easier to write and add HTML in React.
+
+IT IS THE MOBILE PLATFORMS THAT MAKE THIS A BIT MORE CHALLENGING... WITH HTML THAT IS...
 */
 
 // idk if theyre all spans
@@ -37,9 +40,9 @@ console.log(BIBLE_API_KEY)
 console.log(VersionSelectMenu)
 console.log(store.getState())
 // const Props = () => {
-    //     RenderHTMLProps
-    // }
-    const BibleScreen = ({ navigation, route }) => {
+//     RenderHTMLProps
+// }
+const BibleScreen = ({ navigation, route }) => {
     const verse = useSelector((state) => state.authenticate.verseReducer)
     console.log(verse)
     const dispatch = useDispatch()
@@ -89,12 +92,14 @@ console.log(store.getState())
     const customHTMLElementModels = {
         'dynamic-font': HTMLElementModel.fromCustomModel({
             tagName: 'dynamic-font',
+            element: RenderHTML,
             mixedUAStyles: {
                 color: darkMode ? styles.dark.color : styles.light.color,
                 fontSize: fontState.size,
             },
-            contentModel: HTMLContentModel.block
+            contentModel: HTMLContentModel.mixed
         })
+
     }
 
     const GetVerse = async () => {
@@ -282,7 +287,14 @@ console.log(store.getState())
                                             value={data.content}
                                             // stylesheet={scriptureStyles}
                                             /> */}
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                    <TRenderEngineProvider>
+                                        <RenderHTMLConfigProvider GenericPressable={data.content} pressableHightlightColor='yellow'>
+                                            <Pressable onPress={() => console.log(data.id+document.getElementsByTagName('span').innerHTML)}>
+                                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            </Pressable>
+                                        </RenderHTMLConfigProvider>
+                                    </TRenderEngineProvider>
+                                    {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                     {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
 
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -292,7 +304,8 @@ console.log(store.getState())
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
-                                        <Pressable onPress={() => { dispatch(selectVerse(data.next.id))}}>
+                                        {/* I am doing next.id to just get the logic down. Then I make it the data-sid or whatever it is in the html */}
+                                        <Pressable onPress={() => { dispatch(selectVerse(data.next.id)) }}>
                                             <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
                                     </View>

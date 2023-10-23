@@ -6,7 +6,6 @@ import { REACT_APP_EXPRESS_URL } from '@env'
 
 export const putVerse = createAsyncThunk('/verse', async (thunkApi) => {
     try {
-
         const options = {
             url: `${REACT_APP_EXPRESS_URL}/verse`
         }
@@ -27,11 +26,14 @@ export const verseSlice = createSlice({
     reducers: {
         selectVerse(state, action) {
             // if (action.type === '/verse/selectVerse') {
-                console.log("I got hit")
+            console.log("I got hit")
 
-                state.highlightedVerses.push(action.payload) //or something like that
+            state.highlightedVerses.push(action.payload) //or something like that
             // }
         }
+        // deleteVerse(state, action) {
+
+        // }
     },
     // extraReducers (builder) {
     //     builder

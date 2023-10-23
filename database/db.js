@@ -65,7 +65,7 @@ const putVerseInDatabase = async (verse, username, callback) => {
 
         await connect
         const User = mongoose.model('User')
-        await User.updateOne({ username: username }, { $set: { highlightedVerses: verse } })
+        await User.updateOne({ username: username }, { $set: { highlightedVerses: [verse] } })
         callback(null, verse)
     } catch (error) {
         console.log(error)

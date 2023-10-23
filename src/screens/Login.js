@@ -125,7 +125,7 @@ const Login = ({ navigation }) => {
                    </Pressable> */}
                 </View>
             }
-            {!user.reducer.isLoggedIn && user.reducer.loading === 'rejected' &&
+            {!user.reducer.isLoggedIn && user.reducer.username !== null &&
                 <View testID='nouser'>
                     <Text>Could not find the user</Text>
                 </View>

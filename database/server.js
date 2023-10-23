@@ -73,12 +73,13 @@ router.post('/login', async (req, res, next) => {
 router.post('/verse', async (req, res, next) => {
     const verse = req.body.verse
     const username = req.body.username
+    console.log(req.body.verse)
     try {
         // I need to push into an array in db 
         await putVerseInDatabase(verse, username, (err, data) => {
             res.send(data) //reflects from the db into the ui and persisted...
+            next()
         })
-        next()
     } catch (error) {
         console.log(error)
     }
