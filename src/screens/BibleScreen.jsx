@@ -288,6 +288,7 @@ const BibleScreen = ({ navigation, route }) => {
                                             // stylesheet={scriptureStyles}
                                             /> */}
                                     <TRenderEngineProvider>
+                                        {/* document.whatever will work on the web, but not android or ios */}
                                         <RenderHTMLConfigProvider GenericPressable={data.content} pressableHightlightColor='yellow'>
                                             {/* or something like this */}
                                             <Pressable onPress={() => console.log(data.id+document.getElementsByTagName('span').namedItem('data-sid'))}>
