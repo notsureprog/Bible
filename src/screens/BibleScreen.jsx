@@ -19,6 +19,7 @@ import { converted } from '../../css/scriptureConverted'
 // import * as scriptureStyles from '../../css/scripture.css'
 
 import { useDispatch, useSelector } from 'react-redux'
+// import { BulkWriteResult } from 'mongodb';
 // import { putVerseInDatabase } from '../../database/db'
 
 // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
@@ -148,44 +149,53 @@ const BibleScreen = ({ navigation, route }) => {
         let verses = []
         if (parsed !== null) {
             console.log(typeof (parsed))
-            console.log(parsed)
+            console.log(parsed.length) 
+            console.log(parsed) //array...
             // 
-            for (var i = 0; i < parsed.length - 1; i++) {
-                parsed.map((data) => {
-                    if (i !== 0 && i !== data.length - 1) {
-                        parsed[i].props.children.map((data) => {
-                            for (var j = 0; j < data.length; j++) {
-                                if (j % 2 === 0) {
-                                    console.log(data)
-                                    // in job 13, it pushed the same verse 12 times.
-                                    tags.push(data)
-                                    // break
-                                }
-                                if (j % 2 !== 0) {
-                                    console.log(data)
-                                    verses.push(data)
-                                    // break
-                                }
-                            }
-                        })
-                    }
-                })
+            for (var i = 0; i < parsed.length; i++) {
+                console.log(i)
+
+                if (i !== 0 && i !== parsed.length - 1) {
+                    console.log(i)
+                    console.log(parsed[i])
+                    console.log(parsed[i].props)
+                    parsed[i].props.children.map((result) => {
+                        console.log(result)
+                        verses.push(result)
+                    })
+                    
+                }
 
             }
+            console.log(verses)
+            console.log(tags)
+
         }
-        console.log(tags)
-        console.log(verses)
-        console.log(parsed)
         return (
-            <Text>Not Rendering you</Text>
-            // <FlatList
-            //     data={verses}
-            //     renderItem={({ item }) => (
-            //         <Text>{item}</Text>
-            //     )}
-            // />
+            // <Text>Hi</Text>
+            <FlatList
+                data={verses}
+                renderItem={({ item }) => (
+                    <Text>{item}</Text>
+                )}
+            />
         )
+
     }
+
+    // console.log(tags)
+    // console.log(verses)
+    console.log(parsed)
+    // return (
+    //     // <Text>Not Rendering you</Text>
+    //     <FlatList
+    //         data={tags}
+    //         renderItem={({ item }) => (
+    //             <Text>{item}</Text>
+    //         )}
+    //     />
+    // )
+
 
 
     // parse html and create a dom element
@@ -361,7 +371,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     <RenderParsed />
                                     <TRenderEngineProvider parseDocument={data.content}>
                                         <RenderHTMLConfigProvider>
-                                            
+
                                             <RenderHTML pressableHightlightColor='yellow' customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
