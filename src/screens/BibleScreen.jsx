@@ -1,6 +1,6 @@
 import React from 'react'
 import parse from 'html-react-parser';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
 import store from '../app/store'
 // import HTMLView from 'react-native-htmlview'
@@ -14,7 +14,7 @@ import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { selectVerse } from '../features/verse/verseSlice'
-import {converted} from '../../css/scriptureConverted'
+import { converted } from '../../css/scriptureConverted'
 // import { putVerseInDatabase } from '../../database/db'
 // import * as scriptureStyles from '../../css/scripture.css'
 
@@ -91,6 +91,7 @@ const BibleScreen = ({ navigation, route }) => {
 
     console.log(bible)
     const [data, setData] = React.useState(0);
+    const [parsed, setParsed] = React.useState(null)
 
     if (data !== null) {
         console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
@@ -108,7 +109,7 @@ const BibleScreen = ({ navigation, route }) => {
                 fontSize: fontState.size,
                 // converted
             },
-            
+
             contentModel: HTMLContentModel.mixed
         })
     }
@@ -131,7 +132,8 @@ const BibleScreen = ({ navigation, route }) => {
             }
 
             const result = await axios(options);
-            console.log(parse(JSON.stringify(result.data.data)))
+            // console.log(parse(JSON.stringify(result.data.data)))
+            setParsed(parse(JSON.stringify(result.data.data)))
             console.log(result.data.data); //not an array
             setData(result.data.data);
             // parse(result.data.data)
@@ -140,14 +142,59 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
-    
+
+    const RenderParsed = () => {
+        let tags = []
+        let verses = []
+        if (parsed !== null) {
+            console.log(typeof (parsed))
+            console.log(parsed)
+            // 
+            for (var i = 0; i < parsed.length - 1; i++) {
+                parsed.map((data) => {
+                    if (i !== 0 && i !== data.length - 1) {
+                        parsed[i].props.children.map((data) => {
+                            for (var j = 0; j < data.length; j++) {
+                                if (j % 2 === 0) {
+                                    console.log(data)
+                                    // in job 13, it pushed the same verse 12 times.
+                                    tags.push(data)
+                                    // break
+                                }
+                                if (j % 2 !== 0) {
+                                    console.log(data)
+                                    verses.push(data)
+                                    // break
+                                }
+                            }
+                        })
+                    }
+                })
+
+            }
+        }
+        console.log(tags)
+        console.log(verses)
+        console.log(parsed)
+        return (
+            <Text>Not Rendering you</Text>
+            // <FlatList
+            //     data={verses}
+            //     renderItem={({ item }) => (
+            //         <Text>{item}</Text>
+            //     )}
+            // />
+        )
+    }
+
 
     // parse html and create a dom element
     // const TRenderEngine = new TRenderEngine({parseDocument: data.content})
 
     React.useEffect(() => {
         GetVerse()
-    }, [chapter, bible, view])
+    }, [chapter, bible])
+
 
     return (
         <View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }}>
@@ -181,7 +228,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML allowedStyles={{}} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            <RenderHTML source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
@@ -194,7 +241,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     {/* data.content is like <p class='p'></p><p class='Gen'></p><p id='GEN.1.1'></p> etc... and scripture styles hits those */}
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML allowedStyles={{fontWeight: 'italic'}} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
@@ -311,8 +358,10 @@ const BibleScreen = ({ navigation, route }) => {
                                             value={data.content}
                                             // stylesheet={scriptureStyles}
                                             /> */}
+                                    <RenderParsed />
                                     <TRenderEngineProvider parseDocument={data.content}>
                                         <RenderHTMLConfigProvider>
+                                            
                                             <RenderHTML pressableHightlightColor='yellow' customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
