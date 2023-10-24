@@ -1,4 +1,5 @@
 import React from 'react'
+import parse from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform } from 'react-native'
 import axios from 'axios'
 import store from '../app/store'
@@ -6,18 +7,21 @@ import store from '../app/store'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
 // import * as scriptureStyles from '../../css/scriptureConverted'
+// import * as scriptureStyles from '../../css/scriptureConverted'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { selectVerse } from '../features/verse/verseSlice'
+import {converted} from '../../css/scriptureConverted'
 // import { putVerseInDatabase } from '../../database/db'
 // import * as scriptureStyles from '../../css/scripture.css'
 
 import { useDispatch, useSelector } from 'react-redux'
 // import { putVerseInDatabase } from '../../database/db'
 
+// https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
 
 // https://www.w3schools.com/react/react_jsx.asp
 /*
@@ -76,53 +80,74 @@ const BibleScreen = ({ navigation, route }) => {
     // }
     // }
 
+
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
     const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
     console.log(chapter)
+    const [view, setView] = React.useState(`chapter`)
     const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
+
     console.log(bible)
     const [data, setData] = React.useState(0);
 
     if (data !== null) {
         console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
+        const element = document.getElementsByClassName('span')
+        console.log(element)
     }
 
     const customHTMLElementModels = {
         'dynamic-font': HTMLElementModel.fromCustomModel({
             tagName: 'dynamic-font',
             element: RenderHTML,
+
             mixedUAStyles: {
                 color: darkMode ? styles.dark.color : styles.light.color,
                 fontSize: fontState.size,
+                // converted
             },
+            
             contentModel: HTMLContentModel.mixed
         })
-
     }
+
+    const allowedStyles = {
+        fontWeight: 'bold'
+    }
+
+
 
     const GetVerse = async () => {
         try {
             const options = {
                 method: 'GET',
-                url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
+                // // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
+                url: view === 'chapter' ? `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}` : `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}/verses`,
                 headers: {
                     'api-key': `${BIBLE_API_KEY}`
                 }
             }
 
             const result = await axios(options);
+            console.log(parse(JSON.stringify(result.data.data)))
             console.log(result.data.data); //not an array
             setData(result.data.data);
+            // parse(result.data.data)
         } catch (err) {
             console.log(err)
         }
     }
 
+    
+
+    // parse html and create a dom element
+    // const TRenderEngine = new TRenderEngine({parseDocument: data.content})
+
     React.useEffect(() => {
         GetVerse()
-    }, [chapter, bible])
+    }, [chapter, bible, view])
 
     return (
         <View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }}>
@@ -156,8 +181,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
-
+                                            <RenderHTML allowedStyles={{}} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
@@ -170,7 +194,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     {/* data.content is like <p class='p'></p><p class='Gen'></p><p id='GEN.1.1'></p> etc... and scripture styles hits those */}
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            <RenderHTML allowedStyles={{fontWeight: 'italic'}} customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
@@ -287,15 +311,12 @@ const BibleScreen = ({ navigation, route }) => {
                                             value={data.content}
                                             // stylesheet={scriptureStyles}
                                             /> */}
-                                    <TRenderEngineProvider>
-                                        {/* document.whatever will work on the web, but not android or ios */}
-                                        <RenderHTMLConfigProvider GenericPressable={data.content} pressableHightlightColor='yellow'>
-                                            {/* or something like this */}
-                                            <Pressable onPress={() => console.log(data.id+document.getElementsByTagName('span').namedItem('data-sid'))}>
-                                                <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
-                                            </Pressable>
+                                    <TRenderEngineProvider parseDocument={data.content}>
+                                        <RenderHTMLConfigProvider>
+                                            <RenderHTML pressableHightlightColor='yellow' customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
+
                                     {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                     {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
 
