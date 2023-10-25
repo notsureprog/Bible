@@ -96,8 +96,8 @@ const BibleScreen = ({ navigation, route }) => {
 
     if (data !== null) {
         console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
-        const element = document.getElementsByClassName('span')
-        console.log(element)
+        // const element = document.getElementsByClassName('span')
+        // console.log(element)
     }
 
     const customHTMLElementModels = {
@@ -143,40 +143,34 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
-
     const RenderParsed = () => {
-        let tags = []
+        // I will have to merge possibly
+        let tags = [] //this one will have tags
         let verses = []
         if (parsed !== null) {
-            console.log(typeof (parsed))
-            console.log(parsed.length) 
             console.log(parsed) //array...
             // 
             for (var i = 0; i < parsed.length; i++) {
-                console.log(i)
-
                 if (i !== 0 && i !== parsed.length - 1) {
-                    console.log(i)
-                    console.log(parsed[i])
-                    console.log(parsed[i].props)
                     parsed[i].props.children.map((result) => {
-                        console.log(result)
-                        verses.push(result)
+                        verses.push({ data: result, verse: i, chapter: data.id })
                     })
-                    
                 }
-
             }
-            console.log(verses)
-            console.log(tags)
 
+            console.log(verses)
         }
         return (
             // <Text>Hi</Text>
             <FlatList
                 data={verses}
-                renderItem={({ item }) => (
-                    <Text>{item}</Text>
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <View>
+                        <Pressable onPress={() => dispatch(selectVerse(item.chapter + '.' + item.data[0]['data']['data-number']))}>
+                            <Text style={{backgroundColor: styles.verse}}>{item.data}</Text>
+                        </Pressable>
+                    </View>
                 )}
             />
         )
@@ -195,6 +189,9 @@ const BibleScreen = ({ navigation, route }) => {
     //         )}
     //     />
     // )
+    if (data !== null) {
+        console.log(data)
+    }
 
 
 
@@ -265,6 +262,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
+                                            {/* <RenderParsed /> */}
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
@@ -414,7 +412,12 @@ const styles = StyleSheet.create({
     },
     main: {
         flex: 3
+    },
+    verse: {
+        backgroundColor: 'yellow'
     }
 })
+
+
 
 export default BibleScreen
