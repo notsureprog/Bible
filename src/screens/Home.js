@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, Pressable } from 'react-native'
 import UserDropDown from '../../components/UserDropDown'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { loginUsers, logoutUser } from '../features/auth/authSlice'
 import { useDispatch, useSelector } from 'react-redux'
 function Home({ navigation }) {
@@ -13,13 +14,14 @@ function Home({ navigation }) {
                 <View>
                     <UserDropDown />
                     <Pressable onPress={() => { navigation.navigate('BibleSelectScreen') }}>
-                        <Text>Click Here to Read the Bible on my fancy Home Page.</Text>
+                        <Text>Read the Bible</Text>
+                        <MaterialCommunityIcons name='book' size={100}/>
                     </Pressable>
                     <Pressable onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
-                        <Text>Search for a verse</Text>
+                    <MaterialCommunityIcons name='magnify' size={100}/>
                     </Pressable>
                     <Pressable onPress={() => dispatch(logoutUser())}>
-                        <Text>Logout</Text>
+                    <MaterialCommunityIcons name='logout' size={100}/>
                     </Pressable>
                 </View>
             }

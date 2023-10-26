@@ -91,11 +91,11 @@ const BibleScreen = ({ navigation, route }) => {
     const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
 
     console.log(bible)
-    const [data, setData] = React.useState(0);
+    const [data, setData] = React.useState(null);
     const [parsed, setParsed] = React.useState(null)
 
     if (data !== null) {
-        console.log(Object.values(data)) //array... I will use this for the highlighted verses as reference
+        console.log(data) //array... I will use this for the highlighted verses as reference
         // const element = document.getElementsByClassName('span')
         // console.log(element)
     }
@@ -148,20 +148,25 @@ const BibleScreen = ({ navigation, route }) => {
         let tags = [] //this one will have tags
         let verses = []
         let allData = []
-        if (parsed !== null) {
+        if (parsed !== null && data !== null) {
+            console.log(data.id.split('.'))
             console.log(parsed) //array...
-            for (var i = 0; i < parsed.length; i++) {
-                if (i !== 0 && i !== parsed.length - 1) {
-                    parsed[i].props.children.map((result) => {
-                        // data-number is definetly the verse
-                        // every even data element has a type (tag/class) result.data.type
-                        // every odd element is text on result.data
-                        // There has to be a simple way...
-                        verses.push({ data: result, verse: i, chapter: data.id })
-                    })
+            if (data.id.split('.')[1] !== 'intro') {
+                for (var i = 0; i < parsed.length; i++) {
+                    if (i !== 0 && i !== parsed.length - 1) {
+                        parsed[i].props.children.map((result) => {
+                            // data-number is definetly the verse
+                            // every even data element has a type (tag/class) result.data.type
+                            // every odd element is text on result.data
+                            // There has to be a simple way...
+                            verses.push({ data: result, chapter: data.id })
+
+                        })
+                    }
                 }
             }
             console.log(verses)
+            // console.log(tags)
         }
 
 
@@ -172,37 +177,37 @@ const BibleScreen = ({ navigation, route }) => {
         //         verses.push({ data: allData[j]})
         //     }
         // }
+        // item.data is the whole chapter... Something wrong wiith the intro of 
         return (
             // <Text>Hi</Text>
             <FlatList
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
+                    // console.log(verses.length)
                     // console.log(item.data)
-                    // if item.length % 2 === 0 then we need to apply styles and tags. every even data type has a className and children (not all have data-number though)
+                    // if verses.length % 2 === 0 then we need to apply styles and tags. every even data type has a className and children (not all have data-number though)
                     // if item.length % 2 !== 0 then we need to render text. every odd one has just data to worry about
-                    <View>
-                        {item.length % 2 === 0 &&
-                            <View>
-                                <Text>jljfjaljfljaskfjaljfaljfajfajfajldfjalfj</Text>
-                                {/* I need this to tell which verse it is... and it will have to be a numerical props.children... with Number(props.children)...since, for example, some of the children are "LORD" */}
-                                {/* <Pressable onPress={() => console.log(item.data.data.props.children)}>
-                                    <Text>{item.data.props.children}</Text>
-                                </Pressable> */}
-                            </View>
-                        }
+                    <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
+
+                        {/* I have to join two or more pieces of data... 15, And the - (LORD another piece to inclide) - spake, 16 (prev or next) in between two numbers is the data i need. STEP 1... cannot ignore... */}
+                        {/* I may try to match array from db/store and highlight in ui */}
+
                         {item.length % 2 !== 0 &&
-                        // if the click is not props.children and a number, then nothing? However, I would hate to click small numbers. 
-                            <Pressable onPress={() => console.log(item.data)}>
-                                <Text style={{converted, backgroundColor: 'yellow' }}>{item.data}</Text>
-                            </Pressable>
-                            
+                            // if the click is not props.children and a number, then nothing? However, I would hate to click small numbers. 
+                            // <Pressable onPress={() => console.log(item.data)}>
+                            <View >
+                                <Pressable onPress={() => isNaN(item.data) ? dispatch(selectVerse(data.id + '.' + item.data)) : ''}>
+                                    {/* how to make dynamic...??? */}
+                                    {/* color: darkMode ? styles.dark.color : styles.light.color */}
+                                    <Text style={{ color: converted['.eb-container .wj'].color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>{item.data}</Text>
+                                </Pressable>
+                            </View>
                         }
                     </View>
                 )}
             />
         )
-
     }
 
     // console.log(tags)
@@ -288,9 +293,10 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                    {/* renderparsed is definetly the problem on ios and android... conditional rendering works with RenderHTML */}
+                                    {/* <RenderParsed /> */}
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            {/* <RenderParsed /> */}
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
@@ -396,12 +402,12 @@ const BibleScreen = ({ navigation, route }) => {
                                             // stylesheet={scriptureStyles}
                                             /> */}
                                     <RenderParsed />
-                                    <TRenderEngineProvider parseDocument={data.content}>
+                                    {/* <TRenderEngineProvider parseDocument={data.content}>
                                         <RenderHTMLConfigProvider>
 
                                             <RenderHTML pressableHightlightColor='yellow' customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
                                         </RenderHTMLConfigProvider>
-                                    </TRenderEngineProvider>
+                                    </TRenderEngineProvider> */}
 
                                     {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                     {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
@@ -443,7 +449,7 @@ const styles = StyleSheet.create({
         flex: 3
     },
     verse: {
-        backgroundColor: 'yellow'
+
     }
 })
 

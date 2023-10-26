@@ -9,7 +9,7 @@ export const putVerse = createAsyncThunk('/verse', async (thunkApi) => {
         const options = {
             url: `${REACT_APP_EXPRESS_URL}/verse`
         }
-        const result = await axios.post(options, thunkApi)
+        const result = await axios.post(`${REACT_APP_EXPRESS_URL}/verse`, thunkApi)
         console.log(result.data)
         return result.data
     } catch (error) {
