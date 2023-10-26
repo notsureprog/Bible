@@ -147,29 +147,57 @@ const BibleScreen = ({ navigation, route }) => {
         // I will have to merge possibly
         let tags = [] //this one will have tags
         let verses = []
+        let allData = []
         if (parsed !== null) {
             console.log(parsed) //array...
-            // 
             for (var i = 0; i < parsed.length; i++) {
                 if (i !== 0 && i !== parsed.length - 1) {
                     parsed[i].props.children.map((result) => {
+                        // data-number is definetly the verse
+                        // every even data element has a type (tag/class) result.data.type
+                        // every odd element is text on result.data
+                        // There has to be a simple way...
                         verses.push({ data: result, verse: i, chapter: data.id })
                     })
                 }
             }
-
             console.log(verses)
         }
+
+
+
+        // console.log(allData.length)
+        // for (var j = 0; j < allData.length; j++) {
+        //     if (allData.length % 2 !== 0) {
+        //         verses.push({ data: allData[j]})
+        //     }
+        // }
         return (
             // <Text>Hi</Text>
             <FlatList
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
+                    // console.log(item.data)
+                    // if item.length % 2 === 0 then we need to apply styles and tags. every even data type has a className and children (not all have data-number though)
+                    // if item.length % 2 !== 0 then we need to render text. every odd one has just data to worry about
                     <View>
-                        <Pressable onPress={() => dispatch(selectVerse(item.chapter + '.' + item.data[0]['data']['data-number']))}>
-                            <Text style={{backgroundColor: styles.verse}}>{item.data}</Text>
-                        </Pressable>
+                        {item.length % 2 === 0 &&
+                            <View>
+                                <Text>jljfjaljfljaskfjaljfaljfajfajfajldfjalfj</Text>
+                                {/* I need this to tell which verse it is... and it will have to be a numerical props.children... with Number(props.children)...since, for example, some of the children are "LORD" */}
+                                {/* <Pressable onPress={() => console.log(item.data.data.props.children)}>
+                                    <Text>{item.data.props.children}</Text>
+                                </Pressable> */}
+                            </View>
+                        }
+                        {item.length % 2 !== 0 &&
+                        // if the click is not props.children and a number, then nothing? However, I would hate to click small numbers. 
+                            <Pressable onPress={() => console.log(item.data)}>
+                                <Text style={{converted, backgroundColor: 'yellow' }}>{item.data}</Text>
+                            </Pressable>
+                            
+                        }
                     </View>
                 )}
             />
@@ -348,7 +376,8 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            <RenderParsed />
+                                            {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
