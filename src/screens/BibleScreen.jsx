@@ -1,5 +1,5 @@
 import React from 'react'
-import parse from 'html-react-parser';
+import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
 import store from '../app/store'
@@ -86,13 +86,12 @@ const BibleScreen = ({ navigation, route }) => {
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
     const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
-    console.log(chapter)
     const [view, setView] = React.useState(`chapter`)
     const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
-
+    const [parsed, setParsed] = React.useState(null)
     console.log(bible)
     const [data, setData] = React.useState(null);
-    const [parsed, setParsed] = React.useState(null)
+
 
     if (data !== null) {
         console.log(data) //array... I will use this for the highlighted verses as reference
@@ -119,8 +118,6 @@ const BibleScreen = ({ navigation, route }) => {
         fontWeight: 'bold'
     }
 
-
-
     const GetVerse = async () => {
         try {
             const options = {
@@ -132,9 +129,29 @@ const BibleScreen = ({ navigation, route }) => {
                 }
             }
 
+            const parseOptions = {
+                replace: ({ attributes, children }) => {
+                    console.log(attributes)
+                    console.log(children)
+                    if (!attributes) {
+                        return
+                    }
+                    for (var i = 0; i < children.length; i++) {
+                        console.log(children[i])
+                        console.log(attributes[i])
+                        if (attributes.value !== undefined && attributes.name !== 'data-number') {
+                            // i honestly could do this, but dynamic would be so much prettier
+                            return <children.name className={attributes.value} style={{ color: converted[`.eb-container ${attributes.value}`].color }}>{children.data}</children.name>
+
+                        }
+                    }
+
+                }
+            }
             const result = await axios(options);
             // console.log(parse(JSON.stringify(result.data.data)))
-            setParsed(parse(JSON.stringify(result.data.data)))
+            setParsed(parse(JSON.stringify(result.data.data), parseOptions))
+
             console.log(result.data.data); //not an array
             setData(result.data.data);
             // parse(result.data.data)
@@ -143,64 +160,41 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
+    // may not have to do all of this...
+    // I really almost have it here, but that stupid attribute of, for example, 9:1: '' gives me an error, and i think it is preventing me from rendering on ios and android (since it is saying the same thing on my physical device and in the web)
     const RenderParsed = () => {
-        // I will have to merge possibly
-        let tags = [] //this one will have tags
+
+        let tags = []
         let verses = []
         let allData = []
         if (parsed !== null && data !== null) {
             console.log(data.id.split('.'))
-            console.log(parsed) //array...
+            console.log(parsed)
+
             if (data.id.split('.')[1] !== 'intro') {
                 for (var i = 0; i < parsed.length; i++) {
                     if (i !== 0 && i !== parsed.length - 1) {
                         parsed[i].props.children.map((result) => {
-                            // data-number is definetly the verse
-                            // every even data element has a type (tag/class) result.data.type
-                            // every odd element is text on result.data
-                            // There has to be a simple way...
                             verses.push({ data: result, chapter: data.id })
-
                         })
                     }
                 }
             }
             console.log(verses)
-            // console.log(tags)
         }
-
-
-
-        // console.log(allData.length)
-        // for (var j = 0; j < allData.length; j++) {
-        //     if (allData.length % 2 !== 0) {
-        //         verses.push({ data: allData[j]})
-        //     }
-        // }
-        // item.data is the whole chapter... Something wrong wiith the intro of 
         return (
-            // <Text>Hi</Text>
+
             <FlatList
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
-                    // console.log(verses.length)
-                    // console.log(item.data)
-                    // if verses.length % 2 === 0 then we need to apply styles and tags. every even data type has a className and children (not all have data-number though)
-                    // if item.length % 2 !== 0 then we need to render text. every odd one has just data to worry about
+
                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
 
-                        {/* I have to join two or more pieces of data... 15, And the - (LORD another piece to inclide) - spake, 16 (prev or next) in between two numbers is the data i need. STEP 1... cannot ignore... */}
-                        {/* I may try to match array from db/store and highlight in ui */}
-
                         {item.length % 2 !== 0 &&
-                            // if the click is not props.children and a number, then nothing? However, I would hate to click small numbers. 
-                            // <Pressable onPress={() => console.log(item.data)}>
                             <View >
                                 <Pressable onPress={() => isNaN(item.data) ? dispatch(selectVerse(data.id + '.' + item.data)) : ''}>
-                                    {/* how to make dynamic...??? */}
-                                    {/* color: darkMode ? styles.dark.color : styles.light.color */}
-                                    <Text style={{ color: converted['.eb-container .wj'].color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>{item.data}</Text>
+                                    <Text style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>{item.data}</Text>
                                 </Pressable>
                             </View>
                         }
@@ -243,7 +237,7 @@ const BibleScreen = ({ navigation, route }) => {
                 <View>
                     <Text style={{ marginLeft: '25%', marginRight: '25%', color: darkMode ? styles.dark.color : styles.light.color, fontSize: 35 }}>{data.reference}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        {/* This version select menu buttons do not like being clicked */}
+
                         <VersionSelectMenu style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} />
                     </View>
                     <Pressable style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
@@ -278,7 +272,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id === 'REV.22' &&
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-                                    {/* data.content is like <p class='p'></p><p class='Gen'></p><p id='GEN.1.1'></p> etc... and scripture styles hits those */}
+
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
@@ -287,19 +281,15 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                         <Text>{data.previous.bookId} {data.previous.number}</Text>
                                     </Pressable>
-                                    {/* <RenderHTML source={{ html: `${data.content}` }} /> */}
+
                                 </View>
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-                                    {/* renderparsed is definetly the problem on ios and android... conditional rendering works with RenderHTML */}
+
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${RenderParsed}` }} />
                                     {/* <RenderParsed /> */}
-                                    <TRenderEngineProvider>
-                                        <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
-                                        </RenderHTMLConfigProvider>
-                                    </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
