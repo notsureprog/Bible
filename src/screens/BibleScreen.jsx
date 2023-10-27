@@ -136,15 +136,32 @@ const BibleScreen = ({ navigation, route }) => {
                     if (!attributes) {
                         return
                     }
-                    for (var i = 0; i < children.length; i++) {
-                        console.log(children[i])
-                        console.log(attributes[i])
-                        if (attributes.value !== undefined && attributes.name !== 'data-number') {
-                            // i honestly could do this, but dynamic would be so much prettier
-                            return <children.name className={attributes.value} style={{ color: converted[`.eb-container ${attributes.value}`].color }}>{children.data}</children.name>
-
-                        }
+                    // if (attributes.something === 'whatever')
+                    // console.log(children.type)
+                    console.log(domToReact(children, parseOptions))
+                    // i will have to get my styles up here... I cannot do it anywhere else but here
+                    if (typeof (children.name) !== "undefined") {
+                        console.log(<children.name>{domToReact(children, parseOptions)}</children.name>)
+                        return (
+                            <children.name>{domToReact(children, parseOptions)}</children.name>
+                        )
                     }
+
+                    //for (var i = 0; i < children.length; i++) {
+                    //    console.log(Object.values(children[i].attribs)[0])
+                    //     console.log(children[i])
+                    //     console.log(attributes[i])
+                    //     if (attributes.value !== undefined) {
+                    //         console.log("Can I get hit")
+                    //         // console.log(<children.name class={attributes.value} style={{ color: converted[`.eb-container ${attributes.value}`].color, fontSize: converted[`.eb-container ${attributes.value}`].fontSize }}>{children[i].data}</children.name>)
+                    //         // i honestly could do this, but dynamic would be so much prettier
+                    //         // this is still html, so it would be class not className
+                    //         // class^v for verse number probably...
+                    // idk what i was thinking lol. i guess children.name is, for example, span, div, p, etc...
+                    //         return <children.name class={attributes.value} style={{  fontSize: converted[`.eb-container ${attributes.value}`].fontSize }}>{children[i].data}</children.name>
+
+                    //     }
+                    //}
 
                 }
             }
@@ -188,14 +205,20 @@ const BibleScreen = ({ navigation, route }) => {
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
+                    // console.log(index % 2)
 
                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
 
-                        {item.length % 2 !== 0 &&
+                        {index % 2 !== 0 &&
                             <View >
-                                <Pressable onPress={() => isNaN(item.data) ? dispatch(selectVerse(data.id + '.' + item.data)) : ''}>
-                                    <Text style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>{item.data}</Text>
+                                <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
+                                    <Text style={{ color: converted['.eb-container .wj'].color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>{item.data}</Text>
                                 </Pressable>
+                            </View>
+                        }
+                        {index % 2 === 0 &&
+                            <View>
+
                             </View>
                         }
                     </View>
