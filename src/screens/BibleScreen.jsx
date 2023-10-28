@@ -138,16 +138,24 @@ const BibleScreen = ({ navigation, route }) => {
                     console.log(children)
                     console.log(typeof children)
 
-                    // So, for example, on Matthew 15, the attribute 15:11 is invalid, but 15:12, 15:13 is valid... but why???
                     if (!attributes) {
                         return
                     }
+
                     if (!children) {
                         return
                     }
-                    // if (attributes.something === 'whatever')
-                    // console.log(children.type)
-                    // i will have to get my styles up here... I cannot do it anywhere else but here
+                    // maybe a few hundred lines of code... i wouldnt mind figuring a way to do it in a few, but idk...
+                    for (var i = 0; i < attributes.length; i++) {
+
+                        if (attributes[i].value === "\\\"add\\\"") {
+                            return <p style={converted[`.eb-container .add`]}>{domToReact(children, parseOptions)}</p>
+                        }
+                        if (attributes[i].value === '\\"wj\\"') {
+                            // i know theyre not all p tags, but for simplicity
+                            return <p style={converted[`.eb-container .wj`]}>{domToReact(children, parseOptions)}</p>
+                        }
+                    }
                     if (typeof (children.name) !== "undefined") {
                         console.log(<span>{domToReact(children, parseOptions)}</span>)
                         return (
@@ -159,7 +167,6 @@ const BibleScreen = ({ navigation, route }) => {
 
             }
 
-            // a lot of ugly stuff going on...
             const result = await axios(options);
             console.log(parse(JSON.stringify(result.data.data)))
             setParsed(parse(JSON.stringify(result.data.data), parseOptions))
@@ -208,20 +215,26 @@ const BibleScreen = ({ navigation, route }) => {
 
                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
 
-                        
-                            {typeof item.data !== 'object' &&
-                                <View>
-                                    <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
-                                        <Text>{item.data}</Text>
-                                    </Pressable>
-                                </View>
-                            }
-                            {typeof item.data === 'object' && 
+
+                        {typeof item.data !== 'object' &&
                             <View>
-                                <Text>{item.data.props.children}</Text>
+                                <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
+                                    <Text>{item.data}</Text>
+                                </Pressable>
                             </View>
-                            }
-                        
+                        }
+                        {typeof item.data === 'object' &&
+                            <View>
+                                {/* className and children seem to be the only two elements ALWAYS present. I have been looking through a lot of verses and stuff. */}
+                                <Text
+                                    style={
+                                        item.data.props.style
+                                    }
+                                    className={item.data.props.className}>{item.data.props.children}
+                                </Text>
+                            </View>
+                        }
+
 
                     </View>
                 )}
