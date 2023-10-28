@@ -76,7 +76,7 @@ export const authSlice = createSlice({
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
                 AsyncStorage.removeItem('persist:root')
-                window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices.
+                window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
             }
         }
     },

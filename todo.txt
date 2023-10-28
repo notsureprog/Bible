@@ -1,16 +1,34 @@
 - logout button - works on web, but maybe not ios. it does not on andrdoid
 - work on highlighting verses.
-- refactor
+- refactor - make some components for the ui, remove console logs, put styles in a separate file.
 - test (find out why user.reducer.loading is undefined on login test, but idle on going to the page.) - the wrapper took care of it, but still kind of...
 - Error of undefined on bible screen when trying to manipulate the url and messing it up. (maybe get rid of deep linking if it isnt necessary) (maybe a drawer nav or whatever) -- kind if fixed with removing deep linking
 - sign and secure cookies
+
+https://stuff.mit.edu/afs/sipb/project/android/docs/distribute/googleplay/publish/preparing.html
+
 
 Since the store is global, I might be able to use a piece of it as a dependence to the logout function to fireup on a useEffect dependency.
 
 
 From the server, I will get the notinthedb message. no user is being pulled from mongo. All of that is good. However, on the login page, I do not get an error and It says i am logged in
 
+// RendeerHTML last updated 6 years ago, but react html parser less than a week ago. plus react parser has over 1 million weekly downloads
+    // i do need to somehow sanitize html...
+    // const customHTMLElementModels = {
+    //     'dynamic-font': HTMLElementModel.fromCustomModel({
+    //         tagName: 'dynamic-font',
+    //         element: RenderHTML,
 
+    //         mixedUAStyles: {
+    //             color: darkMode ? styles.dark.color : styles.light.color,
+    //             fontSize: fontState.size,
+    //             // converted
+    //         },
+
+    //         contentModel: HTMLContentModel.mixed
+    //     })
+    // }
 
 
 <View style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }}>

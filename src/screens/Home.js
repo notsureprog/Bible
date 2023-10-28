@@ -1,16 +1,17 @@
 import React from 'react'
 import { View, Text, Pressable } from 'react-native'
+import _ from 'underscore'
 import UserDropDown from '../../components/UserDropDown'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { loginUsers, logoutUser } from '../features/auth/authSlice'
 import { useDispatch, useSelector } from 'react-redux'
 function Home({ navigation }) {
-    const user = useSelector((state) => state.authenticate)
+    const user = useSelector((state) => state.authenticate.reducer, _.isEqual)
     const dispatch = useDispatch()
 
     return (
         <View>
-            {user.reducer.isLoggedIn &&
+            {user.isLoggedIn &&
                 <View>
                     <UserDropDown />
                     <Pressable onPress={() => { navigation.navigate('BibleSelectScreen') }}>
@@ -25,7 +26,7 @@ function Home({ navigation }) {
                     </Pressable>
                 </View>
             }
-            {!user.reducer.isLoggedIn && 
+            {!user.isLoggedIn && 
                 <View>
                     <Pressable onPress={() => { navigation.navigate('Login') }}>
                         <Text>Login</Text>

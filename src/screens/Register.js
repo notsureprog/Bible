@@ -1,13 +1,15 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import _ from 'underscore'
 import { submitUser, registerUsers } from '../features/auth/authSlice'
 import { ThemeContext } from './context/ThemeContext'
 
 const Register = ({ navigation }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode
-    const user = useSelector(state => state.authenticate)
+    const user = useSelector(state => state.authenticate.reducer, _.isEqual)
+    console.log(user)
     const putUserInDatabase = submitUser()
     const [username, setUsername] = React.useState(null);
     const [email, setEmail] = React.useState(null);
@@ -41,16 +43,16 @@ const Register = ({ navigation }) => {
     }
 
     React.useEffect(() => {
-        if (user.reducer.loading === 'success') {
+        if (user.loading === 'success') {
             console.log("Success")
         }
         if (user.loading === 'loading') {
             // dispatch(putUserInDatabase)
         }
-    }, [dispatch, user.reducer.loading])
+    }, [dispatch, user.loading])
     return (
         <View style={{ height: '100%', alignItems: 'center', padding: 5, justifyContent: 'space-between', backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-            {!user.reducer.isLoggedIn &&
+            {!user.isLoggedIn &&
                 <View>
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Username</Text>
                     <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setUsername} />
@@ -66,9 +68,9 @@ const Register = ({ navigation }) => {
                 </View>
             }
 
-            {user.reducer.isLoggedIn &&
+            {user.isLoggedIn &&
                 <View>
-                    <Text>{user.reducer.username} is Logged in. You will need to sign out.</Text>
+                    <Text>{user.username} is Logged in. You will need to sign out.</Text>
                     <Pressable onPress={() => navigation.navigate({ name: 'Home' })}>
                         <Text>Go Back</Text>
                     </Pressable>

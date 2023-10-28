@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native'
 import store from '../app/store'
+import _ from 'underscore'
 // import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector, useDispatch } from 'react-redux'
 import { loginUsers, submitUser, logoutUser } from '../features/auth/authSlice'
@@ -12,8 +13,8 @@ const Login = ({ navigation }) => {
 
     const getUserFromDatabase = submitUser();
     // I honestly think this entire store is undefinee somehow on the first iteration.
-    const user = useSelector((state, action) => state.authenticate); //idle initially but is undefined on test...
-    console.log(user.reducer)
+    const user = useSelector((state, action) => state.authenticate.reducer, _.isEqual); //idle initially but is undefined on test...
+    console.log(user)
     const dispatch = useDispatch()
     const [username, setUsername] = React.useState(null);
     const [password, setPassword] = React.useState(null);
@@ -79,39 +80,39 @@ const Login = ({ navigation }) => {
 
     React.useEffect(() => {
         // result.type
-        if (user.reducer.loading === 'success') {
+        if (user.loading === 'success') {
             const stateBefore = store.getState()
             console.log(stateBefore)
             const stateAfter = store.getState()
             console.log(stateAfter)
         }
         // on the second iteration (bad user) of submitting a user, I am going to be at user.reducer.loading === 'rejected' I want to be idle
-        if (user.reducer.loading === 'rejected') {
+        if (user.loading === 'rejected') {
             console.log("Failed")
             console.log("Denied Access")
             console.log(store.getState())
         }
-        if (user.reducer.loading === 'loading') {
+        if (user.loading === 'loading') {
             console.log("loading")
             console.log(store.getState())
             dispatch(getUserFromDatabase)
         }
-        if (user.reducer.loading === 'pending') {
+        if (user.loading === 'pending') {
             // when it is pending, the dispatch is already in progress. when it is pending, it comes back true or false of logged in or not.
             console.log(store.getState())
 
         }
-        if (user.reducer.loading === 'idle') {
+        if (user.loading === 'idle') {
             console.log(store.getState())
         }
         // AsyncStorage.setItem('store', user)
-    }, [dispatch, user.reducer.loading])
+    }, [dispatch, user.loading])
 
     // https://meliorence.github.io/react-native-render-html/api/renderhtml
     return (
         <View aria-label='main' style={{ alignItems: 'center', padding: 5 }}>
             
-            {!user.reducer.isLoggedIn && user.reducer.loading !== 'success' &&
+            {!user.isLoggedIn && user.loading !== 'success' &&
                 <View>
                     {/* <MaterialCommunityIcons name='login' size={100} /> */}
                     <TextInput testID='usernam' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
@@ -125,14 +126,14 @@ const Login = ({ navigation }) => {
                    </Pressable> */}
                 </View>
             }
-            {!user.reducer.isLoggedIn && user.reducer.username !== null &&
+            {!user.isLoggedIn && user.username !== null &&
                 <View testID='nouser'>
                     <Text>Could not find the user</Text>
                 </View>
             }
-            {user.reducer.token !== null &&
+            {user.token !== null &&
                 <View>
-                    <Text>{user.reducer.username} is logged in</Text>
+                    <Text>{user.username} is logged in</Text>
                     <Pressable onPress={() => navigation.navigate('Home')} >
                         <Text>Go Back</Text>
                     </Pressable>

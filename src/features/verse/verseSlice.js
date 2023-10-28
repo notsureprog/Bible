@@ -3,6 +3,8 @@ import React from 'react'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { REACT_APP_EXPRESS_URL } from '@env'
+// import { putVerseInDatabase } from '../../../database/db'
+
 
 export const putVerse = createAsyncThunk('/verse', async (thunkApi) => {
     try {
@@ -27,8 +29,8 @@ export const verseSlice = createSlice({
         selectVerse(state, action) {
             // if (action.type === '/verse/selectVerse') {
             console.log("I got hit")
-
-            state.highlightedVerses.push(action.payload) //or something like that
+            // putVerseInDatabase(action.payload)
+            state.highlightedVerses.push(action.payload) //or something like that... im going to hardcode for now to test.
             // }
         }
         // deleteVerse(state, action) {

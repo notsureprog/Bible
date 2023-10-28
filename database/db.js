@@ -6,19 +6,21 @@ const bcrypt = require('bcrypt');
 
 const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
 const connect = mongoose.connect(uri)
+
+// post user to the database in register form
 const postUserToDatabase = async (username, password, email, callback) => {
 
     try {
         await connect
         const User = mongoose.model('User')
-
+        // has the user password
         bcrypt.hash(password, 10, async (err, hash) => {
             if (err) { throw err }
             const user = new User({ username: username, password: hash, email: email });
             await user.save()
             const token = jwt.sign({ username: username }, hash)
+            // callback to send result to server.js
             callback(null, { username: username, token: token })
-
         })
     } catch (error) {
         console.log(error)
@@ -30,23 +32,24 @@ const getUserFromDatabase = async (username, password, callback) => {
     try {
         await connect
         const User = mongoose.model('User')
-        // probably should find by the id of the user... although it is unique in model.
+        // find the user by username in the db (it is unique). 
         const result = await User.findOne({ username: username })
+        // no user in the db
         if (result === null) {
             console.log("No user was found")
             return { username: null, password: null }
         }
+        // user's hashed password in mongodb
         const pword = result.password
+        // compare if the password's hashes are matching.
         bcrypt.hash(password, 10, async (err, hash) => {
             bcrypt.compare(password, pword, async (err, match) => {
-                console.log("Password and Hash")
-                console.log(pword)
-                console.log("End password and hash")
                 if (err) { throw err }
                 console.log(match)
+                // boolean match from comparing two hashed passwords
                 if (match) {
                     const token = jwt.sign({ username: result.username }, pword)
-                    console.log(token)
+                    // callback to send information back to server.js
                     callback(null, { username: result.username, token: token })
                 } else {
                     return "User not Found"
@@ -62,10 +65,9 @@ const getUserFromDatabase = async (username, password, callback) => {
 // this will have to be persisted in the store too.
 const putVerseInDatabase = async (verse, username, callback) => {
     try {
-
         await connect
         const User = mongoose.model('User')
-        await User.updateOne({ username: username }, { $set: { highlightedVerses: [verse] } })
+        await User.updateOne({ username: username }, { $push: { highlightedVerses: verse } })
         callback(null, verse)
     } catch (error) {
         console.log(error)

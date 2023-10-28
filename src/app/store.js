@@ -19,6 +19,7 @@ const persistConfig = {
 // }
 
 const reducers = combineReducers({
+    // change to authReducer
     reducer: authReducer,
     verseReducer: verseReducer
     // themeReducer: themeReducer

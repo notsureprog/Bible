@@ -2,6 +2,7 @@ import React from 'react'
 import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
+import {WebView} from 'react-native-webview'
 // import store from '../app/store'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
@@ -40,8 +41,8 @@ console.log(VersionSelectMenu)
 //     RenderHTMLProps
 // }
 const BibleScreen = ({ navigation, route }) => {
-    // const verse = useSelector((state) => state.authenticate.verseReducer)
-    // console.log(verse)
+    const verse = useSelector((state) => state.authenticate.verseReducer)
+    console.log(verse) //verse[0,1,n...] with a background color of yellow on match to screen.
     const dispatch = useDispatch()
 
     const fontReducer = (state, action) => {
@@ -90,22 +91,7 @@ const BibleScreen = ({ navigation, route }) => {
         // console.log(element)
     }
 
-    // RendeerHTML last updated 6 years ago, but react html parser less than a week ago. plus react parser has over 1 million weekly downloads
-    // i do need to somehow sanitize html...
-    // const customHTMLElementModels = {
-    //     'dynamic-font': HTMLElementModel.fromCustomModel({
-    //         tagName: 'dynamic-font',
-    //         element: RenderHTML,
-
-    //         mixedUAStyles: {
-    //             color: darkMode ? styles.dark.color : styles.light.color,
-    //             fontSize: fontState.size,
-    //             // converted
-    //         },
-
-    //         contentModel: HTMLContentModel.mixed
-    //     })
-    // }
+    
 
     const allowedStyles = {
         fontWeight: 'bold'
@@ -135,7 +121,7 @@ const BibleScreen = ({ navigation, route }) => {
                 replace: ({ attributes, children }) => {
                     console.log(attributes)
                     console.log(typeof attributes)
-                    console.log(children)
+                    console.log(children) //circular on android
                     console.log(typeof children)
 
                     if (!attributes) {
@@ -147,7 +133,7 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                     // maybe a few hundred lines of code... i wouldnt mind figuring a way to do it in a few, but idk...
                     for (var i = 0; i < attributes.length; i++) {
-
+// i could probably dispatch to db when there is a data number in a span since there should be content within the span
                         if (attributes[i].value === "\\\"add\\\"") {
                             return <p style={converted[`.eb-container .add`]}>{domToReact(children, parseOptions)}</p>
                         }
@@ -155,6 +141,11 @@ const BibleScreen = ({ navigation, route }) => {
                             // i know theyre not all p tags, but for simplicity
                             return <p style={converted[`.eb-container .wj`]}>{domToReact(children, parseOptions)}</p>
                         }
+                        if (attributes[i].value === "\\\"v\\\"") {
+                            // i know theyre not all p tags, but for simplicity
+                            return <button><span style={converted[`.eb-container .v`]}>{domToReact(children, parseOptions)}</span></button>
+                        }
+                        // i think that <children.name></children.name> stuff i made might work in this for loop
                     }
                     if (typeof (children.name) !== "undefined") {
                         console.log(<span>{domToReact(children, parseOptions)}</span>)
@@ -201,6 +192,8 @@ const BibleScreen = ({ navigation, route }) => {
                         })
                     }
                 }
+            } else {
+                verses.push({data: `The Book of ${data.id}`})
             }
             console.log(verses)
 
@@ -303,7 +296,7 @@ const BibleScreen = ({ navigation, route }) => {
 
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
@@ -317,9 +310,12 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View>
                                     {/* using the parser because it appears to be more stable with the amount of downloads, the last publish isnt 6 years ago, etc... */}
                                     {/* <RenderParsed /> */}
-                                    {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${data.content}` }} /> */}
                                     <ScrollView>
-                                        <RenderParsed />
+                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${data.content}` }} />
+                                        {/* <RenderParsed /> */}
+                                        {/* <WebView 
+                                        source={{html: data.content}}
+                                        /> */}
                                     </ScrollView>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
@@ -362,10 +358,10 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
-                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
+                                <View>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
@@ -385,11 +381,11 @@ const BibleScreen = ({ navigation, route }) => {
                     {Platform.OS === 'web' &&
                         <View>
                             {data.id === 'GEN.intro' &&
-                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                <View>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             <CSSPropertyNameList></CSSPropertyNameList>
-                                            <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -400,7 +396,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 </View>
                             }
                             {data.id === 'REV.22' &&
-                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                <View>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             {/* <RenderParsed /> */}

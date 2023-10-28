@@ -13,3 +13,4 @@ props.className and props.children go together for the css
 all of the even index parsed html to jsx will be the tag names with classes. which means i can click a tag with data.id = "."+props.children to store in db
 
 all of the odd is the text
+
