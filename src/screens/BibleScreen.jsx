@@ -2,12 +2,9 @@ import React from 'react'
 import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
-import store from '../app/store'
-// import HTMLView from 'react-native-htmlview'
+// import store from '../app/store'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
-// import * as scriptureStyles from '../../css/scriptureConverted'
-// import * as scriptureStyles from '../../css/scriptureConverted'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
@@ -15,12 +12,7 @@ import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { selectVerse } from '../features/verse/verseSlice'
 import { converted } from '../../css/scriptureConverted'
-// import { putVerseInDatabase } from '../../database/db'
-// import * as scriptureStyles from '../../css/scripture.css'
-
 import { useDispatch, useSelector } from 'react-redux'
-// import { BulkWriteResult } from 'mongodb';
-// import { putVerseInDatabase } from '../../database/db'
 
 // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
 
@@ -43,13 +35,13 @@ IT IS THE MOBILE PLATFORMS THAT MAKE THIS A BIT MORE CHALLENGING... WITH HTML TH
 
 console.log(BIBLE_API_KEY)
 console.log(VersionSelectMenu)
-console.log(store.getState())
+// console.log(store.getState())
 // const Props = () => {
 //     RenderHTMLProps
 // }
 const BibleScreen = ({ navigation, route }) => {
-    const verse = useSelector((state) => state.authenticate.verseReducer)
-    console.log(verse)
+    // const verse = useSelector((state) => state.authenticate.verseReducer)
+    // console.log(verse)
     const dispatch = useDispatch()
 
     const fontReducer = (state, action) => {
@@ -81,15 +73,14 @@ const BibleScreen = ({ navigation, route }) => {
     // }
     // }
 
-
+    // seems like i am spamming useState and not trying to.
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
     const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
-    const [view, setView] = React.useState(`chapter`)
+    // const [view, setView] = React.useState(`chapter`) //i dont really even use
     const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
     const [parsed, setParsed] = React.useState(null)
-    console.log(bible)
     const [data, setData] = React.useState(null);
 
 
@@ -99,20 +90,22 @@ const BibleScreen = ({ navigation, route }) => {
         // console.log(element)
     }
 
-    const customHTMLElementModels = {
-        'dynamic-font': HTMLElementModel.fromCustomModel({
-            tagName: 'dynamic-font',
-            element: RenderHTML,
+    // RendeerHTML last updated 6 years ago, but react html parser less than a week ago. plus react parser has over 1 million weekly downloads
+    // i do need to somehow sanitize html...
+    // const customHTMLElementModels = {
+    //     'dynamic-font': HTMLElementModel.fromCustomModel({
+    //         tagName: 'dynamic-font',
+    //         element: RenderHTML,
 
-            mixedUAStyles: {
-                color: darkMode ? styles.dark.color : styles.light.color,
-                fontSize: fontState.size,
-                // converted
-            },
+    //         mixedUAStyles: {
+    //             color: darkMode ? styles.dark.color : styles.light.color,
+    //             fontSize: fontState.size,
+    //             // converted
+    //         },
 
-            contentModel: HTMLContentModel.mixed
-        })
-    }
+    //         contentModel: HTMLContentModel.mixed
+    //     })
+    // }
 
     const allowedStyles = {
         fontWeight: 'bold'
@@ -123,53 +116,57 @@ const BibleScreen = ({ navigation, route }) => {
             const options = {
                 method: 'GET',
                 // // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
-                url: view === 'chapter' ? `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}` : `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}/verses`,
+                url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
                 headers: {
                     'api-key': `${BIBLE_API_KEY}`
                 }
             }
 
+            const sanitizeOptions = {
+                allowedTags: ['span', 'div', 'p'],
+                allowedAttributes: {
+                    'p': ['class'],
+                    'span': ['class']
+                }
+            }
+
+
             const parseOptions = {
                 replace: ({ attributes, children }) => {
                     console.log(attributes)
+                    console.log(typeof attributes)
                     console.log(children)
+                    console.log(typeof children)
+
+                    // So, for example, on Matthew 15, the attribute 15:11 is invalid, but 15:12, 15:13 is valid... but why???
                     if (!attributes) {
+                        return
+                    }
+                    if (!children) {
                         return
                     }
                     // if (attributes.something === 'whatever')
                     // console.log(children.type)
-                    console.log(domToReact(children, parseOptions))
                     // i will have to get my styles up here... I cannot do it anywhere else but here
                     if (typeof (children.name) !== "undefined") {
-                        console.log(<children.name>{domToReact(children, parseOptions)}</children.name>)
+                        console.log(<span>{domToReact(children, parseOptions)}</span>)
                         return (
-                            <children.name>{domToReact(children, parseOptions)}</children.name>
+                            <p>{domToReact(children, parseOptions)}</p>
                         )
                     }
-
-                    //for (var i = 0; i < children.length; i++) {
-                    //    console.log(Object.values(children[i].attribs)[0])
-                    //     console.log(children[i])
-                    //     console.log(attributes[i])
-                    //     if (attributes.value !== undefined) {
-                    //         console.log("Can I get hit")
-                    //         // console.log(<children.name class={attributes.value} style={{ color: converted[`.eb-container ${attributes.value}`].color, fontSize: converted[`.eb-container ${attributes.value}`].fontSize }}>{children[i].data}</children.name>)
-                    //         // i honestly could do this, but dynamic would be so much prettier
-                    //         // this is still html, so it would be class not className
-                    //         // class^v for verse number probably...
-                    // idk what i was thinking lol. i guess children.name is, for example, span, div, p, etc...
-                    //         return <children.name class={attributes.value} style={{  fontSize: converted[`.eb-container ${attributes.value}`].fontSize }}>{children[i].data}</children.name>
-
-                    //     }
-                    //}
-
+                    console.log(domToReact(children, parseOptions))
                 }
+
             }
+
+            // a lot of ugly stuff going on...
             const result = await axios(options);
-            // console.log(parse(JSON.stringify(result.data.data)))
+            console.log(parse(JSON.stringify(result.data.data)))
             setParsed(parse(JSON.stringify(result.data.data), parseOptions))
 
             console.log(result.data.data); //not an array
+            // console.log(sanitizeHtml(result.data.data.content, sanitizeOptions)); //not an array
+            console.log(result.data.data.content); //not an array
             setData(result.data.data);
             // parse(result.data.data)
         } catch (err) {
@@ -178,7 +175,7 @@ const BibleScreen = ({ navigation, route }) => {
     }
 
     // may not have to do all of this...
-    // I really almost have it here, but that stupid attribute of, for example, 9:1: '' gives me an error, and i think it is preventing me from rendering on ios and android (since it is saying the same thing on my physical device and in the web)
+
     const RenderParsed = () => {
 
         let tags = []
@@ -188,16 +185,18 @@ const BibleScreen = ({ navigation, route }) => {
             console.log(data.id.split('.'))
             console.log(parsed)
 
+            // It seems like this would be bad... Not every one of them is alternating it appears...
             if (data.id.split('.')[1] !== 'intro') {
                 for (var i = 0; i < parsed.length; i++) {
                     if (i !== 0 && i !== parsed.length - 1) {
                         parsed[i].props.children.map((result) => {
-                            verses.push({ data: result, chapter: data.id })
+                            verses.push({ data: result, chapter: data.id, tag: parsed[i].type, class: result.className })
                         })
                     }
                 }
             }
             console.log(verses)
+
         }
         return (
 
@@ -209,36 +208,28 @@ const BibleScreen = ({ navigation, route }) => {
 
                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
 
-                        {index % 2 !== 0 &&
-                            <View >
-                                <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
-                                    <Text style={{ color: converted['.eb-container .wj'].color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>{item.data}</Text>
-                                </Pressable>
-                            </View>
-                        }
-                        {index % 2 === 0 &&
+                        
+                            {typeof item.data !== 'object' &&
+                                <View>
+                                    <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
+                                        <Text>{item.data}</Text>
+                                    </Pressable>
+                                </View>
+                            }
+                            {typeof item.data === 'object' && 
                             <View>
-
+                                <Text>{item.data.props.children}</Text>
                             </View>
-                        }
+                            }
+                        
+
                     </View>
                 )}
             />
         )
     }
-
-    // console.log(tags)
-    // console.log(verses)
     console.log(parsed)
-    // return (
-    //     // <Text>Not Rendering you</Text>
-    //     <FlatList
-    //         data={tags}
-    //         renderItem={({ item }) => (
-    //             <Text>{item}</Text>
-    //         )}
-    //     />
-    // )
+
     if (data !== null) {
         console.log(data)
     }
@@ -283,9 +274,10 @@ const BibleScreen = ({ navigation, route }) => {
                         <View>
                             {data.id === 'GEN.intro' &&
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderHTML source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
+                                            {/* <RenderHTML source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
@@ -309,10 +301,13 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
-                                <View style={{ padding: 10, marginBottom: 100, borderWidth: 4, borderColor: '#333', marginTop: 100 }}>
-
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${RenderParsed}` }} />
+                                <View>
+                                    {/* using the parser because it appears to be more stable with the amount of downloads, the last publish isnt 6 years ago, etc... */}
                                     {/* <RenderParsed /> */}
+                                    {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${data.content}` }} /> */}
+                                    <ScrollView>
+                                        <RenderParsed />
+                                    </ScrollView>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
@@ -395,7 +390,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
-                                            <RenderParsed />
+                                            {/* <RenderParsed /> */}
                                             {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
@@ -408,7 +403,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
                                 // ReactDOM.render()
-                                <View style={{ padding: 10, borderWidth: 1, borderColor: '#333' }}>
+                                <View>
 
                                     {/* <HTMLView 
                                             value={data.content}

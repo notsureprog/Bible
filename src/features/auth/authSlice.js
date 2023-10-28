@@ -4,7 +4,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import http from 'http'
 import { Platform } from 'react-native'
-import { store, persistor } from '../../app/store'
+// import { store, persistor } from '../../app/store'
 import { REACT_APP_EXPRESS_URL } from '@env'
 
 const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRESS_URL}`
