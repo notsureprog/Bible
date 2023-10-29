@@ -2,7 +2,7 @@ import React from 'react'
 import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
-import {WebView} from 'react-native-webview'
+import { WebView } from 'react-native-webview'
 // import store from '../app/store'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
@@ -84,15 +84,6 @@ const BibleScreen = ({ navigation, route }) => {
     const [parsed, setParsed] = React.useState(null)
     const [data, setData] = React.useState(null);
 
-
-    if (data !== null) {
-        console.log(data) //array... I will use this for the highlighted verses as reference
-        // const element = document.getElementsByClassName('span')
-        // console.log(element)
-    }
-
-    
-
     const allowedStyles = {
         fontWeight: 'bold'
     }
@@ -113,6 +104,9 @@ const BibleScreen = ({ navigation, route }) => {
                 allowedAttributes: {
                     'p': ['class'],
                     'span': ['class']
+                },
+                disallowedAttributes: {
+                    'script': ['src, type, etc']
                 }
             }
 
@@ -133,18 +127,23 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                     // maybe a few hundred lines of code... i wouldnt mind figuring a way to do it in a few, but idk...
                     for (var i = 0; i < attributes.length; i++) {
-// i could probably dispatch to db when there is a data number in a span since there should be content within the span
-                        if (attributes[i].value === "\\\"add\\\"") {
-                            return <p style={converted[`.eb-container .add`]}>{domToReact(children, parseOptions)}</p>
+                        // i could probably dispatch to db when there is a data number in a span since there should be content within the span
+                        if (attributes[i].value) {
+                            const DynamicTag = children[i].parent.name
+                            console.log(DynamicTag)
+                            const styleattribute = attributes[i].value.split('\\"')[1]
+                            console.log(styleattribute)
+                            console.log(attributes[i].value)
+                            return <DynamicTag style={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicTag>
                         }
-                        if (attributes[i].value === '\\"wj\\"') {
-                            // i know theyre not all p tags, but for simplicity
-                            return <p style={converted[`.eb-container .wj`]}>{domToReact(children, parseOptions)}</p>
-                        }
-                        if (attributes[i].value === "\\\"v\\\"") {
-                            // i know theyre not all p tags, but for simplicity
-                            return <button><span style={converted[`.eb-container .v`]}>{domToReact(children, parseOptions)}</span></button>
-                        }
+                        // if (attributes[i].value === '\\"wj\\"') {
+                        //     // i know theyre not all p tags, but for simplicity
+                        //     return <p style={converted[`.eb-container .wj`]}>{domToReact(children, parseOptions)}</p>
+                        // }
+                        // if (attributes[i].value === "\\\"v\\\"") {
+                        //     // i know theyre not all p tags, but for simplicity
+                        //     return <button><span style={converted[`.eb-container .v`]}>{domToReact(children, parseOptions)}</span></button>
+                        // }
                         // i think that <children.name></children.name> stuff i made might work in this for loop
                     }
                     if (typeof (children.name) !== "undefined") {
@@ -166,7 +165,6 @@ const BibleScreen = ({ navigation, route }) => {
             // console.log(sanitizeHtml(result.data.data.content, sanitizeOptions)); //not an array
             console.log(result.data.data.content); //not an array
             setData(result.data.data);
-            // parse(result.data.data)
         } catch (err) {
             console.log(err)
         }
@@ -193,7 +191,7 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                 }
             } else {
-                verses.push({data: `The Book of ${data.id}`})
+                verses.push({ data: `The Book of ${data.id}` })
             }
             console.log(verses)
 
@@ -204,10 +202,8 @@ const BibleScreen = ({ navigation, route }) => {
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
-                    // console.log(index % 2)
 
                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
-
 
                         {typeof item.data !== 'object' &&
                             <View>
@@ -218,32 +214,19 @@ const BibleScreen = ({ navigation, route }) => {
                         }
                         {typeof item.data === 'object' &&
                             <View>
-                                {/* className and children seem to be the only two elements ALWAYS present. I have been looking through a lot of verses and stuff. */}
+                                
                                 <Text
-                                    style={
-                                        item.data.props.style
-                                    }
+                                    style={item.data.props.style}
                                     className={item.data.props.className}>{item.data.props.children}
                                 </Text>
                             </View>
                         }
-
-
                     </View>
                 )}
             />
         )
     }
     console.log(parsed)
-
-    if (data !== null) {
-        console.log(data)
-    }
-
-
-
-    // parse html and create a dom element
-    // const TRenderEngine = new TRenderEngine({parseDocument: data.content})
 
     React.useEffect(() => {
         GetVerse()
@@ -311,7 +294,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     {/* using the parser because it appears to be more stable with the amount of downloads, the last publish isnt 6 years ago, etc... */}
                                     {/* <RenderParsed /> */}
                                     <ScrollView>
-                                    <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${data.content}` }} />
+                                        <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `${data.content}` }} />
                                         {/* <RenderParsed /> */}
                                         {/* <WebView 
                                         source={{html: data.content}}
@@ -413,22 +396,7 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
                                 // ReactDOM.render()
                                 <View>
-
-                                    {/* <HTMLView 
-                                            value={data.content}
-                                            // stylesheet={scriptureStyles}
-                                            /> */}
                                     <RenderParsed />
-                                    {/* <TRenderEngineProvider parseDocument={data.content}>
-                                        <RenderHTMLConfigProvider>
-
-                                            <RenderHTML pressableHightlightColor='yellow' customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
-                                        </RenderHTMLConfigProvider>
-                                    </TRenderEngineProvider> */}
-
-                                    {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
-                                    {/* <GenericPressableProps onPress={() => console.log("Works?")}></GenericPressableProps> */}
-
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
@@ -436,7 +404,6 @@ const BibleScreen = ({ navigation, route }) => {
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
-                                        {/* I am doing next.id to just get the logic down. Then I make it the data-sid or whatever it is in the html */}
                                         <Pressable onPress={() => { dispatch(selectVerse(data.next.id)) }}>
                                             <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>

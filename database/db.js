@@ -67,7 +67,7 @@ const putVerseInDatabase = async (verse, username, callback) => {
     try {
         await connect
         const User = mongoose.model('User')
-        await User.updateOne({ username: username }, { $push: { highlightedVerses: verse } })
+        await User.updateManyMany({ username: username }, { $push: { highlightedVerses: {verse: verse} }, {upsert: true} })
         callback(null, verse)
     } catch (error) {
         console.log(error)
