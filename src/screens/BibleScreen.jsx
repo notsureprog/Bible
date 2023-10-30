@@ -11,7 +11,8 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { selectVerse } from '../features/verse/verseSlice'
+import { selectVerse } from '../features/verse/bookSlice'
+import { pushVersesToDatabase } from '../features/auth/authSlice';
 import { converted } from '../../css/scriptureConverted'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -41,8 +42,9 @@ console.log(VersionSelectMenu)
 //     RenderHTMLProps
 // }
 const BibleScreen = ({ navigation, route }) => {
-    const verse = useSelector((state) => state.authenticate.verseReducer)
-    console.log(verse) //verse[0,1,n...] with a background color of yellow on match to screen.
+    // const verse = useSelector((state) => state.authenticate.bookReducer)
+    const user = useSelector((state) => state.authenticate.reducer) //change name to userReducer
+    // console.log(verse) //verse[0,1,n...] with a background color of yellow on match to screen.
     const dispatch = useDispatch()
 
     const fontReducer = (state, action) => {
@@ -129,12 +131,12 @@ const BibleScreen = ({ navigation, route }) => {
                     for (var i = 0; i < attributes.length; i++) {
                         // i could probably dispatch to db when there is a data number in a span since there should be content within the span
                         if (attributes[i].value) {
-                            const DynamicTag = children[i].parent.name
-                            console.log(DynamicTag)
+                            const DynamicHTML = children[i].parent.name
+                            console.log(DynamicHTML)
                             const styleattribute = attributes[i].value.split('\\"')[1]
                             console.log(styleattribute)
                             console.log(attributes[i].value)
-                            return <DynamicTag style={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicTag>
+                            return <DynamicHTML style={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicHTML>
                         }
                         // if (attributes[i].value === '\\"wj\\"') {
                         //     // i know theyre not all p tags, but for simplicity
@@ -207,7 +209,7 @@ const BibleScreen = ({ navigation, route }) => {
 
                         {typeof item.data !== 'object' &&
                             <View>
-                                <Pressable onPress={() => dispatch(selectVerse(`${data.id}.${item.data}`))}>
+                                <Pressable onPress={() => dispatch(pushVersesToDatabase({username: user.username, verse: `${item.data}`}))}>
                                     <Text>{item.data}</Text>
                                 </Pressable>
                             </View>
@@ -404,7 +406,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
-                                        <Pressable onPress={() => { dispatch(selectVerse(data.next.id)) }}>
+                                        <Pressable onPress={() => { console.log("Hello")}}>
                                             <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
                                     </View>

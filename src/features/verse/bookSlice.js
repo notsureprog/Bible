@@ -19,33 +19,24 @@ export const putVerse = createAsyncThunk('/verse', async (thunkApi) => {
     }
 })
 
-export const verseSlice = createSlice({
-    name: 'verse',
+export const bookSlice = createSlice({
+    name: 'books',
+    // go on the intro page of every book. Like Gen.intro
     initialState: {
         // this will be persisted
-        highlightedVerses: []
+        book: null, //Genesis
+        author: null, //Moses
+        dateCreated: null, //3000 bc?
+        description: null //whatever suits it.
     },
     reducers: {
         selectVerse(state, action) {
-            // if (action.type === '/verse/selectVerse') {
-            console.log("I got hit")
-            // putVerseInDatabase(action.payload)
-            state.highlightedVerses.push(action.payload) //or something like that... im going to hardcode for now to test.
-            // }
+            console.log(state)
+            console.log(action.payload)
         }
-        // deleteVerse(state, action) {
-
-        // }
     },
-    // extraReducers (builder) {
-    //     builder
-    //     .addCase(selectVerse.fulfilled, (state, action) => {
-
-    //     })
-    // } 
-
 })
 
-export const { selectVerse } = verseSlice.actions
+export const { showBookInformation } = bookSlice.actions
 
-export default verseSlice.reducer
+export default bookSlice.reducer

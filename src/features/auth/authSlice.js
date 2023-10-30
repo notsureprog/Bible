@@ -31,24 +31,34 @@ export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWi
         // if (err.name === 'AbortError') {}
         rejectWithValue(err.response.data)
     }
-},
-    // FORCE CANCELLATION ON EVEN GOOD REQUESTS
-    // test commented out...
-    //  {
-    // //     // Canceling Before Execution... No wonder...
-    // // // unreachable thunkApi
-    //     condition: (thunkApi, { getState, extra }) => {
-    //         const data  = getState()
-    //         console.log(data)
-    //         const fetchStatus = data.requests[thunkApi]
-    //         console.log(fetchStatus)
-    //         if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
-    //             // Already fetched or in progress, don't need to re-fetch
-    //             return false
-    //           }
-    //     }
-    // }
-)
+})
+
+export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi) => {
+    try {
+        console.log(thunkApi) //user.username and verse
+        const response = await axios.post(`${uri}/verse`, thunkApi)
+        return response.data
+    } catch (error) {
+        console.log(error)
+    }
+})
+// FORCE CANCELLATION ON EVEN GOOD REQUESTS
+// test commented out...
+//  {
+// //     // Canceling Before Execution... No wonder...
+// // // unreachable thunkApi
+//     condition: (thunkApi, { getState, extra }) => {
+//         const data  = getState()
+//         console.log(data)
+//         const fetchStatus = data.requests[thunkApi]
+//         console.log(fetchStatus)
+//         if (fetchStatus === 'fulfilled' || fetchStatus === 'loading') {
+//             // Already fetched or in progress, don't need to re-fetch
+//             return false
+//           }
+//     }
+// }
+
 
 
 // createSlice uses immer library internally
@@ -61,9 +71,9 @@ export const authSlice = createSlice({
         token: null,
         loading: 'idle', //should neveer be undefined. 
         isLoggedIn: false, //only bool right now
-        // authenticatedUser: {},
         currentRequestId: null,
-        errorMessage: null
+        errorMessage: null,
+        highlightedVerses: []
     },
 
     reducers: {
@@ -78,6 +88,10 @@ export const authSlice = createSlice({
                 AsyncStorage.removeItem('persist:root')
                 window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
             }
+        },
+        putVerseInDatabase(state, action) {
+            console.log(state)
+            console.log(action)
         }
     },
 
@@ -109,6 +123,7 @@ export const authSlice = createSlice({
                 state.token = action.payload.token
                 state.loading = 'success'
                 state.isLoggedIn = true
+
             })
 
             .addCase(loginUsers.pending, (state, action) => {
@@ -131,9 +146,23 @@ export const authSlice = createSlice({
             .addCase(loginUsers.rejected, (state, action) => {
                 state.loading = "idle"
                 state.errorMessage = action.error
-                
+
                 // i do need to refresh the store on submit if i get rejected.
             })
+            .addCase(pushVersesToDatabase.pending, (state, action) => {
+                if (action.type === '/verse/pending') {
+                    console.log(state)
+                    console.log(action)
+                    // some kind of previous state of highlightedVerses
+                }
+            })
+            .addCase(pushVersesToDatabase.fulfilled, (state, action) => {
+                if (action.type === '/verse/fulfilled') {
+                    console.log(state)
+                    console.log(action)
+                    state.highlightedVerses.push(action.meta.arg) //well i do just want to push one single verse or if it is selected take it off if clicked.
+                }
+            })  
     }
 });
 
@@ -145,7 +174,7 @@ const putUserInDatabase = (state, action) => { return { username: action.payload
 // const getUserFromDB = (registerUser.pending)
 // deleteUser, updateUser
 
-export const { submitUser, logoutUser } = authSlice.actions
+export const { submitUser, logoutUser, putVerseInDatabase } = authSlice.actions
 
 export default authSlice.reducer
 // not needed i do not believe

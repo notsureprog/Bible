@@ -1,5 +1,5 @@
 import authReducer, { submitUser } from '../features/auth/authSlice'
-import verseReducer from '../features/verse/verseSlice'
+import verseReducer from '../features/verse/bookSlice'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
