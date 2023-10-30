@@ -169,6 +169,7 @@ const BibleScreen = ({ navigation, route }) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
                     <View>
+                        {/* Still would need the verse number because some verses are the same: ex: Mark 9:44, 9:46, 9:48. Probably should store the version too because, for example, KJV has more than NIV */}
                         <Pressable onPress={() => dispatch(pushVersesToDatabase({ username: user.username, verse: `${item.data}` }))}>
                             <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
                                 {typeof item.data !== 'object' &&

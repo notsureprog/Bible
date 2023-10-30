@@ -1,4 +1,3 @@
-// import { StatusBar } from 'expo-status-bar';
 import React from 'react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'

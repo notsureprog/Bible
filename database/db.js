@@ -3,7 +3,6 @@ const env = require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 
-
 const uri = process.env.REACT_APP_MONGODB_CONNECTION_STRING_PREFIX
 const connect = mongoose.connect(uri)
 

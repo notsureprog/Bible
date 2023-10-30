@@ -2,7 +2,7 @@
   "name": "bible",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "proxy": "http://192.168.1.140:8081",
+  
   "scripts": {
     "start": "expo start",
     "test": "jest --detectOpenHandles",
