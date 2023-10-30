@@ -9,6 +9,7 @@ import { cleanup, fireEvent, render, screen, userEvent } from '@testing-library/
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 
+// stage 5
 let initialState = {
     users: [],
     username: null,

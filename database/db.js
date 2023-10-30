@@ -34,6 +34,7 @@ const getUserFromDatabase = async (username, password, callback) => {
         const User = mongoose.model('User')
         // find the user by username in the db (it is unique). 
         const result = await User.findOne({ username: username })
+        console.log(result)
         // no user in the db
         if (result === null) {
             console.log("No user was found")
@@ -50,7 +51,7 @@ const getUserFromDatabase = async (username, password, callback) => {
                 if (match) {
                     const token = jwt.sign({ username: result.username }, pword)
                     // callback to send information back to server.js
-                    callback(null, { username: result.username, token: token })
+                    callback(null, { username: result.username, token: token, highlightedVerses: result.highlightedVerses })
                 } else {
                     return "User not Found"
                 }

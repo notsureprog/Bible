@@ -26,7 +26,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [data, setData] = React.useState(null);
-    const [bible, setBible] = React.useState('de4e12af7f28f599-02'); //although it could change depending on the version, but I am passing back to bible screen for more bible
+    const [bible, setBible] = React.useState('de4e12af7f28f599-02'); 
     const [query, setQuery] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [limitState, limitDispatch] = React.useReducer(limitReducer, { limit: 0 });
@@ -48,15 +48,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
             </View>
         )
     }
-    console.log(bible)
-
-    const handleTheme = () => {
-        if (darkMode) {
-            theme.dispatch({ type: "LIGHTMODE" })
-        } else {
-            theme.dispatch({ type: "DARKMODE" })
-        }
-    }
+    
 
     console.log(limitState.limit)
 
@@ -134,9 +126,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                 <View>
                     {Platform.OS === 'android' &&
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, marginBottom: 20 }}>
-                            <Pressable onPress={() => handleTheme()}>
-                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </Pressable>
+                            
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList
@@ -154,9 +144,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                     }
                     {Platform.OS === 'ios' &&
                         <SafeAreaView style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                            <Pressable onPress={() => handleTheme()}>
-                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </Pressable>
+                            
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList
@@ -175,9 +163,7 @@ const BibleSearchVerseScreen = ({ navigation }) => {
                     {Platform.OS === 'web' &&
 
                         <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                            <Pressable onPress={() => handleTheme()}>
-                                <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Theme</Text>
-                            </Pressable>
+                           
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>{data.total} Results found for {query}: </Text>
                             <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Every match for a phrase is listed below...</Text>
                             <FlatList

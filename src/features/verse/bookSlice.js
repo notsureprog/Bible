@@ -1,10 +1,7 @@
-// need to toggle on or off the verse highlighted.
 import React from 'react'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { REACT_APP_EXPRESS_URL } from '@env'
-// import { putVerseInDatabase } from '../../../database/db'
-
 
 export const putVerse = createAsyncThunk('/verse', async (thunkApi) => {
     try {
@@ -23,7 +20,7 @@ export const bookSlice = createSlice({
     name: 'books',
     // go on the intro page of every book. Like Gen.intro
     initialState: {
-        // this will be persisted
+        // this will be persisted... May not want it persisted. Maybe just a reducer with a ton of cases for the .intro
         book: null, //Genesis
         author: null, //Moses
         dateCreated: null, //3000 bc?

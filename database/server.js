@@ -87,9 +87,5 @@ router.post('/verse', async (req, res, next) => {
 
 app.use('/', router)
 
-// app.get('/', requireAuth, (req, res) => {
-//     res.redirect('http://localhost:19006/Home')
-// })
-
 
 app.listen(3000, () => console.log('listening'))

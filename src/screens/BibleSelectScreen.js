@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BIBLE_API_KEY } from '@env'
 
 const BibleSelectScreen = ({ navigation }) => {
-    // https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
+    
 
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
