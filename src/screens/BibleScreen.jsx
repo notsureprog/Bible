@@ -197,18 +197,23 @@ const BibleScreen = ({ navigation, route }) => {
             console.log(typeof parsedHTML[i])
 
             // console.log(DynamicHTML)
-            parsedHTML[i].props.children.map((result) => {
+            parsedHTML[i].props.children.map((result, index) => {
+                console.log(index)
                 if (typeof result === 'object') {
-
                     const DynamicHTML = result.type
                     const className = result.props.className
+
                     console.log(className)
                     console.log(DynamicHTML)
                     console.log(result.props.children)
-                    verses.push({text: result.props.children, tag: DynamicHTML, className: className})
+                    verses.push({ text: result.props.children, tag: DynamicHTML, className: className })
                     console.log(<DynamicHTML>{result.props.children}</DynamicHTML>)
-                    
+
                     return <DynamicHTML className={className} style={converted['.eb-container *']} key={result.props['data-sid']}>{result.props.children}</DynamicHTML>
+                }
+                if(typeof result !== 'object') {
+                    // needs to be the previous tag and className
+                    verses.push({text: result, tag: 'p', className: ''})
                 }
             })
             // if (typeof parsed[i].props.children === 'object') {
@@ -237,13 +242,16 @@ const BibleScreen = ({ navigation, route }) => {
         //     console.log(verses)
         // }
         return (
-            <FlatList 
-            data={verses}
-            renderItem={({item}) => (
-                <View>
-                    <item.tag style={converted[`.eb-container .wj`]} className={item.className}>{item.text}</item.tag>
-                </View>
-            )}
+            <FlatList
+                data={verses}
+                renderItem={({ item }) => (
+                    <View>
+                        {/* i will be dispatching the verse, book, chapter,  */}
+                        <Pressable onPress={() => console.log(`${item.text}`)}>
+                            <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
+                        </Pressable>
+                    </View>
+                )}
             />
         )
         // return (
