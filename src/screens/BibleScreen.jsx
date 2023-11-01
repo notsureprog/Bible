@@ -260,8 +260,9 @@ const BibleScreen = ({ navigation, route }) => {
                                             source={{ html: data.content }}
                                         /> */}
 
-                                    <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-                                        <RenderHTML source={{ html: `${data.content}` }} />
+                                    <ScrollView style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
+                                        {/* for now... */}
+                                        <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                         </Pressable>
@@ -269,7 +270,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                         </Pressable>
-                                    </View>
+                                    </ScrollView>
                                 </View>
                             }
                         </View>

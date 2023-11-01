@@ -68,6 +68,7 @@ const putVerseInDatabase = async (verse, username, book, chapter, version, callb
         await connect
         const User = mongoose.model('User')
         // if it is in there, then remove it on second click
+        // query with the version, and if the chapter and verse are found, remove it.
         await User.updateOne({ username: username }, { $push: { highlightedVerses:  {verse: verse, book: book, chapter: chapter, version: version} } })
         callback(null, verse, book, chapter, version)
     } catch (error) {
