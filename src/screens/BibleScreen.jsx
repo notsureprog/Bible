@@ -83,11 +83,11 @@ const BibleScreen = ({ navigation, route }) => {
         try {
             const options = {
                 method: 'GET',
-                url: `https://885f8317-2398-4449-80ed-33ca172f5f8b.mock.pstmn.io/BibleVerses`,
-                // url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
-                // headers: {
-                //     'api-key': `${BIBLE_API_KEY}`
-                // }
+                // url: `https://885f8317-2398-4449-80ed-33ca172f5f8b.mock.pstmn.io/BibleVerses`,
+                url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
+                headers: {
+                    'api-key': `${BIBLE_API_KEY}`
+                }
             }
 
             const sanitizeOptions = {
