@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Platform } from 'react-native'
 import { REACT_APP_EXPRESS_URL } from '@env'
 
-const uri = Platform.OS === 'web' ? 'http://localhost:3000' : `${REACT_APP_EXPRESS_URL}`
+const uri = `${REACT_APP_EXPRESS_URL}`
 
 export const registerUsers = createAsyncThunk(`/register`, async (thunkApi, { rejectWithValue }) => {
     console.log(typeof (thunkApi))

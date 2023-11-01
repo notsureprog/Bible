@@ -63,12 +63,13 @@ const getUserFromDatabase = async (username, password, callback) => {
 }
 
 // this will have to be persisted in the store too.
-const putVerseInDatabase = async (verse, username, callback) => {
+const putVerseInDatabase = async (verse, username, book, chapter, version, callback) => {
     try {
         await connect
         const User = mongoose.model('User')
-        await User.updateOne({ username: username }, { $push: { highlightedVerses:  verse } })
-        callback(null, verse)
+        // if it is in there, then remove it on second click
+        await User.updateOne({ username: username }, { $push: { highlightedVerses:  {verse: verse, book: book, chapter: chapter, version: version} } })
+        callback(null, verse, book, chapter, version)
     } catch (error) {
         console.log(error)
     }

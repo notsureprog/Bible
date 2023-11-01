@@ -4,7 +4,7 @@ import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { BIBLE_API_KEY } from '@env'
+import { BIBLE_API_KEY, REACT_APP_MOCK_BOOK_VERSES } from '@env'
 
 const BibleSelectScreen = ({ navigation }) => {
     
@@ -124,12 +124,12 @@ const BibleSelectScreen = ({ navigation }) => {
             try {
                 const options = {
                     method: 'GET',
-                    // url: 'https://04b4762d-18b0-49f1-8433-14585aeeb6e5.mock.pstmn.io/ChapterSelect'
+                    url: `${REACT_APP_MOCK_BOOK_VERSES}`
                     // method: 'GET',
-                    url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
-                    headers: {
-                        'api-key': `${BIBLE_API_KEY}`
-                    }
+                    // url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
+                    // headers: {
+                    //     'api-key': `${BIBLE_API_KEY}`
+                    // }
                 }
                 const result = await axios(options);
                 setData(result.data.data);

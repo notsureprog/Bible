@@ -8,7 +8,7 @@ import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngin
 import { ThemeContext } from './context/ThemeContext'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL } from '@env'
+import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL, REACT_APP_MOCK_CHAPTER_CONTENTS } from '@env'
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { selectVerse } from '../features/verse/bookSlice'
@@ -84,10 +84,11 @@ const BibleScreen = ({ navigation, route }) => {
             const options = {
                 method: 'GET',
                 // url: `https://885f8317-2398-4449-80ed-33ca172f5f8b.mock.pstmn.io/BibleVerses`,
-                url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
-                headers: {
-                    'api-key': `${BIBLE_API_KEY}`
-                }
+                url: `${REACT_APP_MOCK_CHAPTER_CONTENTS}`
+                // url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
+                // headers: {
+                //     'api-key': `${BIBLE_API_KEY}`
+                // }
             }
 
             const sanitizeOptions = {
@@ -98,12 +99,6 @@ const BibleScreen = ({ navigation, route }) => {
                     'div': ['*']
                 }
             }
-
-
-
-
-            // setData(parse(sanitizeHTML(result.data.data.content, sanitizeOptions), parseOptions))
-
 
             const parseOptions = {
                 replace: ({ attributes, children }) => {
@@ -124,64 +119,12 @@ const BibleScreen = ({ navigation, route }) => {
                     if (attributes.class === 'wj') {
                         console.log("words of jesus")
                     }
-
-                    // // for (var i = 0; i < attributes.length; i++) {
-                    // // console.log(attributes[i].value)
-
-                    // for (var i = 0; i < attributes.length; i++) {
-                    //     if (children[i].next === 'undefined') {
-                    //         return
-                    //     }
-                    //     // let group = []
-                    //     //group for clicking a singlee verse with all of the styles. if next !== null and data-number is present then group on the previous data-number up to the current
-                    //     if (attributes[i].value && children[i].next !== 'null' && children[i].next !== 'undefined') { // === text/Element 
-
-                    //         const DynamicHTML = children[i].parent.name
-                    //         const wholeVerse = []
-                    //         console.log(DynamicHTML)
-                    //         const styleattribute = attributes[i].value.split('\\"')[1]
-                    //         console.log(styleattribute)
-                    //         // if next !== null && next !== undefined, then merge all of the stuff
-                    //         if (attributes[i].prev === 'null') {
-                    //             console.log(attributes[i]['attribs']['data-number'])
-                    //         }
-                    //         console.log(<DynamicHTML style={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicHTML>)
-                    //         return <DynamicHTML style={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicHTML>
-                    //     }
-
-                    // }
-
-                    // if (attributes[i].value) { // === text/Element 
-                    //     // i think this is good for the span, p, div, etc...
-                    //     const DynamicHTML = children[i].parent.name
-
-                    //     console.log(DynamicHTML)
-                    //     const styleattribute = children[i].parent.attribs.class.split('\\"')[1]
-                    //     console.log(styleattribute)
-                    //     const property = attributes[i].something
-                    //     // i know this problem i think...
-                    //     // 'property': converted[`.eb-container .'styleattribute'`].property -- although there is no [.eb-container .'styleattribute'].color and words of christ are red...
-                    //     return <DynamicHTML className={converted[`.eb-container .${styleattribute}`]}>{domToReact(children, parseOptions)}</DynamicHTML>
-                    // }
-
                 }
-                // if (typeof (children.name) !== "undefined") {
-                //     console.log(<span>{domToReact(children, parseOptions)}</span>)
-                //     return (
-                //         <p>{domToReact(children, parseOptions)}</p>
-                //     )
-                // }
-
             }
-
-
-
             const result = await axios(options);
             const cleanHTML = sanitizeHTML(result.data.data.content, sanitizeOptions)
             console.log(result.data.data.content)
-
             setParsed(cleanHTML, parseOptions)
-
             setData(result.data.data);
         } catch (err) {
             console.log(err)
@@ -190,18 +133,18 @@ const BibleScreen = ({ navigation, route }) => {
 
     const RenderParsed = () => {
         let verses = []
-        // console.log(parse(parsed)) // i will probably setData here
         const parsedHTML = parse(parsed)
         console.log(parsedHTML)
         for (var i = 0; i < parsedHTML.length; i++) {
             console.log(typeof parsedHTML[i])
 
-            // console.log(DynamicHTML)
             parsedHTML[i].props.children.map((result, index) => {
                 console.log(index)
+                console.log(typeof result)
                 if (typeof result === 'object') {
                     const DynamicHTML = result.type
                     const className = result.props.className
+
 
                     console.log(className)
                     console.log(DynamicHTML)
@@ -211,81 +154,43 @@ const BibleScreen = ({ navigation, route }) => {
 
                     return <DynamicHTML className={className} style={converted['.eb-container *']} key={result.props['data-sid']}>{result.props.children}</DynamicHTML>
                 }
-                if(typeof result !== 'object') {
+                if (typeof result !== 'object') {
                     // needs to be the previous tag and className
-                    verses.push({text: result, tag: 'p', className: ''})
+                    verses.push({ text: result, tag: 'p', className: '' })
                 }
             })
-            // if (typeof parsed[i].props.children === 'object') {
-
-            // }
-
 
         }
-        // there should not be too many class names in here, but idl
-        // let tags = []
-        // let verses = []
-        // if (parsed !== null && data !== null) {
 
-        //     if (data.id.split('.')[1] !== 'intro') {
-        //         for (var i = 0; i < parsed.length; i++) {
-        //             if (i !== 0 && i !== parsed.length - 1) {
-        //                 console.log(parsed)
-        //                 parsed[i].props.children.map((result) => {
-        //                     verses.push({ data: result, chapter: data.id, tag: parsed[i].type, class: result.className })
-        //                 })
-        //             }
-        //         }
-        //     } else {
-        //         verses.push({ data: `The Book of ${data.id}` })
-        //     }
-        //     console.log(verses)
-        // }
         return (
             <FlatList
                 data={verses}
                 renderItem={({ item }) => (
                     <View>
-                        {/* i will be dispatching the verse, book, chapter,  */}
-                        <Pressable onPress={() => console.log(`${item.text}`)}>
+                        {item.className === 'p' &&
+
+                            
+                                <item.tag style={converted[`.eb-container sup[class^=p]`]} className={item.className}>{item.text}</item.tag>
+                            
+                        }
+                        {item.className === 'v' &&
+
+                            
+                                <item.tag style={converted[`.eb-container sup[class^=v]`]} className={item.className}>{item.text}</item.tag>
+                            
+                        }
+                        {/* const putVerseInDatabase = async (verse, username, book, chapter, version, callback) => { */}
+                        <Pressable onPress={() => dispatch(pushVersesToDatabase({verse: `${data.id}`, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: 'KJV'}))}>
                             <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
                         </Pressable>
                     </View>
                 )}
             />
         )
-        // return (
-        //     <FlatList
-        //         data={verses}
-        //         keyExtractor={(item, index) => index.toString()}
-        //         renderItem={({ item, index }) => (
-        //             <View>
-        //                 {/* Still would need the verse number because some verses are the same: ex: Mark 9:44, 9:46, 9:48. Probably should store the version too because, for example, KJV has more than NIV */}
-        //                 <Pressable onPress={() => dispatch(pushVersesToDatabase({ username: user.username, verse: `${item.data}` }))}>
-        //                     <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, color: darkMode ? styles.dark.color : styles.light.color }}>
-        //                         {typeof item.data !== 'object' &&
-        //                             <View>
-        //                                 {/* <Pressable onPress={() => dispatch(pushVersesToDatabase({ username: user.username, verse: `${item.data}` }))}> */}
-        //                                 <Text>{item.data}</Text>
-        //                                 {/* </Pressable> */}
-        //                             </View>
-        //                         }
-        //                         {typeof item.data === 'object' &&
-        //                             <View>
-        //                                 {/* <Pressable onPress={() => dispatch(pushVersesToDatabase({ username: user.username, verse: `${item.data}` }))}> */}
-        //                                 <Text
-        //                                     style={item.data.props.style}
-        //                                     className={item.data.props.className}>{item.data.props.children}
-        //                                 </Text>
-        //                                 {/* </Pressable> */}
-        //                             </View>
-        //                         }
-        //                     </View >
-        //                 </Pressable>
-        //             </View>
-        //         )}
-        //     />
-        // )
+
+    }
+    if(data !== null) {
+        console.log(data)
     }
     console.log(parsed)
 
