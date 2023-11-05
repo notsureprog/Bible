@@ -124,12 +124,10 @@ const BibleSelectScreen = ({ navigation }) => {
             try {
                 const options = {
                     method: 'GET',
-                    url: `${REACT_APP_MOCK_BOOK_VERSES}`
-                    // method: 'GET',
-                    // url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
-                    // headers: {
-                    //     'api-key': `${BIBLE_API_KEY}`
-                    // }
+                    url: `https://api.scripture.api.bible/v1/bibles/${bible}/books/${book}/chapters?fums-version=3`,
+                    headers: {
+                        'api-key': `${BIBLE_API_KEY}`
+                    }
                 }
                 const result = await axios(options);
                 setData(result.data.data);

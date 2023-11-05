@@ -2,6 +2,7 @@ import React from 'react'
 import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
+import _ from 'underscore'
 import sanitizeHTML from 'sanitize-html'
 import { WebView } from 'react-native-webview'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
@@ -83,23 +84,29 @@ const BibleScreen = ({ navigation, route }) => {
         try {
             const options = {
                 method: 'GET',
-                // url: `https://885f8317-2398-4449-80ed-33ca172f5f8b.mock.pstmn.io/BibleVerses`,
-                url: `${REACT_APP_MOCK_CHAPTER_CONTENTS}`
-                // url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
-                // headers: {
-                //     'api-key': `${BIBLE_API_KEY}`
-                // }
-            }
-
-            const sanitizeOptions = {
-                allowedTags: ['p', 'span', 'div'], //children[i].parent.name but no repeats... Idk, I may just need to white list certain ones in the api
-                allowedAttributes: {
-                    'p': ['*'],
-                    'span': ['*'],
-                    'div': ['*']
+                url: `https://api.scripture.api.bible/v1/bibles/${bible}/chapters/${chapter}`,
+                headers: {
+                    'api-key': `${BIBLE_API_KEY}`
                 }
             }
 
+            const sanitizeOptions = {
+                allowedTags: [
+                    "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+                    "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
+                    "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
+                    "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
+                    "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
+                    "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
+                    "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
+                ], //children[i].parent.name but no repeats... Idk, I may just need to white list certain ones in the api
+                allowedAttributes: {
+                    'p': ['*'], //wont leave these as * btw...
+                    'span': ['*'],
+                    // 'div':['*']
+                }
+            }
+            // Doesnt even work yet
             const parseOptions = {
                 replace: ({ attributes, children }) => {
 
@@ -134,11 +141,30 @@ const BibleScreen = ({ navigation, route }) => {
     const RenderParsed = () => {
         let verses = []
         const parsedHTML = parse(parsed)
-        console.log(parsedHTML)
+        console.log(parsedHTML.length)
+        if (parsedHTML.length === undefined) {
+            console.log(parsedHTML)
+            parsedHTML.props.children.map((result) => {
+                console.log(result)
+                if (typeof result === 'string') {
+                    console.log("Grouped verses to click and store in the db")
+                    verses.push({ text: result, tag: 'p', className: 'v' })
+                }
+                if (typeof result === 'object') {
+                    console.log(typeof Number(result.props.children))
+                    verses.push({ text: result.props.children, className: result.props.className, tag: result.type })
+                }
+            })
+            
+        }
         for (var i = 0; i < parsedHTML.length; i++) {
             console.log(typeof parsedHTML[i])
-
+            // if the next piece is a number
             parsedHTML[i].props.children.map((result, index) => {
+                console.log(_.range(index, index + 1))
+                
+                // 
+                console.log(result)
                 console.log(index)
                 console.log(typeof result)
                 if (typeof result === 'object') {
@@ -153,6 +179,7 @@ const BibleScreen = ({ navigation, route }) => {
                     console.log(<DynamicHTML>{result.props.children}</DynamicHTML>)
 
                     return <DynamicHTML className={className} style={converted['.eb-container *']} key={result.props['data-sid']}>{result.props.children}</DynamicHTML>
+
                 }
                 if (typeof result !== 'object') {
                     // needs to be the previous tag and className
@@ -162,25 +189,42 @@ const BibleScreen = ({ navigation, route }) => {
 
         }
 
+        console.log(verses)
+
+        const reduce = _.reduce(verses, (memo, num) => {
+            if (typeof Number(num.text) !== 'number') {
+
+                return num.text
+            }
+
+        })
+        // idk
+        const filterTest = _.filter(verses, (num) => {
+            _.groupBy(typeof Number(num.text) === 'number')
+        })
+        console.log(filterTest)
+        
+        // [{'1': text: {'in the beginning', 'God', 'Created the heaven and the earth'}}]
+        const grouped = _.chain(verses).groupBy("text", function(v){
+            console.log(v)
+            const data = _.map(v, function(it){
+                console.log(it)
+                return it
+            })
+            return {
+                item: data.text,
+                verse: data
+
+            }
+        })
+        console.log(grouped)
+
         return (
             <FlatList
                 data={verses}
                 renderItem={({ item }) => (
                     <View>
-                        {item.className === 'p' &&
-
-                            
-                                <item.tag style={converted[`.eb-container sup[class^=p]`]} className={item.className}>{item.text}</item.tag>
-                            
-                        }
-                        {item.className === 'v' &&
-
-                            
-                                <item.tag style={converted[`.eb-container sup[class^=v]`]} className={item.className}>{item.text}</item.tag>
-                            
-                        }
-                        {/* const putVerseInDatabase = async (verse, username, book, chapter, version, callback) => { */}
-                        <Pressable onPress={() => dispatch(pushVersesToDatabase({verse: `${data.id}`, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: 'KJV'}))}>
+                        <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: `${data.id}`, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: 'KJV' }))}>
                             <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
                         </Pressable>
                     </View>
@@ -189,7 +233,7 @@ const BibleScreen = ({ navigation, route }) => {
         )
 
     }
-    if(data !== null) {
+    if (data !== null) {
         console.log(data)
     }
     console.log(parsed)
@@ -250,9 +294,9 @@ const BibleScreen = ({ navigation, route }) => {
                                     <Pressable style={{ height: 30, width: 25, backgroundColor: 'red' }} onPress={() => setChapter(`${data.previous.id}`)}>
                                         <Text>{data.previous.bookId} {data.previous.number}</Text>
                                     </Pressable>
-
                                 </View>
                             }
+
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
 
                                 <View>

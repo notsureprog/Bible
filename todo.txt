@@ -1,5 +1,5 @@
 - logout button - works on web, but maybe not ios. it does not on andrdoid
-- work on highlighting verses.
+- work on highlighting verses. (group verses by data number)
 - refactor - make some components for the ui, remove console logs, put styles in a separate file.
 - test (find out why user.reducer.loading is undefined on login test, but idle on going to the page.) - the wrapper took care of it, but still kind of...
 - Error of undefined on bible screen when trying to manipulate the url and messing it up. (maybe get rid of deep linking if it isnt necessary) (maybe a drawer nav or whatever) -- kind if fixed with removing deep linking
