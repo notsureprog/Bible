@@ -36,6 +36,8 @@ const BibleScreen = ({ navigation, route }) => {
     const user = useSelector((state) => state.authenticate.reducer) //change name to userReducer
     const dispatch = useDispatch()
 
+    console.log(user.highlightedVerses)
+
 
     const fontReducer = (state, action) => {
         if (action.type === "INCREASE_FONT") {
@@ -151,34 +153,49 @@ const BibleScreen = ({ navigation, route }) => {
                     verses.push({ text: result, tag: 'p', className: 'v' })
                 }
                 if (typeof result === 'object') {
-                    console.log(typeof Number(result.props.children))
-                    verses.push({ text: result.props.children, className: result.props.className, tag: result.type })
+                    const testIfNum = +result.props.children
+                    const className = result.props.className
+                    const DynamicHTML = result.type
+                    console.log(typeof result.props.children)
+                    console.log(result.props.children)
+                    if (isNaN(testIfNum)) {
+                        // it isnt really a different array really... 
+                        // all i want is to combine all of the texts, but not the className or tags. 
+                        // I only want to merge the text for storing in db and highlight, but not for styling...
+                        verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
+                    }
+                    if (!isNaN(testIfNum)) {
+                        // nested hooks not allowed
+                        verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
+                    }
+                    // verses.push({ text: result.props.children, className: result.props.className, tag: result.type })
                 }
             })
-            
+
         }
         for (var i = 0; i < parsedHTML.length; i++) {
             console.log(typeof parsedHTML[i])
             // if the next piece is a number
             parsedHTML[i].props.children.map((result, index) => {
                 console.log(_.range(index, index + 1))
-                
+
                 // 
                 console.log(result)
                 console.log(index)
                 console.log(typeof result)
                 if (typeof result === 'object') {
-                    const DynamicHTML = result.type
+                    const testIfNum = +result.props.children
                     const className = result.props.className
+                    const DynamicHTML = result.type
 
-
-                    console.log(className)
-                    console.log(DynamicHTML)
-                    console.log(result.props.children)
-                    verses.push({ text: result.props.children, tag: DynamicHTML, className: className })
-                    console.log(<DynamicHTML>{result.props.children}</DynamicHTML>)
-
-                    return <DynamicHTML className={className} style={converted['.eb-container *']} key={result.props['data-sid']}>{result.props.children}</DynamicHTML>
+                    if (isNaN(testIfNum)) {
+                        // it isnt really a different array really... 
+                        verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
+                    }
+                    if (!isNaN(testIfNum)) {
+                        // nested hooks not allowed
+                        verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
+                    }
 
                 }
                 if (typeof result !== 'object') {
@@ -191,42 +208,26 @@ const BibleScreen = ({ navigation, route }) => {
 
         console.log(verses)
 
-        const reduce = _.reduce(verses, (memo, num) => {
-            if (typeof Number(num.text) !== 'number') {
-
-                return num.text
-            }
-
-        })
-        // idk
-        const filterTest = _.filter(verses, (num) => {
-            _.groupBy(typeof Number(num.text) === 'number')
-        })
-        console.log(filterTest)
-        
-        // [{'1': text: {'in the beginning', 'God', 'Created the heaven and the earth'}}]
-        const grouped = _.chain(verses).groupBy("text", function(v){
-            console.log(v)
-            const data = _.map(v, function(it){
-                console.log(it)
-                return it
-            })
-            return {
-                item: data.text,
-                verse: data
-
-            }
-        })
-        console.log(grouped)
-
         return (
+            // i may have to map this instead of flatlist so i can do some other things. i likee the lazy loading though for performance.
             <FlatList
                 data={verses}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
+                    // console.log(typeof item.text)
                     <View>
-                        <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: `${data.id}`, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: 'KJV' }))}>
-                            <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
-                        </Pressable>
+                        {/* group all of item.text */}
+                        {/* I cannot group the array anyways because the different className and tags, so I cannot get 1: [{text: ['in the beginning', 'God', 'created']}] because I would have className 'add, wj, etc...'...*/}
+                        <View>
+                            {item.verse !== null &&
+                                // https://blog.logrocket.com/accessing-previous-props-state-react-hooks/
+                                // I am getting ahead of myself. Do the above after I combine all of the stuff in between verses into one verse.
+                                <Text>{item.verse}</Text>
+                            }
+                            <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
+                                {/* I need to combine item.text either here, or in the RenderParsed Fn */}
+                                <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
+                            </Pressable>
+                        </View>
                     </View>
                 )}
             />

@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     highlightedVerses: [
-        
+        {} //the object inside must be unique on all params (all together. There can be multiple verse 1 (Like Matthew 6:1 and Mark 6:1 is good), but not Mark 6:1 and Mark 6:1).
     ]
     
 });
