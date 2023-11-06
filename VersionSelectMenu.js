@@ -42,9 +42,10 @@ const VersionSelectMenu = () => {
                 open={open}
                 value={haveVersion}
                 items={version}
-                setOpen={() => onOpen()}
+                setOpen={setOpen}
+                setItems={setVersion}
                 // i guess it will be undefined on the first iteration
-                setValue={(val) => {setBible(val); setLoading(true);}}
+                setValue={setBible}
             // setItems={setVersion}
             />
         </View>

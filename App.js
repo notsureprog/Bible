@@ -12,6 +12,7 @@ import ThemeButton from './components/ThemeButton'
 import Login from './src/screens/Login'
 import Register from './src/screens/Register'
 import ErrorPage from './src/screens/ErrorPage'
+import VersionSelectMenu from './VersionSelectMenu'
 
 const Stack = createNativeStackNavigator();
 

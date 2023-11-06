@@ -65,6 +65,8 @@ const BibleScreen = ({ navigation, route }) => {
     const [parsed, setParsed] = React.useState(null)
     const [data, setData] = React.useState(null);
 
+    console.log(parsed)
+
     const customHTMLElementModels = {
         'dynamic-font': HTMLElementModel.fromCustomModel({
             tagName: 'dynamic-font',
@@ -94,6 +96,7 @@ const BibleScreen = ({ navigation, route }) => {
 
             const sanitizeOptions = {
                 allowedTags: [
+                    // Will be removing all but 3.
                     "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
                     "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
                     "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
@@ -189,6 +192,8 @@ const BibleScreen = ({ navigation, route }) => {
                     const DynamicHTML = result.type
 
                     if (isNaN(testIfNum)) {
+                        // so maybe length too... although one of the psalms (119) goes into 100 verses.
+                        // I have read the entire bible a few times. As far as i know, there are only a few instances of the bible using numbers rather than spelling the number out. onee of those is the number of the beast in newer versions being 666 rather than six hundred threescore and six.
                         // it isnt really a different array really... 
                         verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
                     }
@@ -223,6 +228,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 // I am getting ahead of myself. Do the above after I combine all of the stuff in between verses into one verse.
                                 <Text>{item.verse}</Text>
                             }
+                            {/* well the ref.previous.verse or whatever */}
                             <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
                                 {/* I need to combine item.text either here, or in the RenderParsed Fn */}
                                 <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
@@ -238,6 +244,7 @@ const BibleScreen = ({ navigation, route }) => {
         console.log(data)
     }
     console.log(parsed)
+    console.log(bible)
 
     React.useEffect(() => {
         GetVerse()
@@ -253,14 +260,14 @@ const BibleScreen = ({ navigation, route }) => {
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <VersionSelectMenu style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} />
                     </View>
-                    <Pressable style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
+                    <Pressable style={{ height: 30, width: 150, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
                         <Text style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 30, width: 100, color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
                     </Pressable>
-                    <Pressable style={{ height: 30, width: 125, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.popToTop()}>
+                    <Pressable style={{ height: 30, width: 150, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.popToTop()}>
                         <Text style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 30, width: 100, color: darkMode ? styles.dark.color : styles.light.color }}>Home Page</Text>
                     </Pressable>
-                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color }}>Change the Font Size:</Text>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 150 }}>Change the Font Size:</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', width: 150 }}>
                         <Pressable onPress={() => fontDispatch({ type: "DECREASE_FONT" })}>
                             <AntDesign name='minuscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
                         </Pressable>
