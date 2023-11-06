@@ -143,12 +143,17 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
+    // I think everything but psalm is taken care of in this program. I am trying to test and code at the same time.
+
     const RenderParsed = () => {
         let verses = []
         const parsedHTML = parse(parsed)
         console.log(parsedHTML.length)
-        if (parsedHTML.length === undefined) {
-            console.log(parsedHTML)
+        console.log(parsedHTML)
+        // I am kind of thinking about or-ing this with parsedHTML[i].props.children === 'string'
+        // if (parsedHTML.length === undefined) {
+        if (parsedHTML === 'object') {
+            console.log(typeof parsedHTML) //this is getting ugly...
             parsedHTML.props.children.map((result) => {
                 console.log(result)
                 if (typeof result === 'string') {
@@ -174,11 +179,22 @@ const BibleScreen = ({ navigation, route }) => {
                     // verses.push({ text: result.props.children, className: result.props.className, tag: result.type })
                 }
             })
-
         }
+        // i needs to be 1 for psa
         for (var i = 0; i < parsedHTML.length; i++) {
             console.log(typeof parsedHTML[i])
+            // it is getting kind of ugly on my side... 
             // if the next piece is a number
+            // this is not valid in psalm
+            console.log(typeof parsedHTML[i].props.children)
+            console.log(parsedHTML[i].props.children)
+            if (typeof parsedHTML[i].props.children === 'string') {
+                verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
+            }
+            if (typeof parsedHTML[i].props.children === 'object' && chapter.split('.')[0] === 'PSA') {
+                console.log(parsedHTML[i].props.children)
+            }
+
             parsedHTML[i].props.children.map((result, index) => {
                 console.log(_.range(index, index + 1))
 
@@ -208,8 +224,8 @@ const BibleScreen = ({ navigation, route }) => {
                     verses.push({ text: result, tag: 'p', className: '' })
                 }
             })
-
         }
+        // verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
 
         console.log(verses)
 
