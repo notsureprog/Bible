@@ -211,6 +211,7 @@ const BibleScreen = ({ navigation, route }) => {
             // <Text>Hello Bible</Text>
             <FlatList
                 data={parsedHTML}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <View>
                         {typeof item.props.children !== 'object' &&
@@ -219,10 +220,19 @@ const BibleScreen = ({ navigation, route }) => {
                         {typeof item.props.children === 'object' &&
                             <View>
                                 {item.props.children.map((result) => (
-                                    console.log(result)
-                                    // <View>
-                                    //     <item.type style={converted[`.eb-container .${result.className}`]}>{result}</item.type>
-                                    // </View>
+                                    // console.log(result)
+                                    <View>
+                                        {typeof result !== 'object' &&
+                                            <View>
+                                                <item.type >{result}</item.type>
+                                            </View>
+                                        }
+                                        {typeof result === 'object' &&
+                                            <View>
+                                                <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                                            </View>
+                                        }
+                                    </View>
                                 ))}
                             </View>
                         }
