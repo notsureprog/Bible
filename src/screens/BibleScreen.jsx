@@ -146,7 +146,10 @@ const BibleScreen = ({ navigation, route }) => {
     const RenderParsed = () => {
         let verses = []
         const parsedHTML = parse(parsed)
-        if (parsedHTML === 'object') {
+        console.log(parsedHTML) //this is what everything relies on....
+        console.log(typeof parsedHTML) //this is what everything relies on....
+        // if typeof parsedHTML is an object
+        if (parsedHTML.length === undefined) {
             console.log(typeof parsedHTML) //this is getting ugly... user experience vs ?
             parsedHTML.props.children.map((result) => {
                 if (typeof result === 'string') {
@@ -168,25 +171,35 @@ const BibleScreen = ({ navigation, route }) => {
         
         for (var i = 0; i < parsedHTML.length; i++) {
             if (chapter.split('.')[0] === 'PSA') {
-                console.log(parsedHTML)
+                console.log(parsedHTML[i].props.children)
             }
-            parsedHTML[i].props.children.map((result, index) => {
-                if (typeof result === 'object') {
-                    const testIfNum = +result.props.children
-                    const className = result.props.className
-                    const DynamicHTML = result.type
+            if (typeof parsedHTML[i].props.children === 'string') {
+                verses.push({text: parsedHTML[i].props.children, verse: null, tag: parsedHTML[i].type, className: parsedHTML[i].props.className})
+            }
+            if (parsedHTML[i].props.children === null) {
+                return
+                // verses.push({text: null, verse: null, className: null, tag: 'p'})
+            }
+            if (typeof parsedHTML[i].props.children === 'object') {
 
-                    if (isNaN(testIfNum)) {
-                        verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
+                parsedHTML[i].props.children.map((result, index) => {
+                    if (typeof result === 'object') {
+                        const testIfNum = +result.props.children
+                        const className = result.props.className
+                        const DynamicHTML = result.type
+    
+                        if (isNaN(testIfNum)) {
+                            verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
+                        }
+                        if (!isNaN(testIfNum)) {
+                            verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
+                        }
                     }
-                    if (!isNaN(testIfNum)) {
-                        verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
+                    if (typeof result !== 'object') {
+                        verses.push({ text: result, tag: 'p', className: '' })
                     }
-                }
-                if (typeof result !== 'object') {
-                    verses.push({ text: result, tag: 'p', className: '' })
-                }
-            })
+                })
+            }
         }
 
         return (
