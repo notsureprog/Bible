@@ -143,13 +143,11 @@ const BibleScreen = ({ navigation, route }) => {
         }
     }
 
-    // I think everything but psalm is taken care of in this program. I am trying to test and code at the same time.
-
     const RenderParsed = () => {
         let verses = []
         const parsedHTML = parse(parsed)
         if (parsedHTML === 'object') {
-            console.log(typeof parsedHTML) //this is getting ugly...
+            console.log(typeof parsedHTML) //this is getting ugly... user experience vs ?
             parsedHTML.props.children.map((result) => {
                 if (typeof result === 'string') {
                     verses.push({ text: result, tag: 'p', className: 'v' })
@@ -167,91 +165,40 @@ const BibleScreen = ({ navigation, route }) => {
                 }
             })
         }
-        // i needs to be 1 for psa
+        
         for (var i = 0; i < parsedHTML.length; i++) {
-            console.log(typeof parsedHTML[i])
-            // it is getting kind of ugly on my side... 
-            // if the next piece is a number
-            // this is not valid in psalm
-            // psalm 150 works though...
-            // if (typeof parsedHTML[i].props.children === 'string') {
-            //     verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
-            // }
-            // if (typeof parsedHTML[i].props.children === 'object' && chapter.split('.')[0] === 'PSA') {
-            //     if (typeof result === 'string') {
-            //         verses.push({ text: parsedHTML[i].props.children, verses: null, tag: 'p', className: '' })
-            //     }
-            //     if (typeof result === 'object') {
-            //         parsedHTML[i].props.children.map((result) => {
-            //             const testIfNum = +result.props.children
-            //             if (!isNaN(testIfNum)) {
-            //                 verses.push({ text: null, verse: result.props.children })
-            //             }
-            //             if (isNaN(testIfNum)) {
-            //                 verses.push({ text: result.props.children, verses: null, className: result.props.className, tag: result.type })
-            //             }
-            //         })
-            //     }
-            // }
-
-            // As far as i know, psalm is the only book of the bible that will not compile fully... expect for a few like psalm 150...
-            console.log(parsedHTML) //for psalm props.children is an array dor otheers...
-            // I may need to if statement for split parsedHTML and test for psalm...
             if (chapter.split('.')[0] === 'PSA') {
                 console.log(parsedHTML)
             }
             parsedHTML[i].props.children.map((result, index) => {
-
-
-                // 
-                console.log(result)
-                console.log(index)
-                console.log(typeof result)
                 if (typeof result === 'object') {
                     const testIfNum = +result.props.children
                     const className = result.props.className
                     const DynamicHTML = result.type
 
                     if (isNaN(testIfNum)) {
-                        // so maybe length too... although one of the psalms (119) goes into 100 verses.
-                        // I have read the entire bible a few times. As far as i know, there are only a few instances of the bible using numbers rather than spelling the number out. onee of those is the number of the beast in newer versions being 666 rather than six hundred threescore and six.
-                        // it isnt really a different array really... 
                         verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
                     }
                     if (!isNaN(testIfNum)) {
-                        // nested hooks not allowed
                         verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
                     }
-
                 }
                 if (typeof result !== 'object') {
-                    // needs to be the previous tag and className
                     verses.push({ text: result, tag: 'p', className: '' })
                 }
             })
         }
-        // verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
-
-        console.log(verses)
 
         return (
-            // i may have to map this instead of flatlist so i can do some other things. i likee the lazy loading though for performance.
             <FlatList
                 data={verses}
                 renderItem={({ item, index }) => (
-                    // console.log(typeof item.text)
                     <View>
-                        {/* group all of item.text */}
-                        {/* I cannot group the array anyways because the different className and tags, so I cannot get 1: [{text: ['in the beginning', 'God', 'created']}] because I would have className 'add, wj, etc...'...*/}
                         <View>
                             {item.verse !== null &&
-                                // https://blog.logrocket.com/accessing-previous-props-state-react-hooks/
-                                // I am getting ahead of myself. Do the above after I combine all of the stuff in between verses into one verse.
                                 <Text>{item.verse}</Text>
                             }
-                            {/* well the ref.previous.verse or whatever */}
                             <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
-                                {/* I need to combine item.text either here, or in the RenderParsed Fn */}
                                 <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
                             </Pressable>
                         </View>
