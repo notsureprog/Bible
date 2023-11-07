@@ -171,7 +171,14 @@ const BibleScreen = ({ navigation, route }) => {
         
         for (var i = 0; i < parsedHTML.length; i++) {
             if (chapter.split('.')[0] === 'PSA') {
-                console.log(parsedHTML[i].props.children)
+                // notsure psalm 13 and psalm 150 work, but others do not. I will come back to the ui on web later. I am working on the db and thunk handling some... plus getting rid of all but main branch. 
+                <FlatList 
+                data={parsedHTML}
+                renderItem={({item}) => (
+                    <Text>{item.props.children}</Text>
+                )}
+                />
+                
             }
             if (typeof parsedHTML[i].props.children === 'string') {
                 verses.push({text: parsedHTML[i].props.children, verse: null, tag: parsedHTML[i].type, className: parsedHTML[i].props.className})
