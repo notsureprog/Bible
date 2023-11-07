@@ -49,8 +49,7 @@ router.post('/login', async (req, res, next) => {
     const password = req.body.password
     try {
         await getUserFromDatabase(username, password, (err, data) => {
-            console.log("Data from db.js")
-            console.log(data)
+            
             res.send(data)
             next()
         })

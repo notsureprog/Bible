@@ -36,10 +36,7 @@ const Register = ({ navigation }) => {
         } else {
             <Text>Passwords do not match</Text>
         }
-        setUsername('')
-        setPassword('')
-        setConfirmPassword('')
-        setEmail('')
+        
     }
 
     React.useEffect(() => {

@@ -8,6 +8,10 @@ import { useDispatch, useSelector } from 'react-redux'
 function Home({ navigation }) {
     const user = useSelector((state) => state.authenticate.reducer, _.isEqual)
     const dispatch = useDispatch()
+    // think about this after sleep...
+    // React.useEffect(() => {
+        
+    // },[user.isLoggedIn])
 
     return (
         <View>
@@ -16,17 +20,17 @@ function Home({ navigation }) {
                     <UserDropDown />
                     <Pressable onPress={() => { navigation.navigate('BibleSelectScreen') }}>
                         <Text>Read the Bible</Text>
-                        <MaterialCommunityIcons name='book' size={100}/>
+                        <MaterialCommunityIcons name='book' size={100} />
                     </Pressable>
                     <Pressable onPress={() => { navigation.navigate('BibleSearchVerseScreen') }}>
-                    <MaterialCommunityIcons name='magnify' size={100}/>
+                        <MaterialCommunityIcons name='magnify' size={100} />
                     </Pressable>
                     <Pressable onPress={() => dispatch(logoutUser())}>
-                    <MaterialCommunityIcons name='logout' size={100}/>
+                        <MaterialCommunityIcons name='logout' size={100} />
                     </Pressable>
                 </View>
             }
-            {!user.isLoggedIn && 
+            {!user.isLoggedIn &&
                 <View>
                     <Pressable onPress={() => { navigation.navigate('Login') }}>
                         <Text>Login</Text>
@@ -39,6 +43,7 @@ function Home({ navigation }) {
 
         </View>
     )
+
 }
 
 export default Home

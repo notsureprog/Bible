@@ -8,7 +8,6 @@ import { REACT_APP_EXPRESS_URL } from '@env'
 const uri = `${REACT_APP_EXPRESS_URL}`
 
 export const registerUsers = createAsyncThunk(`/register`, async (thunkApi, { rejectWithValue }) => {
-    console.log(typeof (thunkApi))
     try {
         const response = await axios.post(`${uri}/register`, thunkApi)
         return response.data
@@ -18,9 +17,8 @@ export const registerUsers = createAsyncThunk(`/register`, async (thunkApi, { re
 })
 
 export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue, signal }) => {
-
+// do not show creds in console
     try {
-        console.log(thunkApi)
         const response = await axios.post(`${uri}/login`, thunkApi)
         return response.data
     }
@@ -35,7 +33,6 @@ export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi, 
         const response = await axios.post(`${uri}/verse`, thunkApi)
         return response.data
     } catch (error) {
-        console.log(error)
         rejectWithValue(error.response.data)
     }
 })
@@ -79,12 +76,11 @@ export const authSlice = createSlice({
         },
         logoutUser(state, action) {
             console.log(action.type)
-            if (action.type === 'authenticate/logoutUser' && Platform.OS === 'web') {
+            if (action.type === 'authenticate/logoutUser') {
                 AsyncStorage.removeItem('persist:root')
-                window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
-            } else {
-                AsyncStorage.removeItem('persist:root') //just refresh the page 
-            }
+                // do not want window location so it will do this for all three devices. useEffect dependency to fire a function
+                // window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
+            } 
         },
         putVerseInDatabase(state, action) {
             console.log(state)
@@ -131,24 +127,19 @@ export const authSlice = createSlice({
 
             .addCase(loginUsers.pending, (state, action) => {
                 const currentRequestId = action.meta.requestId
-                console.log(currentRequestId)
                 if (action.type === '/login/pending' && action.meta.requestId !== currentRequestId) {
-                    // signal.abort()
                     state.currentRequestId = action.meta.requestId
                     state.loading = "pending"
                 }
                 if (!state.isLoggedIn && state.currentRequestId !== action.meta.requestId) {
                     state.currentRequestId = undefined
                     state.loading = 'rejected'
-                    console.log(action)
                 }
             })
 
             .addCase(loginUsers.rejected, (state, action) => {
                 state.loading = "idle"
                 state.errorMessage = action.error
-
-                // i do need to refresh the store on submit if i get rejected.
             })
 
             .addCase(pushVersesToDatabase.pending, (state, action) => {
@@ -171,6 +162,8 @@ export const authSlice = createSlice({
 function logoutRefresh() {
     this.forceUpdate()
 }
+
+
 
 const putUserInDatabase = (state, action) => { return { username: action.payload.username } }
 export const { submitUser, logoutUser, putVerseInDatabase } = authSlice.actions
