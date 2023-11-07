@@ -148,35 +148,22 @@ const BibleScreen = ({ navigation, route }) => {
     const RenderParsed = () => {
         let verses = []
         const parsedHTML = parse(parsed)
-        console.log(parsedHTML.length)
-        console.log(parsedHTML)
-        // I am kind of thinking about or-ing this with parsedHTML[i].props.children === 'string'
-        // if (parsedHTML.length === undefined) {
         if (parsedHTML === 'object') {
             console.log(typeof parsedHTML) //this is getting ugly...
             parsedHTML.props.children.map((result) => {
-                console.log(result)
                 if (typeof result === 'string') {
-                    console.log("Grouped verses to click and store in the db")
                     verses.push({ text: result, tag: 'p', className: 'v' })
                 }
                 if (typeof result === 'object') {
                     const testIfNum = +result.props.children
                     const className = result.props.className
                     const DynamicHTML = result.type
-                    console.log(typeof result.props.children)
-                    console.log(result.props.children)
                     if (isNaN(testIfNum)) {
-                        // it isnt really a different array really... 
-                        // all i want is to combine all of the texts, but not the className or tags. 
-                        // I only want to merge the text for storing in db and highlight, but not for styling...
                         verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
                     }
                     if (!isNaN(testIfNum)) {
-                        // nested hooks not allowed
                         verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
                     }
-                    // verses.push({ text: result.props.children, className: result.props.className, tag: result.type })
                 }
             })
         }
@@ -186,17 +173,35 @@ const BibleScreen = ({ navigation, route }) => {
             // it is getting kind of ugly on my side... 
             // if the next piece is a number
             // this is not valid in psalm
-            console.log(typeof parsedHTML[i].props.children)
-            console.log(parsedHTML[i].props.children)
-            if (typeof parsedHTML[i].props.children === 'string') {
-                verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
-            }
-            if (typeof parsedHTML[i].props.children === 'object' && chapter.split('.')[0] === 'PSA') {
-                console.log(parsedHTML[i].props.children)
-            }
+            // psalm 150 works though...
+            // if (typeof parsedHTML[i].props.children === 'string') {
+            //     verses.push({ text: parsedHTML[i].props.children, verse: null, className: parsedHTML[i].props.className, tag: parsedHTML[i].type })
+            // }
+            // if (typeof parsedHTML[i].props.children === 'object' && chapter.split('.')[0] === 'PSA') {
+            //     if (typeof result === 'string') {
+            //         verses.push({ text: parsedHTML[i].props.children, verses: null, tag: 'p', className: '' })
+            //     }
+            //     if (typeof result === 'object') {
+            //         parsedHTML[i].props.children.map((result) => {
+            //             const testIfNum = +result.props.children
+            //             if (!isNaN(testIfNum)) {
+            //                 verses.push({ text: null, verse: result.props.children })
+            //             }
+            //             if (isNaN(testIfNum)) {
+            //                 verses.push({ text: result.props.children, verses: null, className: result.props.className, tag: result.type })
+            //             }
+            //         })
+            //     }
+            // }
 
+            // As far as i know, psalm is the only book of the bible that will not compile fully... expect for a few like psalm 150...
+            console.log(parsedHTML) //for psalm props.children is an array dor otheers...
+            // I may need to if statement for split parsedHTML and test for psalm...
+            if (chapter.split('.')[0] === 'PSA') {
+                console.log(parsedHTML)
+            }
             parsedHTML[i].props.children.map((result, index) => {
-                console.log(_.range(index, index + 1))
+
 
                 // 
                 console.log(result)
