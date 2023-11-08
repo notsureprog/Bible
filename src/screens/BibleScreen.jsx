@@ -3,6 +3,8 @@ import parse, { domToReact } from 'html-react-parser';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, SafeAreaView, Platform, FlatList } from 'react-native'
 import axios from 'axios'
 import _ from 'underscore'
+import { ErrorBoundary } from 'react-error-boundary'
+import ErrorPage from './ErrorPage';
 import sanitizeHTML from 'sanitize-html'
 import { WebView } from 'react-native-webview'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
@@ -218,11 +220,15 @@ const BibleScreen = ({ navigation, route }) => {
                         {typeof item.props.children !== 'object' &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
                         }
-                        {typeof item.props.children === 'object' && !item.props.children && 
+                        {typeof item.props.children === 'object' && !item.props.children &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item}</item.type>
                         }
+                        {/* {item.props.children.props.children !== null &&
+                            <Text>{item.props.children.props.children}</Text>
+                        } */}
                         {typeof item.props.children === 'object' && item.props.children &&
                             <View>
+                                
                                 {item.props.children.map((result) => (
                                     // console.log(result)
                                     <View>
@@ -240,6 +246,13 @@ const BibleScreen = ({ navigation, route }) => {
                                 ))}
                             </View>
                         }
+                        {/* I know the error is thrown from the item.props.children.props.children */}
+                        {/* I found a null one too */}
+                        {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
+                        {item.props.children === null &&
+                            <Text>Blank space</Text>
+                        }
+
                     </View>
                 )}
             />
@@ -261,6 +274,10 @@ const BibleScreen = ({ navigation, route }) => {
         )
 
     }
+
+
+
+
     if (data !== null) {
         console.log(data)
     }
@@ -430,7 +447,11 @@ const BibleScreen = ({ navigation, route }) => {
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
                                 <View>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <RenderParsed />
+                                        <ErrorBoundary
+                                        FallbackComponent={ErrorPage}>
+
+                                            <RenderParsed />
+                                        </ErrorBoundary>
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>

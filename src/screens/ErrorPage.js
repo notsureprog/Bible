@@ -6,7 +6,7 @@ const ErrorPage = ({navigation}) => {
   return (
     <View>
       {/* I kind if want an error page lol. I will keep this... */}
-        <Text>{user.errorMessage}</Text>
+        <Text>Something Went Wrong</Text>
         <Pressable onPress={() => console.log("Trying again")}>
           <Text>Try Again</Text>
         </Pressable>
