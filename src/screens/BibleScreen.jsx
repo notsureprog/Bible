@@ -220,38 +220,43 @@ const BibleScreen = ({ navigation, route }) => {
                         {typeof item.props.children !== 'object' &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
                         }
-                        {typeof item.props.children === 'object' && !item.props.children &&
-                            <item.type style={converted[`.eb-container .${item.props.className}`]}>{item}</item.type>
-                        }
+                       
                         {/* {item.props.children.props.children !== null &&
                             <Text>{item.props.children.props.children}</Text>
                         } */}
-                        {typeof item.props.children === 'object' && item.props.children &&
-                            <View>
-                                
-                                {item.props.children.map((result) => (
-                                    // console.log(result)
-                                    <View>
-                                        {typeof result !== 'object' &&
-                                            <View>
-                                                <item.type>{result}</item.type>
-                                            </View>
-                                        }
-                                        {typeof result === 'object' &&
-                                            <View>
-                                                <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-                                            </View>
-                                        }
-                                    </View>
-                                ))}
-                            </View>
-                        }
+                        {/* {typeof item.props.children === 'object' && item.props.children && */}
+                        <View>
+                            {typeof item.props.children === 'object' && typeof item.props.children.props !== 'undefined' &&
+                                <Text>{item.props.children.props.children}</Text>
+                            }
+                            {typeof item.props.children === 'object' &&
+                                <View>
+                                    {item.props.children.map((result) => (
+                                        // console.log(result)
+                                        <View>
+                                            {typeof result !== 'object' &&
+                                                <View>
+                                                    <item.type>{result}</item.type>
+                                                </View>
+                                            }
+                                            {typeof result === 'object' &&
+                                                <View>
+                                                    <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                                                </View>
+                                            }
+                                        </View>
+                                    ))}
+                                </View>
+                            }
+                        </View>
+
+                        {/* } */}
                         {/* I know the error is thrown from the item.props.children.props.children */}
                         {/* I found a null one too */}
                         {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
-                        {item.props.children === null &&
+                        {/* {item.props.children === null &&
                             <Text>Blank space</Text>
-                        }
+                        } */}
 
                     </View>
                 )}
@@ -448,7 +453,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 <View>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <ErrorBoundary
-                                        FallbackComponent={ErrorPage}>
+                                            FallbackComponent={ErrorPage}>
 
                                             <RenderParsed />
                                         </ErrorBoundary>
