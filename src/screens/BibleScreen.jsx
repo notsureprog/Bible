@@ -217,16 +217,28 @@ const BibleScreen = ({ navigation, route }) => {
                 renderItem={({ item }) => (
                     <View>
                         {/* I need to be able to group results into one verse. if !isNan(result) */}
-                        {typeof item.props.children !== 'object' &&
+                        {typeof item.props.children === 'string' &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
                         }
-
+                        {item.props.children === null &&
+                            <Text></Text>
+                        }
                         {/* {item.props.children.props.children !== null &&
                             <Text>{item.props.children.props.children}</Text>
                         } */}
                         {/* {typeof item.props.children === 'object' && item.props.children && */}
-                        {Array.isArray(item.props.children) === false &&
-                            <item.type>{item.props.children.props.children}</item.type>
+
+                        {Array.isArray(item.props.children) === false && item.props.children !== null &&
+                            <View>
+                                {typeof item.props.children === 'string' &&
+                                    <Text>{item.props.children}</Text>
+                                }
+                                {typeof item.props.children === 'object' &&
+                                    <Text>{item.props.children.props.children}</Text>
+                                }
+                            </View>
+
+                            // <item.type>{item.props.children.props.children}</item.type>
                         }
                         {Array.isArray(item.props.children) &&
                             <View>
@@ -247,7 +259,7 @@ const BibleScreen = ({ navigation, route }) => {
                                 ))}
                             </View>
                         }
-                        
+
 
                         {/* } */}
                         {/* I know the error is thrown from the item.props.children.props.children */}
