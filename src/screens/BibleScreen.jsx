@@ -214,17 +214,21 @@ const BibleScreen = ({ navigation, route }) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <View>
+                        {/* I need to be able to group results into one verse. if !isNan(result) */}
                         {typeof item.props.children !== 'object' &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
                         }
-                        {typeof item.props.children === 'object' &&
+                        {typeof item.props.children === 'object' && !item.props.children && 
+                            <item.type style={converted[`.eb-container .${item.props.className}`]}>{item}</item.type>
+                        }
+                        {typeof item.props.children === 'object' && item.props.children &&
                             <View>
                                 {item.props.children.map((result) => (
                                     // console.log(result)
                                     <View>
                                         {typeof result !== 'object' &&
                                             <View>
-                                                <item.type >{result}</item.type>
+                                                <item.type>{result}</item.type>
                                             </View>
                                         }
                                         {typeof result === 'object' &&
