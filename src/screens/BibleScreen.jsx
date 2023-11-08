@@ -220,35 +220,34 @@ const BibleScreen = ({ navigation, route }) => {
                         {typeof item.props.children !== 'object' &&
                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
                         }
-                       
+
                         {/* {item.props.children.props.children !== null &&
                             <Text>{item.props.children.props.children}</Text>
                         } */}
                         {/* {typeof item.props.children === 'object' && item.props.children && */}
-                        <View>
-                            {typeof item.props.children === 'object' && typeof item.props.children.props !== 'undefined' &&
-                                <Text>{item.props.children.props.children}</Text>
-                            }
-                            {typeof item.props.children === 'object' &&
-                                <View>
-                                    {item.props.children.map((result) => (
-                                        // console.log(result)
-                                        <View>
-                                            {typeof result !== 'object' &&
-                                                <View>
-                                                    <item.type>{result}</item.type>
-                                                </View>
-                                            }
-                                            {typeof result === 'object' &&
-                                                <View>
-                                                    <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-                                                </View>
-                                            }
-                                        </View>
-                                    ))}
-                                </View>
-                            }
-                        </View>
+                        {Array.isArray(item.props.children) === false &&
+                            <item.type>{item.props.children.props.children}</item.type>
+                        }
+                        {Array.isArray(item.props.children) &&
+                            <View>
+                                {item.props.children.map((result) => (
+                                    // console.log(result)
+                                    <View>
+                                        {typeof result !== 'object' &&
+                                            <View>
+                                                <item.type>{result}</item.type>
+                                            </View>
+                                        }
+                                        {typeof result === 'object' &&
+                                            <View>
+                                                <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                                            </View>
+                                        }
+                                    </View>
+                                ))}
+                            </View>
+                        }
+                        
 
                         {/* } */}
                         {/* I know the error is thrown from the item.props.children.props.children */}
