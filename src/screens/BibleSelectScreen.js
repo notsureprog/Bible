@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Pressable, FlatList, StyleSheet } from 'react-native'
+import { View, Text, Pressable, FlatList, StyleSheet, useWindowDimensions } from 'react-native'
 import axios from 'axios'
 import { ThemeContext } from './context/ThemeContext'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -8,7 +8,7 @@ import { BIBLE_API_KEY, REACT_APP_MOCK_BOOK_VERSES } from '@env'
 
 const BibleSelectScreen = ({ navigation }) => {
     
-
+    const {width, height} = useWindowDimensions()
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [data, setData] = React.useState(null);
@@ -158,9 +158,9 @@ const BibleSelectScreen = ({ navigation }) => {
                         numColumns={4}
                         keyExtractor={(item) => item.number}
                         renderItem={({ item }) => (
-                            <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 5 }}>
-                                <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 50, width: 50 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
-                                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12 }}>{item.number}</Text>
+                            <View style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: 15 }}>
+                                <Pressable style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: height/8, width: width/6 }} onPress={() => { navigation.navigate({ name: 'BibleScreen', params: { chapter: `${item.id}`, version: `${bible}` } }) }}>
+                                    <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 12, marginLeft: width/12, marginTop: height/16 }}>{item.number}</Text>
                                 </Pressable>
                             </View>
                         )}

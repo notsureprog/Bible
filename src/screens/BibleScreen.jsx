@@ -90,13 +90,7 @@ const BibleScreen = ({ navigation, route }) => {
             const sanitizeOptions = {
                 allowedTags: [
                     // Will be removing all but 3.
-                    "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
-                    "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
-                    "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
-                    "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
-                    "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
-                    "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
-                    "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
+                    "p", "span"
                 ], //children[i].parent.name but no repeats... Idk, I may just need to white list certain ones in the api
                 allowedAttributes: {
                     'p': ['*'], //wont leave these as * btw...
@@ -220,7 +214,7 @@ const BibleScreen = ({ navigation, route }) => {
 
             // }
             <View>
-                
+
                 <FlatList
                     data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     keyExtractor={(item, index) => index.toString()}
