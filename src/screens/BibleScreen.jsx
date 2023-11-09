@@ -211,67 +211,79 @@ const BibleScreen = ({ navigation, route }) => {
 
         return (
             // <Text>Hello Bible</Text>
-            <FlatList
-                data={parsedHTML}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <View>
-                        {/* I need to be able to group results into one verse. if !isNan(result) */}
-                        {typeof item.props.children === 'string' &&
-                            <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                        }
-                        {item.props.children === null &&
-                            <Text></Text>
-                        }
-                        {/* {item.props.children.props.children !== null &&
-                            <Text>{item.props.children.props.children}</Text>
-                        } */}
-                        {/* {typeof item.props.children === 'object' && item.props.children && */}
+            // {Array.isArray(parsedHTML) === false && (
+            //     <FlatList 
+            //     data={[parsedHTML]}
+            //     keyExtractor={(item, index) => index.toString()}
+            //     renderItem={()}
+            //     />
 
-                        {Array.isArray(item.props.children) === false && item.props.children !== null &&
-                            <View>
-                                {typeof item.props.children === 'string' &&
-                                    <Text>{item.props.children}</Text>
-                                }
-                                {typeof item.props.children === 'object' &&
-                                    <Text>{item.props.children.props.children}</Text>
-                                }
-                            </View>
+            // }
+            <View>
+                
+                <FlatList
+                    data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                        <View>
+                            {/* I need to be able to group results into one verse. if !isNan(result) */}
+                            {typeof item.props.children === 'string' &&
+                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                            }
+                            {item.props.children === null &&
+                                <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
+                            }
+                            {/* {item.props.children.props.children !== null &&
+                                <Text>{item.props.children.props.children}</Text>
+                            } */}
+                            {/* {typeof item.props.children === 'object' && item.props.children && */}
 
-                            // <item.type>{item.props.children.props.children}</item.type>
-                        }
-                        {Array.isArray(item.props.children) &&
-                            <View>
-                                {item.props.children.map((result) => (
-                                    // console.log(result)
-                                    <View>
-                                        {typeof result !== 'object' &&
-                                            <View>
-                                                <item.type>{result}</item.type>
-                                            </View>
-                                        }
-                                        {typeof result === 'object' &&
-                                            <View>
-                                                <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-                                            </View>
-                                        }
-                                    </View>
-                                ))}
-                            </View>
-                        }
+                            {Array.isArray(item.props.children) === false && item.props.children !== null &&
+                                <View>
+                                    {typeof item.props.children === 'string' &&
+                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                                    }
+                                    {typeof item.props.children === 'object' &&
+                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
+                                    }
+                                </View>
+
+                                // <item.type>{item.props.children.props.children}</item.type>
+                            }
+                            {Array.isArray(item.props.children) &&
+                                <View>
+                                    {item.props.children.map((result) => (
+                                        // console.log(result)
+                                        <View key={result.key}>
+                                            {typeof result === 'string' &&
+                                                <View>
+                                                    {/* however, there are conditions for things like p that need to be taken care of */}
+                                                    <item.type style={converted[`.eb-container .${item.type}`]}>{result}</item.type>
+                                                </View>
+                                            }
+                                            {typeof result === 'object' &&
+                                                <View>
+                                                    <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                                                </View>
+                                            }
+                                        </View>
+                                    ))}
+                                </View>
+                            }
 
 
-                        {/* } */}
-                        {/* I know the error is thrown from the item.props.children.props.children */}
-                        {/* I found a null one too */}
-                        {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
-                        {/* {item.props.children === null &&
-                            <Text>Blank space</Text>
-                        } */}
+                            {/* } */}
+                            {/* I know the error is thrown from the item.props.children.props.children */}
+                            {/* I found a null one too */}
+                            {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
+                            {/* {item.props.children === null &&
+                                <Text>Blank space</Text>
+                            } */}
 
-                    </View>
-                )}
-            />
+                        </View>
+                    )}
+                />
+            </View>
             // <FlatList
             //     data={verses}
             //     renderItem={({ item, index }) => (

@@ -78,6 +78,7 @@ export const authSlice = createSlice({
             console.log(action.type)
             if (action.type === 'authenticate/logoutUser') {
                 AsyncStorage.removeItem('persist:root')
+                window.location.reload()
                 // do not want window location so it will do this for all three devices. useEffect dependency to fire a function
                 // window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
             } 

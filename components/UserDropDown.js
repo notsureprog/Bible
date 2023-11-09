@@ -7,24 +7,24 @@ const UserDropDown = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.authenticate.reducer)
 
-    const HandleUser = () => {
-        return (
-            <View>
-                {user.isLoggedIn &&
-                    <Pressable onPress={() => dispatch(logoutUser())}>
-                        <Text>Logout</Text>
-                    </Pressable>
-                }
-            </View>
-        )
-    }
+    // const HandleUser = () => {
+    //     return (
+    //         <View>
+    //             {user.isLoggedIn &&
+    //                 <Pressable onPress={() => dispatch(logoutUser())}>
+    //                     <Text>Logout</Text>
+    //                 </Pressable>
+    //             }
+    //         </View>
+    //     )
+    // }
 
     
     return (
         <View>
             {user.token !== null &&
                 <View>
-                    <HandleUser />
+                    {/* <HandleUser /> */}
                     <Text>{user.username + "'s Menu"}</Text>
 
                 </View>
