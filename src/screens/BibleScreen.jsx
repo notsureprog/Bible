@@ -15,7 +15,7 @@ import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL, REACT_APP_MO
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { selectVerse } from '../features/verse/bookSlice'
-import { pushVersesToDatabase } from '../features/auth/authSlice';
+import { pushVersesToDatabase, putVerseInDatabase } from '../features/auth/authSlice';
 import { converted } from '../../css/scriptureConverted'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -33,6 +33,7 @@ JSX makes it easier to write and add HTML in React.
 // https://github.com/meliorence/react-native-render-html/blob/v6.3.1/packages/render-html/src/TNodeRenderer.tsx
 
 // Example of what I am Thinking - <${css}><${html}></${css}>
+
 
 const BibleScreen = ({ navigation, route }) => {
     const user = useSelector((state) => state.authenticate.reducer) //change name to userReducer
@@ -58,6 +59,7 @@ const BibleScreen = ({ navigation, route }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
+    const [highlighted, setHighlighted] = React.useState(false)
     const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
     const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
     const [html, setHtml] = React.useState(null)
@@ -214,18 +216,34 @@ const BibleScreen = ({ navigation, route }) => {
 
             // }
             <View>
-
+                {/* 
+                // potential solutions:
+                // RESEARCH THIS SOME BECAUSE FLATLIST MAY BE A BIT DIFFERENT
+                // I could have the user click the number and put it in the db (easier, but not as user friendly)
+                // I could group all of the items in between the numbers and store the number iin db and highlight the group. 
+                // tbh, I would need the group anyways...
+                // I THINK ALL DATA IS ITEM.PROPS.CHILDREN up until the additional .props.children
+                */}
                 <FlatList
                     data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View>
                             {/* I need to be able to group results into one verse. if !isNan(result) */}
+                            {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
+                            {/* the number will be in here. Everything else can be merged together */}
                             {typeof item.props.children === 'string' &&
-                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                                // console.log(+item.props.children)
+                                <Pressable>
+
+                                    <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                                </Pressable>
+
                             }
                             {item.props.children === null &&
-                                <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
+                                <Pressable >
+                                    <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
+                                </Pressable>
                             }
                             {/* {item.props.children.props.children !== null &&
                                 <Text>{item.props.children.props.children}</Text>
@@ -252,12 +270,21 @@ const BibleScreen = ({ navigation, route }) => {
                                             {typeof result === 'string' &&
                                                 <View>
                                                     {/* however, there are conditions for things like p that need to be taken care of */}
-                                                    <item.type style={converted[`.eb-container .${item.type}`]}>{result}</item.type>
+                                                    {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
+                                                    <Pressable style={{backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}  onPress={() => {dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted)}}>
+                                                        <item.type style={converted[`.eb-container .${item.type}`]}>
+                                                            {result}
+                                                        </item.type>
+                                                    </Pressable>
+
+
                                                 </View>
                                             }
                                             {typeof result === 'object' &&
                                                 <View>
+
                                                     <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+
                                                 </View>
                                             }
                                         </View>
