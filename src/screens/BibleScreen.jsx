@@ -183,7 +183,7 @@ const BibleScreen = ({ navigation, route }) => {
                         }
                     }
                     if (typeof result === 'string') {
-                        verses.push({ verse: null, text: result, className: parsedHTML.props.className, tag: parsedHTML.tag })
+                        verses.push({ verse: null, text: result, className: parsedHTML.props.className, tag: parsedHTML.type })
                     }
                 })
             }
@@ -278,120 +278,134 @@ const BibleScreen = ({ navigation, route }) => {
                 */}
                 <FlatList
                     // verses
-                    data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
+                    // data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
+                    data={verses}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => {
 
                         return (
 
                             <View>
-                                {/* I need to be able to group results into one verse. if !isNan(result) */}
-                                {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
-                                {/* the number will be in here. Everything else can be merged together */}
-                                {typeof item.props.children === 'string' &&
-                                    // console.log(+item.props.children)
-                                    <Pressable>
-                                        {/* {verses.push(item.props.children)} */}
-                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                                    </Pressable>
-
+                                {item.verse !== null &&
+                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
                                 }
-                                {item.props.children === null &&
-                                    <Pressable >
-
-                                        <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
-                                    </Pressable>
+                                {item.text !== null &&
+                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
                                 }
-                                {/* {item.props.children.props.children !== null &&
-                                <Text>{item.props.children.props.children}</Text>
-                            } */}
-                                {/* {typeof item.props.children === 'object' && item.props.children && */}
-
-                                {Array.isArray(item.props.children) === false && item.props.children !== null &&
-                                    <View>
-                                        {typeof item.props.children === 'string' &&
-                                            <View>
-                                                {/* {verses.push(item.props.children)} */}
-                                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                                            </View>
-                                        }
-                                        {typeof item.props.children === 'object' &&
-                                            <View>
-                                                {/* {verses.push(item.props.children.props.children)} */}
-                                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
-                                            </View>
-                                        }
-                                    </View>
-
-                                    // <item.type>{item.props.children.props.children}</item.type>
-                                }
-                                {Array.isArray(item.props.children) &&
-                                    <View>
-                                        {item.props.children.map((result) => (
-                                            // console.log(result)
-                                            <View key={result.key}>
-                                                {typeof result === 'string' &&
-                                                    <View>
-                                                        {/* however, there are conditions for things like p that need to be taken care of */}
-                                                        {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
-                                                        {/* {verses.push(result)} */}
-
-                                                        <Pressable style={{ backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
-                                                            <item.type style={converted[`.eb-container .${item.type}`]}>
-                                                                {result}
-                                                            </item.type>
-                                                        </Pressable>
-
-
-
-                                                    </View>
-                                                }
-                                                {typeof result === 'object' &&
-                                                    <View>
-                                                        {/* {verses.push(result.props.children)} */}
-                                                        <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-                                                    </View>
-                                                }
-                                            </View>
-                                        ))}
-                                    </View>
-                                }
-
-
-                                {/* } */}
-                                {/* I know the error is thrown from the item.props.children.props.children */}
-                                {/* I found a null one too */}
-                                {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
-                                {/* {item.props.children === null &&
-                                <Text>Blank space</Text>
-                            } */}
-
                             </View>
                         )
-                        // console.log(verses)
-                    }
+                    }}
 
-                    }
+                //                 <View>
+                //                     {/* I need to be able to group results into one verse. if !isNan(result) */}
+                //                     {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
+                //                     {/* the number will be in here. Everything else can be merged together */}
+                //                     {typeof item.props.children === 'string' &&
+                //                         // console.log(+item.props.children)
+                //                         <Pressable>
+                //                             {/* {verses.push(item.props.children)} */}
+                //                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                //                         </Pressable>
+
+                //                     }
+                //                     {item.props.children === null &&
+                //                         <Pressable >
+
+                //                             <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
+                //                         </Pressable>
+                //                     }
+                //                     {/* {item.props.children.props.children !== null &&
+                //                     <Text>{item.props.children.props.children}</Text>
+                //                 } */}
+                //                     {/* {typeof item.props.children === 'object' && item.props.children && */}
+
+                //                     {Array.isArray(item.props.children) === false && item.props.children !== null &&
+                //                         <View>
+                //                             {typeof item.props.children === 'string' &&
+                //                                 <View>
+                //                                     {/* {verses.push(item.props.children)} */}
+                //                                     <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                //                                 </View>
+                //                             }
+                //                             {typeof item.props.children === 'object' &&
+                //                                 <View>
+                //                                     {/* {verses.push(item.props.children.props.children)} */}
+                //                                     <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
+                //                                 </View>
+                //                             }
+                //                         </View>
+
+                //                         // <item.type>{item.props.children.props.children}</item.type>
+                //                     }
+                //                     {Array.isArray(item.props.children) &&
+                //                         <View>
+                //                             {item.props.children.map((result) => (
+                //                                 // console.log(result)
+                //                                 <View key={result.key}>
+                //                                     {typeof result === 'string' &&
+                //                                         <View>
+                //                                             {/* however, there are conditions for things like p that need to be taken care of */}
+                //                                             {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
+                //                                             {/* {verses.push(result)} */}
+
+                //                                             <Pressable style={{ backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
+                //                                                 <item.type style={converted[`.eb-container .${item.type}`]}>
+                //                                                     {result}
+                //                                                 </item.type>
+                //                                             </Pressable>
+
+
+
+                //                                         </View>
+                //                                     }
+                //                                     {typeof result === 'object' &&
+                //                                         <View>
+                //                                             {/* {verses.push(result.props.children)} */}
+                //                                             <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                //                                         </View>
+                //                                     }
+                //                                 </View>
+                //                             ))}
+                //                         </View>
+                //                     }
+
+
+                //                     {/* } */}
+                //                     {/* I know the error is thrown from the item.props.children.props.children */}
+                //                     {/* I found a null one too */}
+                //                     {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
+                //                     {/* {item.props.children === null &&
+                //                     <Text>Blank space</Text>
+                //                 } */}
+
+                //                 </View>
+                //             )
+                //             // console.log(verses)
+                //         }
+
+                //         }
+                //     />
+                // </View>
+                // <FlatList
+                //     data={verses}
+                //     renderItem={({ item, index }) => (
+                //         <View>
+                //             <View>
+                //                 {item.verse !== null &&
+                //                     <Text>{item.verse}</Text>
+                //                 }
+                //                 <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
+                //                     <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
+                //                 </Pressable>
+                //             </View>
+                //         </View>
+                //     )}
+                // />
                 />
             </View>
-            // <FlatList
-            //     data={verses}
-            //     renderItem={({ item, index }) => (
-            //         <View>
-            //             <View>
-            //                 {item.verse !== null &&
-            //                     <Text>{item.verse}</Text>
-            //                 }
-            //                 <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
-            //                     <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
-            //                 </Pressable>
-            //             </View>
-            //         </View>
-            //     )}
-            // />
         )
-
     }
+
 
 
 
