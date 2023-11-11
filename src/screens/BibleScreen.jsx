@@ -139,7 +139,7 @@ const BibleScreen = ({ navigation, route }) => {
         console.log(typeof parsedHTML)
         console.log(parsedHTML)
         // highlight all text after verse number.
-        const verses = [{ text: '', verse: '', tag: '', className: '' }] // I was thinking push everything iin here, and test to see if a num on each split(',') and combine if not
+        const verses = [] // I was thinking push everything iin here, and test to see if a num on each split(',') and combine if not
         // console.log(verses)
         if (Array.isArray(parsedHTML)) {
             console.log("The Array")
@@ -162,12 +162,32 @@ const BibleScreen = ({ navigation, route }) => {
                             //     verses.push({ text: parsedHTML.props.children, verse: null, className: '', tag: 'p' })
                             // }
                         }
-                        if(typeof data === 'string') {
-                            verses.push({text: data, verse: null, className: result.props.className, tag: result.type})
+                        if (typeof data === 'string') {
+                            verses.push({ text: data, verse: null, className: result.props.className, tag: result.type })
                         }
                     })
                 }
             })
+        }
+        if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
+            console.log("The object")
+            console.log(parsedHTML)
+            if (Array.isArray(parsedHTML.props.children)) {
+                parsedHTML.props.children.map((result) => {
+                    if (typeof result === 'object') {
+                        if (!isNaN(Number(result.props.children))) {
+                            verses.push({ verse: result.props.children, text: null, className: result.props.className, tag: result.type })
+                        }
+                        if (isNaN(Number(result.props.children))) {
+                            verses.push({ verse: null, text: result.props.children, className: result.props.className, tag: result.type })
+                        }
+                    }
+                    if (typeof result === 'string') {
+                        verses.push({ verse: null, text: result, className: parsedHTML.props.className, tag: parsedHTML.tag })
+                    }
+                })
+            }
+
         }
         console.log(verses)
         // if (parsedHTML.length === undefined) {
@@ -257,6 +277,7 @@ const BibleScreen = ({ navigation, route }) => {
                 // I THINK ALL DATA IS ITEM.PROPS.CHILDREN up until the additional .props.children
                 */}
                 <FlatList
+                    // verses
                     data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => {
