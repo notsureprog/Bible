@@ -134,11 +134,42 @@ const BibleScreen = ({ navigation, route }) => {
     }
 
     const RenderParsed = () => {
-        let verses = []
+
         const parsedHTML = parse(html) //returns jsx elements, empty array, or string
         console.log(typeof parsedHTML)
         console.log(parsedHTML)
-
+        // highlight all text after verse number.
+        const verses = [{ text: '', verse: '', tag: '', className: '' }] // I was thinking push everything iin here, and test to see if a num on each split(',') and combine if not
+        // console.log(verses)
+        if (Array.isArray(parsedHTML)) {
+            console.log("The Array")
+            console.log(parsedHTML)
+            parsedHTML.map((result) => {
+                if (Array.isArray(result.props.children)) {
+                    result.props.children.map((data) => {
+                        if (typeof data === 'object') {
+                            if (!isNaN(Number(data.props.children))) {
+                                verses.push({ verse: data.props.children, text: null, className: data.props.className, tag: data.type })
+                            }
+                            if (isNaN(Number(data.props.children))) {
+                                verses.push({ verse: null, text: data.props.children, className: data.props.className, tag: data.type })
+                            }
+                            // I think this is good too...
+                            if (typeof result === 'string') {
+                                verses.push({ verse: null, text: result, className: result.props.className, tag: result.type })
+                            }
+                            // if (typeof parsedHTML.props.children === 'string') {
+                            //     verses.push({ text: parsedHTML.props.children, verse: null, className: '', tag: 'p' })
+                            // }
+                        }
+                        if(typeof data === 'string') {
+                            verses.push({text: data, verse: null, className: result.props.className, tag: result.type})
+                        }
+                    })
+                }
+            })
+        }
+        console.log(verses)
         // if (parsedHTML.length === undefined) {
         //     if (chapter.split('.')[1] === 'intro') {
         //         verses.push({text: parsedHTML.props.children, verse: null, className: parsedHTML.props.className, tag: 'p'})
@@ -205,6 +236,7 @@ const BibleScreen = ({ navigation, route }) => {
         //     }
         // }
 
+
         return (
             // <Text>Hello Bible</Text>
             // {Array.isArray(parsedHTML) === false && (
@@ -227,82 +259,98 @@ const BibleScreen = ({ navigation, route }) => {
                 <FlatList
                     data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <View>
-                            {/* I need to be able to group results into one verse. if !isNan(result) */}
-                            {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
-                            {/* the number will be in here. Everything else can be merged together */}
-                            {typeof item.props.children === 'string' &&
-                                // console.log(+item.props.children)
-                                <Pressable>
+                    renderItem={({ item }) => {
 
-                                    <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                                </Pressable>
+                        return (
 
-                            }
-                            {item.props.children === null &&
-                                <Pressable >
-                                    <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
-                                </Pressable>
-                            }
-                            {/* {item.props.children.props.children !== null &&
+                            <View>
+                                {/* I need to be able to group results into one verse. if !isNan(result) */}
+                                {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
+                                {/* the number will be in here. Everything else can be merged together */}
+                                {typeof item.props.children === 'string' &&
+                                    // console.log(+item.props.children)
+                                    <Pressable>
+                                        {/* {verses.push(item.props.children)} */}
+                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                                    </Pressable>
+
+                                }
+                                {item.props.children === null &&
+                                    <Pressable >
+
+                                        <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
+                                    </Pressable>
+                                }
+                                {/* {item.props.children.props.children !== null &&
                                 <Text>{item.props.children.props.children}</Text>
                             } */}
-                            {/* {typeof item.props.children === 'object' && item.props.children && */}
+                                {/* {typeof item.props.children === 'object' && item.props.children && */}
 
-                            {Array.isArray(item.props.children) === false && item.props.children !== null &&
-                                <View>
-                                    {typeof item.props.children === 'string' &&
-                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                                    }
-                                    {typeof item.props.children === 'object' &&
-                                        <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
-                                    }
-                                </View>
+                                {Array.isArray(item.props.children) === false && item.props.children !== null &&
+                                    <View>
+                                        {typeof item.props.children === 'string' &&
+                                            <View>
+                                                {/* {verses.push(item.props.children)} */}
+                                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
+                                            </View>
+                                        }
+                                        {typeof item.props.children === 'object' &&
+                                            <View>
+                                                {/* {verses.push(item.props.children.props.children)} */}
+                                                <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
+                                            </View>
+                                        }
+                                    </View>
 
-                                // <item.type>{item.props.children.props.children}</item.type>
-                            }
-                            {Array.isArray(item.props.children) &&
-                                <View>
-                                    {item.props.children.map((result) => (
-                                        // console.log(result)
-                                        <View key={result.key}>
-                                            {typeof result === 'string' &&
-                                                <View>
-                                                    {/* however, there are conditions for things like p that need to be taken care of */}
-                                                    {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
-                                                    <Pressable style={{backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}  onPress={() => {dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted)}}>
-                                                        <item.type style={converted[`.eb-container .${item.type}`]}>
-                                                            {result}
-                                                        </item.type>
-                                                    </Pressable>
+                                    // <item.type>{item.props.children.props.children}</item.type>
+                                }
+                                {Array.isArray(item.props.children) &&
+                                    <View>
+                                        {item.props.children.map((result) => (
+                                            // console.log(result)
+                                            <View key={result.key}>
+                                                {typeof result === 'string' &&
+                                                    <View>
+                                                        {/* however, there are conditions for things like p that need to be taken care of */}
+                                                        {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
+                                                        {/* {verses.push(result)} */}
 
-
-                                                </View>
-                                            }
-                                            {typeof result === 'object' &&
-                                                <View>
-
-                                                    <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-
-                                                </View>
-                                            }
-                                        </View>
-                                    ))}
-                                </View>
-                            }
+                                                        <Pressable style={{ backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
+                                                            <item.type style={converted[`.eb-container .${item.type}`]}>
+                                                                {result}
+                                                            </item.type>
+                                                        </Pressable>
 
 
-                            {/* } */}
-                            {/* I know the error is thrown from the item.props.children.props.children */}
-                            {/* I found a null one too */}
-                            {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
-                            {/* {item.props.children === null &&
+
+                                                    </View>
+                                                }
+                                                {typeof result === 'object' &&
+                                                    <View>
+                                                        {/* {verses.push(result.props.children)} */}
+                                                        <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
+                                                    </View>
+                                                }
+                                            </View>
+                                        ))}
+                                    </View>
+                                }
+
+
+                                {/* } */}
+                                {/* I know the error is thrown from the item.props.children.props.children */}
+                                {/* I found a null one too */}
+                                {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
+                                {/* {item.props.children === null &&
                                 <Text>Blank space</Text>
                             } */}
 
-                        </View>
-                    )}
+                            </View>
+                        )
+                        // console.log(verses)
+                    }
+
+                    }
                 />
             </View>
             // <FlatList
