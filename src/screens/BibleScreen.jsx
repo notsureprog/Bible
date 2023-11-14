@@ -33,7 +33,13 @@ JSX makes it easier to write and add HTML in React.
 // https://github.com/meliorence/react-native-render-html/blob/v6.3.1/packages/render-html/src/TNodeRenderer.tsx
 
 // Example of what I am Thinking - <${css}><${html}></${css}>
-
+/**
+ * 
+ { label: 'KJV', value: 'de4e12af7f28f599-01' },
+        { label: 'ASV', value: '06125adad2d5898a-01' },
+        { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
+        { label: 'WEBBE', value: '7142879509583d59-04' },
+ */
 
 const BibleScreen = ({ navigation, route }) => {
     const user = useSelector((state) => state.authenticate.reducer) //change name to userReducer
@@ -100,28 +106,7 @@ const BibleScreen = ({ navigation, route }) => {
                     // 'div':['*']
                 }
             }
-            // Doesnt even work yet
-            // const parseOptions = {
-            //     replace: ({ attributes, children }) => {
 
-            //         console.log(attributes)
-            //         console.log(typeof attributes)
-            //         console.log(children)
-            //         console.log(typeof children)
-
-            //         if (!attributes) {
-            //             return
-            //         }
-
-            //         if (!children) {
-            //             return
-            //         }
-
-            //         if (attributes.class === 'wj') {
-            //             console.log("words of jesus")
-            //         }
-            //     }
-            // }
             const result = await axios(options);
             const cleanHTML = sanitizeHTML(result.data.data.content, sanitizeOptions)
             console.log(result.data.data.content)
@@ -139,7 +124,9 @@ const BibleScreen = ({ navigation, route }) => {
         console.log(typeof parsedHTML)
         console.log(parsedHTML)
         // highlight all text after verse number.
-        const verses = [] // I was thinking push everything iin here, and test to see if a num on each split(',') and combine if not
+        const verses = []
+        let groupedVerse = [];
+
         // console.log(verses)
         if (Array.isArray(parsedHTML)) {
             console.log("The Array")
@@ -149,18 +136,18 @@ const BibleScreen = ({ navigation, route }) => {
                     result.props.children.map((data) => {
                         if (typeof data === 'object') {
                             if (!isNaN(Number(data.props.children))) {
+                                console.log(data.props.children)
+                                groupedVerse.push(data.props.children)
                                 verses.push({ verse: data.props.children, text: null, className: data.props.className, tag: data.type })
                             }
                             if (isNaN(Number(data.props.children))) {
                                 verses.push({ verse: null, text: data.props.children, className: data.props.className, tag: data.type })
+                                
                             }
                             // I think this is good too...
                             if (typeof result === 'string') {
                                 verses.push({ verse: null, text: result, className: result.props.className, tag: result.type })
                             }
-                            // if (typeof parsedHTML.props.children === 'string') {
-                            //     verses.push({ text: parsedHTML.props.children, verse: null, className: '', tag: 'p' })
-                            // }
                         }
                         if (typeof data === 'string') {
                             verses.push({ text: data, verse: null, className: result.props.className, tag: result.type })
@@ -169,16 +156,34 @@ const BibleScreen = ({ navigation, route }) => {
                 }
             })
         }
+        
+        for (var i=0; i<verses.length; i++) {
+            let v;
+            verses.map((result) => {
+                if(result.verse !== null) {
+                    v = result.verse
+                }
+                if (result.verse === null) {
+                    result.verse = v
+                }
+            })
+        }
+        
         if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
             console.log("The object")
             console.log(parsedHTML)
             if (Array.isArray(parsedHTML.props.children)) {
                 parsedHTML.props.children.map((result) => {
+                    // here is where we need to be manipulating some of this data. 
+                    // I could either say that the verse is not null in all of the data, and make sure the verses correspond to the text
+                    // Or i could have a verse, and have an array of text to map out.
                     if (typeof result === 'object') {
                         if (!isNaN(Number(result.props.children))) {
+                            console.log(result.props.children)
                             verses.push({ verse: result.props.children, text: null, className: result.props.className, tag: result.type })
                         }
                         if (isNaN(Number(result.props.children))) {
+                            console.log(result.props.children)
                             verses.push({ verse: null, text: result.props.children, className: result.props.className, tag: result.type })
                         }
                     }
@@ -187,228 +192,37 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                 })
             }
-
         }
-        console.log(verses)
-        // if (parsedHTML.length === undefined) {
-        //     if (chapter.split('.')[1] === 'intro') {
-        //         verses.push({text: parsedHTML.props.children, verse: null, className: parsedHTML.props.className, tag: 'p'})
-        //     }
-
-        //     parsedHTML.props.children.map((result) => {
-        //         if (typeof result === 'string') {
-        //             verses.push({ text: result, tag: 'p', className: 'v' })
-        //         }
-        //         if (typeof result === 'object') {
-        //             const testIfNum = +result.props.children
-        //             const className = result.props.className
-        //             const DynamicHTML = result.type
-        //             if (isNaN(testIfNum)) {
-        //                 verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
-        //             }
-        //             if (!isNaN(testIfNum)) {
-        //                 verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
-        //             }
+        // for (var i = 1; i < groupedVerse.length; i++) {
+        //     verses.map((result) => {
+        //         if(result.verse === null) {
+        //             result.verse = i
         //         }
         //     })
         // }
-        // // JSX elements
-        // for (var i = 0; i < parsedHTML.length; i++) {
-        //     if (chapter.split('.')[0] === 'PSA') {
-        //         // notsure psalm 13 and psalm 150 work, but others do not. I will come back to the ui on web later. I am working on the db and thunk handling some... plus getting rid of all but main branch. 
-        //         <FlatList
-        //             data={parsedHTML}
-        //             renderItem={({ item }) => (
-        //                 <Text>{item.props.children}</Text>
-        //             )}
-        //         />
-
-        //     }
-        //     if (chapter.split('.')[1] === 'intro') {
-        //         <Text>{chapter}</Text>
-        //     }
-        //     if (typeof parsedHTML[i].props.children === 'string') {
-        //         verses.push({ text: parsedHTML[i].props.children, verse: null, tag: parsedHTML[i].type, className: parsedHTML[i].props.className })
-        //     }
-        //     if (parsedHTML[i].props.children === null) {
-        //         return
-        //         // verses.push({text: null, verse: null, className: null, tag: 'p'})
-        //     }
-        //     if (typeof parsedHTML[i].props.children === 'object') {
-
-        //         parsedHTML[i].props.children.map((result, index) => {
-        //             if (typeof result === 'object') {
-        //                 const testIfNum = +result.props.children
-        //                 const className = result.props.className
-        //                 const DynamicHTML = result.type
-
-        //                 if (isNaN(testIfNum)) {
-        //                     verses.push({ text: result.props.children, verse: null, tag: DynamicHTML, className: className })
-        //                 }
-        //                 if (!isNaN(testIfNum)) {
-        //                     verses.push({ verse: result.props.children, text: null, className: className, tag: DynamicHTML })
-        //                 }
-        //             }
-        //             if (typeof result !== 'object') {
-        //                 verses.push({ text: result, tag: 'p', className: '' })
-        //             }
-        //         })
-        //     }
-        // }
-
-
+        console.log(verses)
         return (
-            // <Text>Hello Bible</Text>
-            // {Array.isArray(parsedHTML) === false && (
-            //     <FlatList 
-            //     data={[parsedHTML]}
-            //     keyExtractor={(item, index) => index.toString()}
-            //     renderItem={()}
-            //     />
 
-            // }
             <View>
-                {/* 
-                // potential solutions:
-                // RESEARCH THIS SOME BECAUSE FLATLIST MAY BE A BIT DIFFERENT
-                // I could have the user click the number and put it in the db (easier, but not as user friendly)
-                // I could group all of the items in between the numbers and store the number iin db and highlight the group. 
-                // tbh, I would need the group anyways...
-                // I THINK ALL DATA IS ITEM.PROPS.CHILDREN up until the additional .props.children
-                */}
                 <FlatList
                     // verses
                     // data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => {
-
+                    
+                    renderItem={({ item, index }) => {
                         return (
-
-                            <View>
-                                {item.verse !== null &&
-                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
-                                }
-                                {item.text !== null &&
-                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
-                                }
+                            <View style={{ margin: 0 }}>
+                                <Pressable style={{color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}} onPress={() => {dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted)}}>
+                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}{item.text}</item.tag>
+                                </Pressable>
                             </View>
                         )
                     }}
-
-                //                 <View>
-                //                     {/* I need to be able to group results into one verse. if !isNan(result) */}
-                //                     {/* then apply a background color. and it will be user.highlightedVerses frmo the store. */}
-                //                     {/* the number will be in here. Everything else can be merged together */}
-                //                     {typeof item.props.children === 'string' &&
-                //                         // console.log(+item.props.children)
-                //                         <Pressable>
-                //                             {/* {verses.push(item.props.children)} */}
-                //                             <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                //                         </Pressable>
-
-                //                     }
-                //                     {item.props.children === null &&
-                //                         <Pressable >
-
-                //                             <item.type style={converted[`.eb-container .${item.props.className}`]}></item.type>
-                //                         </Pressable>
-                //                     }
-                //                     {/* {item.props.children.props.children !== null &&
-                //                     <Text>{item.props.children.props.children}</Text>
-                //                 } */}
-                //                     {/* {typeof item.props.children === 'object' && item.props.children && */}
-
-                //                     {Array.isArray(item.props.children) === false && item.props.children !== null &&
-                //                         <View>
-                //                             {typeof item.props.children === 'string' &&
-                //                                 <View>
-                //                                     {/* {verses.push(item.props.children)} */}
-                //                                     <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children}</item.type>
-                //                                 </View>
-                //                             }
-                //                             {typeof item.props.children === 'object' &&
-                //                                 <View>
-                //                                     {/* {verses.push(item.props.children.props.children)} */}
-                //                                     <item.type style={converted[`.eb-container .${item.props.className}`]}>{item.props.children.props.children}</item.type>
-                //                                 </View>
-                //                             }
-                //                         </View>
-
-                //                         // <item.type>{item.props.children.props.children}</item.type>
-                //                     }
-                //                     {Array.isArray(item.props.children) &&
-                //                         <View>
-                //                             {item.props.children.map((result) => (
-                //                                 // console.log(result)
-                //                                 <View key={result.key}>
-                //                                     {typeof result === 'string' &&
-                //                                         <View>
-                //                                             {/* however, there are conditions for things like p that need to be taken care of */}
-                //                                             {/* await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => { */}
-                //                                             {/* {verses.push(result)} */}
-
-                //                                             <Pressable style={{ backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: result, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
-                //                                                 <item.type style={converted[`.eb-container .${item.type}`]}>
-                //                                                     {result}
-                //                                                 </item.type>
-                //                                             </Pressable>
-
-
-
-                //                                         </View>
-                //                                     }
-                //                                     {typeof result === 'object' &&
-                //                                         <View>
-                //                                             {/* {verses.push(result.props.children)} */}
-                //                                             <result.type style={converted[`.eb-container .${result.props.className}`]}>{result.props.children}</result.type>
-                //                                         </View>
-                //                                     }
-                //                                 </View>
-                //                             ))}
-                //                         </View>
-                //                     }
-
-
-                //                     {/* } */}
-                //                     {/* I know the error is thrown from the item.props.children.props.children */}
-                //                     {/* I found a null one too */}
-                //                     {/* Just have to get it as it comes. Added errorboundary to parsed component in Platform === 'web' */}
-                //                     {/* {item.props.children === null &&
-                //                     <Text>Blank space</Text>
-                //                 } */}
-
-                //                 </View>
-                //             )
-                //             // console.log(verses)
-                //         }
-
-                //         }
-                //     />
-                // </View>
-                // <FlatList
-                //     data={verses}
-                //     renderItem={({ item, index }) => (
-                //         <View>
-                //             <View>
-                //                 {item.verse !== null &&
-                //                     <Text>{item.verse}</Text>
-                //                 }
-                //                 <Pressable onPress={() => dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: `${data.bookId}`, chapter: `${data.number}`, version: bible }))}>
-                //                     <item.tag style={converted[`.eb-container .${item.className}`]} className={item.className}>{item.text}</item.tag>
-                //                 </Pressable>
-                //             </View>
-                //         </View>
-                //     )}
-                // />
                 />
             </View>
         )
     }
-
-
-
-
 
     if (data !== null) {
         console.log(data)
@@ -428,7 +242,6 @@ const BibleScreen = ({ navigation, route }) => {
                 <View>
                     <Text style={{ marginLeft: '25%', marginRight: '25%', color: darkMode ? styles.dark.color : styles.light.color, fontSize: 35 }}>{data.reference}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        <VersionSelectMenu style={{ backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} />
                     </View>
                     <Pressable style={{ height: 30, width: 150, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor, borderColor: darkMode ? styles.dark.color : styles.light.color }} onPress={() => navigation.pop(1)}>
                         <Text style={{ borderColor: darkMode ? styles.dark.color : styles.light.color, borderWidth: 1, height: 30, width: 100, color: darkMode ? styles.dark.color : styles.light.color }}>Go Back</Text>
@@ -581,9 +394,9 @@ const BibleScreen = ({ navigation, route }) => {
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <ErrorBoundary
                                             FallbackComponent={ErrorPage}>
-
                                             <RenderParsed />
                                         </ErrorBoundary>
+                                        {/* I can change fint in the convertedCss file somehow... */}
                                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>

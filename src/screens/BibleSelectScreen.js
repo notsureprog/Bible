@@ -8,6 +8,13 @@ import { BIBLE_API_KEY, REACT_APP_MOCK_BOOK_VERSES } from '@env'
 
 const BibleSelectScreen = ({ navigation }) => {
     
+    /**
+     * 
+     *  { label: 'KJV', value: 'de4e12af7f28f599-01' },
+        { label: 'ASV', value: '06125adad2d5898a-01' },
+        { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
+        { label: 'WEBBE', value: '7142879509583d59-04' },
+     */
     const {width, height} = useWindowDimensions()
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
