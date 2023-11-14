@@ -214,9 +214,15 @@ const BibleScreen = ({ navigation, route }) => {
                     // data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
-
                     renderItem={({ item, index }) => {
                         // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === '1' && element.book === 'EPH.6' && element.chapter === 'EPH.6')
+                        /**
+                         * 
+                         * Ex: 
+                         * {verse: '1', book: 'REV', chapter: '1', version: 'KJV'}
+                         * {verse: '5', book: 'REV', chapter: '1', version: 'KJV'} //christ is the prince of the kings of the earth
+                         * {verse: '6', book: 'REV', chapter: '1', version: 'KJV'} //christ made us kings and priests
+                         */
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         console.log(testToSeeIfVerseInDB)
                         return (
@@ -230,13 +236,7 @@ const BibleScreen = ({ navigation, route }) => {
                                     }
                                     {item.text !== null &&
                                         <View>
-
-
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
-
-
-                                            {/* i need to highlight all of the matching verses in each object when one is clicked */}
-
                                         </View>
                                     }
                                 </Pressable>
