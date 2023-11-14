@@ -168,6 +168,8 @@ const BibleScreen = ({ navigation, route }) => {
                 }
             })
         }
+
+        console.log(user.highlightedVerses) //this will come from mongodb and store... Go ahead and push i guess for fallback...
         
         if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
             console.log("The object")
