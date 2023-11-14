@@ -1,5 +1,6 @@
 const { number } = require('joi');
 const mongoose = require('mongoose');
+const { unique } = require('underscore');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -15,15 +16,13 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true, 
+        unique: true,
         required: true,
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
-    highlightedVerses: [
-         //the object inside must be unique on all params (all together. There can be multiple verse 1 (Like Matthew 6:1 and Mark 6:1 is good), but not Mark 6:1 and Mark 6:1).
-        // verse: number
-    ]
-    
+    // I actually want the ability to click and remove it anyways... so unSet if it is already in there.
+    highlightedVerses: []//[]
+
 });
 
 mongoose.model('User', userSchema);

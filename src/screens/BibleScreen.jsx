@@ -157,20 +157,10 @@ const BibleScreen = ({ navigation, route }) => {
             })
         }
 
-        for (var i = 0; i < verses.length; i++) {
-            let v;
-            verses.map((result) => {
-                if (result.verse !== null) {
-                    v = result.verse
-                }
-                if (result.verse === null) {
-                    result.verse = v
-                }
-            })
-        }
 
-        console.log(user.highlightedVerses) //this will come from mongodb and store... Go ahead and push i guess for fallback...
 
+        // console.log(user.highlightedVerses.find(element => element.verse === '1' && element.book === 'GEN.33')) //this will come from mongodb and store... Go ahead and push i guess for fallback...
+        // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === item.book)
         if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
             console.log("The object")
             console.log(parsedHTML)
@@ -202,7 +192,20 @@ const BibleScreen = ({ navigation, route }) => {
         //         }
         //     })
         // }
+        for (var i = 0; i < verses.length; i++) {
+            let v;
+            verses.map((result) => {
+                if (result.verse !== null) {
+                    v = result.verse
+                }
+                if (result.verse === null) {
+                    result.verse = v
+                }
+            })
+        }
+
         console.log(verses)
+
         return (
 
             <View>
@@ -213,14 +216,28 @@ const BibleScreen = ({ navigation, route }) => {
                     keyExtractor={(item, index) => index.toString()}
 
                     renderItem={({ item, index }) => {
+                        // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === '1' && element.book === 'EPH.6' && element.chapter === 'EPH.6')
+                        const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id && element.chapter === chapter)
+                        console.log(testToSeeIfVerseInDB)
                         return (
                             <View style={{ margin: 0, padding: 0, display: 'flex' }}>
-                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
+                                {/* i guess another boolean for highlighted is user.highlighted.something.find === undefined/null */}
+                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
                                     {item.text === null &&
-                                        <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
+                                        <View>
+                                            <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
+                                        </View>
                                     }
-                                    {item.text !== null && 
-                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
+                                    {item.text !== null &&
+                                        <View>
+
+
+                                            <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
+
+
+                                            {/* i need to highlight all of the matching verses in each object when one is clicked */}
+
+                                        </View>
                                     }
                                 </Pressable>
                             </View>
@@ -263,6 +280,13 @@ const BibleScreen = ({ navigation, route }) => {
                         </Pressable>
                         <Pressable onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                             <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
+                        </Pressable>
+                        <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
+                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
+                        </Pressable>
+
+                        <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
+                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                         </Pressable>
                     </View>
 
@@ -353,13 +377,13 @@ const BibleScreen = ({ navigation, route }) => {
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
 
-                                        <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                        {/* <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                                         </Pressable>
 
                                         <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                        </Pressable>
+                                        </Pressable> */}
                                     </View>
                                 </View>
                             }
@@ -404,7 +428,7 @@ const BibleScreen = ({ navigation, route }) => {
                                             <RenderParsed />
                                         </ErrorBoundary>
                                         {/* I can change fint in the convertedCss file somehow... */}
-                                        <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
+                                        {/* <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
                                         </Pressable>
                                         <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
@@ -412,7 +436,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         </Pressable>
                                         <Pressable onPress={() => { console.log("Hello") }}>
                                             <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
-                                        </Pressable>
+                                        </Pressable> */}
                                     </View>
                                 </View>
                             }
