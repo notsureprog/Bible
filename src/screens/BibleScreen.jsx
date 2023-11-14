@@ -228,14 +228,24 @@ const BibleScreen = ({ navigation, route }) => {
                         return (
                             <View style={{ margin: 0, padding: 0, display: 'flex' }}>
                                 {/* i guess another boolean for highlighted is user.highlighted.something.find === undefined/null */}
-                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible })); setHighlighted(!highlighted) }}>
+                                <Pressable style={{
+                                    color: darkMode ? styles.dark.color : styles.light.color,
+                                    backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor
+                                }}
+                                    onPress={() => {
+                                        dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }));
+                                        // if nothing matches theen it is undefined...
+                                        setHighlighted(typeof testToSeeIfVerseInDB === 'undefined' ? highlighted : !highlighted)
+                                    }}
+                                >
                                     {item.text === null &&
                                         <View>
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
                                         </View>
                                     }
                                     {item.text !== null &&
-                                        <View>
+                                        <View style={{backgroundColor : typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>
+                                            {/* i want all text with identical verses to be highlighted */}
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
                                         </View>
                                     }
