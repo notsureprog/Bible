@@ -142,7 +142,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             if (isNaN(Number(data.props.children))) {
                                 verses.push({ verse: null, text: data.props.children, className: data.props.className, tag: data.type })
-                                
+
                             }
                             // I think this is good too...
                             if (typeof result === 'string') {
@@ -156,11 +156,11 @@ const BibleScreen = ({ navigation, route }) => {
                 }
             })
         }
-        
-        for (var i=0; i<verses.length; i++) {
+
+        for (var i = 0; i < verses.length; i++) {
             let v;
             verses.map((result) => {
-                if(result.verse !== null) {
+                if (result.verse !== null) {
                     v = result.verse
                 }
                 if (result.verse === null) {
@@ -170,7 +170,7 @@ const BibleScreen = ({ navigation, route }) => {
         }
 
         console.log(user.highlightedVerses) //this will come from mongodb and store... Go ahead and push i guess for fallback...
-        
+
         if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
             console.log("The object")
             console.log(parsedHTML)
@@ -211,12 +211,17 @@ const BibleScreen = ({ navigation, route }) => {
                     // data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
-                    
+
                     renderItem={({ item, index }) => {
                         return (
-                            <View style={{ margin: 0 }}>
-                                <Pressable style={{color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}} onPress={() => {dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted)}}>
-                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}{item.text}</item.tag>
+                            <View style={{ margin: 0, padding: 0, display: 'flex' }}>
+                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: highlighted ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
+                                    {item.text === null &&
+                                        <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
+                                    }
+                                    {item.text !== null && 
+                                    <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
+                                    }
                                 </Pressable>
                             </View>
                         )
