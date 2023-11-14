@@ -64,11 +64,11 @@ const BibleScreen = ({ navigation, route }) => {
 
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
-    const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 })
-    const [highlighted, setHighlighted] = React.useState(false)
-    const [chapter, setChapter] = React.useState(route.params.chapter !== undefined ? route.params.chapter : 'GEN.1');
-    const [bible, setBible] = React.useState(route.params.version !== undefined ? route.params.version : 'de4e12af7f28f599-01');
-    const [html, setHtml] = React.useState(null)
+    const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 });
+    const [highlighted, setHighlighted] = React.useState(false);
+    const [chapter, setChapter] = React.useState(route.params.chapter); //took off deep linking for now, so user cannot crash in the url...
+    const [bible, setBible] = React.useState(route.params.version);
+    const [html, setHtml] = React.useState(null);
     const [data, setData] = React.useState(null);
 
     const customHTMLElementModels = {
@@ -108,23 +108,23 @@ const BibleScreen = ({ navigation, route }) => {
             }
 
             const result = await axios(options);
-            const cleanHTML = sanitizeHTML(result.data.data.content, sanitizeOptions)
-            console.log(result.data.data.content)
-            setHtml(cleanHTML)
+            const cleanHTML = sanitizeHTML(result.data.data.content, sanitizeOptions);
+            console.log(result.data.data.content);
+            setHtml(cleanHTML);
             // setHtml(cleanHTML, parseOptions)
             setData(result.data.data);
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     const RenderParsed = () => {
 
-        const parsedHTML = parse(html) //returns jsx elements, empty array, or string
-        console.log(typeof parsedHTML)
-        console.log(parsedHTML)
+        const parsedHTML = parse(html); //returns jsx elements, empty array, or string
+        console.log(typeof parsedHTML);
+        console.log(parsedHTML);
         // highlight all text after verse number.
-        const verses = []
+        const verses = [];
         let groupedVerse = [];
 
         // console.log(verses)
@@ -217,12 +217,12 @@ const BibleScreen = ({ navigation, route }) => {
 
                     renderItem={({ item, index }) => {
                         // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === '1' && element.book === 'EPH.6' && element.chapter === 'EPH.6')
-                        const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id && element.chapter === chapter)
+                        const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         console.log(testToSeeIfVerseInDB)
                         return (
                             <View style={{ margin: 0, padding: 0, display: 'flex' }}>
                                 {/* i guess another boolean for highlighted is user.highlighted.something.find === undefined/null */}
-                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id, chapter: chapter, version: bible })); setHighlighted(!highlighted) }}>
+                                <Pressable style={{ color: darkMode ? styles.dark.color : styles.light.color, backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }} onPress={() => { dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible })); setHighlighted(!highlighted) }}>
                                     {item.text === null &&
                                         <View>
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
