@@ -224,6 +224,7 @@ const BibleScreen = ({ navigation, route }) => {
                          * {verse: '5', book: 'REV', chapter: '1', version: 'KJV'} //christ is the prince of the kings of the earth
                          * {verse: '6', book: 'REV', chapter: '1', version: 'KJV'} //christ made us kings and priests
                          */
+                        // the problem comes from here if i am not mistaken. for the db deletes, but the store retains.
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         console.log(testToSeeIfVerseInDB)
                         return (
@@ -239,7 +240,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         // probably need another db func to remove
                                         dispatch(typeof testToSeeIfVerseInDB === 'undefined' ? pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }) : removeVerseFromDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }));
                                         // if nothing matches theen it is undefined...
-                                        setHighlighted(typeof testToSeeIfVerseInDB === 'undefined' ? highlighted : !highlighted)
+                                        // setHighlighted(typeof testToSeeIfVerseInDB === 'undefined' ? false : true)
                                         
                                     }}
                                 >

@@ -76,13 +76,13 @@ const putVerseInDatabase = async (verse, username, book, chapter, version, callb
     }
 }
 
-const removeVerseFromDatabase = async (verse, username, book, chapter, version, callback) => {
+const removeVerseFromDatabase = async (verse, username, book, chapter, version) => {
     try {
         await connect
         const User = mongoose.model('User')
 
         await User.updateOne({ username: username }, { $pull: { highlightedVerses: { verse: verse, book: book, chapter: chapter, version: version } } })
-        callback(null, verse, book, chapter, version)
+        
     } catch (error) {
         console.log(error)
     }

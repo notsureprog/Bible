@@ -40,7 +40,7 @@ export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi, 
 export const removeVerseFromDatabase = createAsyncThunk('/verse/delete', async (thunkApi, {rejectWithValue}) => {
     console.log(thunkApi)
     try {
-        const response = await axios.post(`${uri}/verse/delete`, thunkApi)
+        const response = await axios.delete(`${uri}/verse/delete`, thunkApi)
         return response.data
     } catch (error) {
         rejectWithValue(error.response.data)
@@ -169,11 +169,20 @@ export const authSlice = createSlice({
                 }
             })
             // send action meta arg to db
-            .addCase(removeVerseFromDatabase.fulfilled, (state, action) => {
-                if (action.type === '/verse/delete/fulfilled') {
-                    state.highlightedVerses.push(action.meta.arg) //db.js will send back undefined.
+            .addCase(removeVerseFromDatabase.pending, (state, action) => {
+                if (action.type === '/verse/delete/pending') {
+                    state.highlightedVerses.forEach((element) => {
+                        delete element.verse === action.meta.arg.verse
+                        delete element.version === action.meta.arg.version
+                        delete element.book === action.meta.arg.book
+                        delete element.chapter === action.meta.arg.chapter
+                    })
                     
                 }
+            })
+            .addCase(removeVerseFromDatabase.fulfilled, (state, action) => {
+                console.log(state)
+                console.log(action)
             })
     }
 });
