@@ -40,7 +40,7 @@ export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi, 
 export const removeVerseFromDatabase = createAsyncThunk('/verse/delete', async (thunkApi, {rejectWithValue}) => {
     console.log(thunkApi)
     try {
-        const response = await axios.delete(`${uri}/verse/delete`, thunkApi)
+        const response = await axios.post(`${uri}/verse/delete`, thunkApi)
         return response.data
     } catch (error) {
         rejectWithValue(error.response.data)
@@ -176,6 +176,7 @@ export const authSlice = createSlice({
                         delete element.version === action.meta.arg.version
                         delete element.book === action.meta.arg.book
                         delete element.chapter === action.meta.arg.chapter
+                        delete element.username === action.meta.arg.username
                     })
                     
                 }

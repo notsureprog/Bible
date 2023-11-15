@@ -89,7 +89,7 @@ router.post('/verse', async (req, res, next) => {
     }
 })
 
-router.delete('/verse/delete', async (req, res, next) => {
+router.post('/verse/delete', async (req, res, next) => {
     const verse = req.body.verse
     const username = req.body.username
     const book = req.body.book
@@ -98,6 +98,7 @@ router.delete('/verse/delete', async (req, res, next) => {
     try {
         await removeVerseFromDatabase(verse, username, book, chapter, version, (err, data) => {
             console.log(data)
+            res.send(data)
         })
     } catch (error) {
         console.log(error)

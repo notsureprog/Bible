@@ -82,6 +82,7 @@ const removeVerseFromDatabase = async (verse, username, book, chapter, version) 
         const User = mongoose.model('User')
 
         await User.updateOne({ username: username }, { $pull: { highlightedVerses: { verse: verse, book: book, chapter: chapter, version: version } } })
+        // callback(null)
         
     } catch (error) {
         console.log(error)
