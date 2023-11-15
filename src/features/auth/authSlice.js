@@ -173,16 +173,31 @@ export const authSlice = createSlice({
                 if (action.type === '/verse/delete/pending') {
                     state.highlightedVerses.forEach((element) => {
                         if (element.verse === action.meta.arg.verse && element.book === action.meta.arg.book && element.chapter === action.meta.arg.chapter && element.version === action.meta.arg.version) {
-                            delete element.verse, element.book, element.chapter, element.version //this ,may be problematic because it would be deleting all
+                            delete element.verse //this ,may be problematic because it would be deleting all
+                            delete element.book
+                            delete element.chapter
+                            delete element.version
+                            delete element.username
+                            // left with {} in store
                         }
                         // its just deleting all element.verse... i dont think it even looks at action.meta.arg.verse... same for version, book, chapter, username
                     })
 
+                    state.highlightedVerses.filter((element) => {
+                        if (Object.keys(element).length !== 0) {
+                            return true
+                        }
+                        return false
+                    })
                 }
             })
             .addCase(removeVerseFromDatabase.fulfilled, (state, action) => {
-                console.log(state)
-                console.log(action)
+                state.highlightedVerses.filter((element) => {
+                    if (Object.keys(element).length !== 0) {
+                        return true
+                    }
+                    return false
+                })
             })
     }
 });
