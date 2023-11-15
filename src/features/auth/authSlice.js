@@ -17,7 +17,7 @@ export const registerUsers = createAsyncThunk(`/register`, async (thunkApi, { re
 })
 
 export const loginUsers = createAsyncThunk(`/login`, async (thunkApi, { rejectWithValue, signal }) => {
-// do not show creds in console
+    // do not show creds in console
     try {
         const response = await axios.post(`${uri}/login`, thunkApi)
         return response.data
@@ -37,7 +37,7 @@ export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi, 
     }
 })
 
-export const removeVerseFromDatabase = createAsyncThunk('/verse/delete', async (thunkApi, {rejectWithValue}) => {
+export const removeVerseFromDatabase = createAsyncThunk('/verse/delete', async (thunkApi, { rejectWithValue }) => {
     console.log(thunkApi)
     try {
         const response = await axios.post(`${uri}/verse/delete`, thunkApi)
@@ -91,13 +91,13 @@ export const authSlice = createSlice({
                 window.location.reload()
                 // do not want window location so it will do this for all three devices. useEffect dependency to fire a function
                 // window.location.reload() //crashes on android for some reason. need a reload function that will work on all of the devices. if i reload on ios or android on re-rendeer of app, i am logged out though...
-            } 
+            }
         },
         putVerseInDatabase(state, action) {
             console.log(state)
             console.log(action)
         },
-        
+
     },
 
     extraReducers: (builder) => {
@@ -172,13 +172,12 @@ export const authSlice = createSlice({
             .addCase(removeVerseFromDatabase.pending, (state, action) => {
                 if (action.type === '/verse/delete/pending') {
                     state.highlightedVerses.forEach((element) => {
-                        delete element.verse === action.meta.arg.verse
-                        delete element.version === action.meta.arg.version
-                        delete element.book === action.meta.arg.book
-                        delete element.chapter === action.meta.arg.chapter
-                        delete element.username === action.meta.arg.username
+                        if (element.verse === action.meta.arg.verse && element.book === action.meta.arg.book && element.chapter === action.meta.arg.chapter && element.version === action.meta.arg.version) {
+                            delete element.verse, element.book, element.chapter, element.version //this ,may be problematic because it would be deleting all
+                        }
+                        // its just deleting all element.verse... i dont think it even looks at action.meta.arg.verse... same for version, book, chapter, username
                     })
-                    
+
                 }
             })
             .addCase(removeVerseFromDatabase.fulfilled, (state, action) => {
