@@ -15,7 +15,8 @@ import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL, REACT_APP_MO
 import VersionSelectMenu from '../../VersionSelectMenu'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { selectVerse } from '../features/verse/bookSlice'
-import { pushVersesToDatabase, putVerseInDatabase } from '../features/auth/authSlice';
+import { pushVersesToDatabase, putVerseInDatabase, removeVerseFromDatabase } from '../features/auth/authSlice';
+// import { removeVerseFromDatabase } from '../../database/db';
 import { converted } from '../../css/scriptureConverted'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -233,9 +234,13 @@ const BibleScreen = ({ navigation, route }) => {
                                     backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor
                                 }}
                                     onPress={() => {
-                                        dispatch(pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }));
+                                        // if the item matches something in the db, then it ought to take it out on press
+                                        // if the item is not highlighted, it will highlight on press
+                                        // probably need another db func to remove
+                                        dispatch(typeof testToSeeIfVerseInDB === 'undefined' ? pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }) : removeVerseFromDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }));
                                         // if nothing matches theen it is undefined...
                                         setHighlighted(typeof testToSeeIfVerseInDB === 'undefined' ? highlighted : !highlighted)
+                                        
                                     }}
                                 >
                                     {item.text === null &&

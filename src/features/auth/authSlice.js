@@ -36,6 +36,16 @@ export const pushVersesToDatabase = createAsyncThunk('/verse', async (thunkApi, 
         rejectWithValue(error.response.data)
     }
 })
+
+export const removeVerseFromDatabase = createAsyncThunk('/verse/delete', async (thunkApi, {rejectWithValue}) => {
+    console.log(thunkApi)
+    try {
+        const response = await axios.post(`${uri}/verse/delete`, thunkApi)
+        return response.data
+    } catch (error) {
+        rejectWithValue(error.response.data)
+    }
+})
 // FORCE CANCELLATION ON EVEN GOOD REQUESTS
 // test commented out...
 //  {
@@ -86,7 +96,8 @@ export const authSlice = createSlice({
         putVerseInDatabase(state, action) {
             console.log(state)
             console.log(action)
-        }
+        },
+        
     },
 
     extraReducers: (builder) => {
@@ -155,6 +166,13 @@ export const authSlice = createSlice({
                     console.log(state)
                     console.log(action)
                     state.highlightedVerses.push(action.meta.arg) //well i do just want to push one single verse or if it is selected take it off if clicked.
+                }
+            })
+            // send action meta arg to db
+            .addCase(removeVerseFromDatabase.fulfilled, (state, action) => {
+                if (action.type === '/verse/delete/fulfilled') {
+                    state.highlightedVerses.push(action.meta.arg) //db.js will send back undefined.
+                    
                 }
             })
     }

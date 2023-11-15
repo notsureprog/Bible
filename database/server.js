@@ -11,7 +11,7 @@ const cors = require('cors');
 app.use(cors());
 app.use(bodyParser.json())
 app.use(cookieParser())
-const { postUserToDatabase, getUserFromDatabase, putVerseInDatabase } = require('./db');
+const { postUserToDatabase, getUserFromDatabase, putVerseInDatabase, removeVerseFromDatabase } = require('./db');
 
 router.use((req, res, next) => {
     res.header({ 'Access-Control-Allow-Origin': 'http://localhost:19006' });
@@ -49,7 +49,7 @@ router.post('/login', async (req, res, next) => {
     const password = req.body.password
     try {
         await getUserFromDatabase(username, password, (err, data) => {
-            
+
             res.send(data)
             next()
         })
@@ -69,6 +69,7 @@ router.post('/login', async (req, res, next) => {
 // }
 
 // })
+// verse/add
 router.post('/verse', async (req, res, next) => {
     const verse = req.body.verse
     const username = req.body.username
@@ -80,6 +81,23 @@ router.post('/verse', async (req, res, next) => {
         // I need to push into an array in db 
         await putVerseInDatabase(verse, username, book, chapter, version, (err, data) => {
             res.send(data) //reflects from the db into the ui and persisted...
+            next()
+        })
+        // await removeVerseFromDatabase(verse, username, book, chapter, version)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.post('/verse/delete', async (req, res) => {
+    const verse = req.body.verse
+    const username = req.body.username
+    const book = req.body.book
+    const chapter = req.body.chapter
+    const version = req.body.version
+    try {
+        await removeVerseFromDatabase(verse, username, book, chapter, version, (err, data) => {
+            res.send(data)
             next()
         })
     } catch (error) {

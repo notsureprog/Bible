@@ -69,12 +69,23 @@ const putVerseInDatabase = async (verse, username, book, chapter, version, callb
         const User = mongoose.model('User')
         // if it is in there, then remove it on second click
         // query with the version, and if the chapter and verse are found, remove it.
-        await User.updateOne({ username: username }, { $push: { highlightedVerses:  {verse: verse, book: book, chapter: chapter, version: version} } })
+        await User.updateOne({ username: username }, { $push: { highlightedVerses: { verse: verse, book: book, chapter: chapter, version: version } } })
         callback(null, verse, book, chapter, version)
     } catch (error) {
         console.log(error)
     }
+}
 
+const removeVerseFromDatabase = async (verse, username, book, chapter, version, callback) => {
+    try {
+        await connect
+        const User = mongoose.model('User')
+
+        await User.updateOne({ username: username }, { $pull: { highlightedVerses: { verse: verse, book: book, chapter: chapter, version: version } } })
+        callback(null, verse, book, chapter, version)
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const dropUserFromDatabase = async (username, password) => {
@@ -83,4 +94,4 @@ const dropUserFromDatabase = async (username, password) => {
     await dropUser.collection('collections').deleteOne({ username: username, password: password })
 }
 
-module.exports = { postUserToDatabase, getUserFromDatabase, putVerseInDatabase}
+module.exports = { postUserToDatabase, getUserFromDatabase, putVerseInDatabase, removeVerseFromDatabase }
