@@ -66,7 +66,6 @@ const BibleScreen = ({ navigation, route }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 });
-    const [highlighted, setHighlighted] = React.useState(false);
     const [chapter, setChapter] = React.useState(route.params.chapter); //took off deep linking for now, so user cannot crash in the url...
     const [bible, setBible] = React.useState(route.params.version);
     const [html, setHtml] = React.useState(null);
@@ -228,7 +227,7 @@ const BibleScreen = ({ navigation, route }) => {
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         console.log(testToSeeIfVerseInDB)
                         return (
-                            <View style={{ margin: 0, padding: 0, display: 'flex' }}>
+                            <View style={{ display: 'flex' }}>
                                 {/* i guess another boolean for highlighted is user.highlighted.something.find === undefined/null */}
                                 <Pressable style={{
                                     color: darkMode ? styles.dark.color : styles.light.color,
@@ -250,7 +249,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         </View>
                                     }
                                     {item.text !== null &&
-                                        <View style={{backgroundColor : typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>
+                                        <View style={{ color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor : typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>
                                             {/* i want all text with identical verses to be highlighted */}
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
                                         </View>
@@ -305,7 +304,6 @@ const BibleScreen = ({ navigation, route }) => {
                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                         </Pressable>
                     </View>
-
                     {Platform.OS === 'android' &&
                         <View>
                             {data.id === 'GEN.intro' &&
@@ -336,14 +334,9 @@ const BibleScreen = ({ navigation, route }) => {
                             }
 
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
-
                                 <View>
-                                    {/* <WebView
-                                            source={{ html: data.content }}
-                                        /> */}
-
                                     <ScrollView style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-                                        {/* for now... */}
+                                        {/* Thinking WebView Some how... As long as verses come from the db, then it should be ok... */}
                                         <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<dynamic-font>${data.content}</dynamic-font>` }} />
                                         <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
                                             <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
@@ -392,14 +385,6 @@ const BibleScreen = ({ navigation, route }) => {
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-
-                                        {/* <Pressable style={{ flexDirection: 'row' }} onPress={() => { setChapter(`${data.previous.id}`) }}>
-                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                        </Pressable>
-
-                                        <Pressable style={{ paddingTop: '50%', paddingLeft: '25%', marginLeft: '25%' }} onPress={() => { setChapter(`${data.next.id}`) }}>
-                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
-                                        </Pressable> */}
                                     </View>
                                 </View>
                             }
@@ -412,7 +397,6 @@ const BibleScreen = ({ navigation, route }) => {
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             <CSSPropertyNameList></CSSPropertyNameList>
-                                            {/* <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} /> */}
                                         </RenderHTMLConfigProvider>
                                     </TRenderEngineProvider>
                                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -443,16 +427,6 @@ const BibleScreen = ({ navigation, route }) => {
                                             FallbackComponent={ErrorPage}>
                                             <RenderParsed />
                                         </ErrorBoundary>
-                                        {/* I can change fint in the convertedCss file somehow... */}
-                                        {/* <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
-                                            <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
-                                        </Pressable>
-                                        <Pressable onPress={() => { setChapter(`${data.next.id}`) }}>
-                                            <AntDesign name='rightcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
-                                        </Pressable>
-                                        <Pressable onPress={() => { console.log("Hello") }}>
-                                            <AntDesign name='group' style={{ color: darkMode ? styles.dark.color : styles.light.color, height: 50, width: 50 }} size={30} />
-                                        </Pressable> */}
                                     </View>
                                 </View>
                             }

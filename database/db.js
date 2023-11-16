@@ -77,12 +77,13 @@ const putVerseInDatabase = async (verse, username, book, chapter, version, callb
 }
 
 const removeVerseFromDatabase = async (verse, username, book, chapter, version) => {
+    // I would not really need to send much of anything... 
     try {
         await connect
         const User = mongoose.model('User')
 
         await User.updateOne({ username: username }, { $pull: { highlightedVerses: { verse: verse, book: book, chapter: chapter, version: version } } })
-        // callback(null)
+        
         
     } catch (error) {
         console.log(error)

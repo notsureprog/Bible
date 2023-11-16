@@ -10,7 +10,7 @@ console.log(authReducer)
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    
+    blacklist: ['highlightedVerses']
 }
 
 // const getDefaultMiddleware = () => {
@@ -20,7 +20,7 @@ const persistConfig = {
 
 const reducers = combineReducers({
     // change to authReducer
-    reducer: authReducer,
+    reducer: authReducer, // i dont think the persist is the problem... I think I need to clearr the localStorage a little better... rather than persist:root
     verseReducer: verseReducer
     // themeReducer: themeReducer
 })

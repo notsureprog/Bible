@@ -99,6 +99,7 @@ router.post('/verse/delete', async (req, res, next) => {
         await removeVerseFromDatabase(verse, username, book, chapter, version, (err, data) => {
             console.log(data)
             res.send(data)
+            next()
         })
     } catch (error) {
         console.log(error)
