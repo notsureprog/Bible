@@ -74,7 +74,7 @@ const BibleScreen = ({ navigation, route }) => {
                     'api-key': `${BIBLE_API_KEY}`
                 }
             }
-
+ 
             const sanitizeOptions = {
                 allowedTags: [
                     // Will be removing all but 3.
