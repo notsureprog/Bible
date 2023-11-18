@@ -9,39 +9,13 @@ import sanitizeHTML from 'sanitize-html'
 import { WebView } from 'react-native-webview'
 import { HTMLElementModel, CSSPropertyNameList, CSSProcessorConfig, TRenderEngineProvider, RenderHTML, HTMLContentModel, RenderHTMLConfigProvider } from 'react-native-render-html'
 import { ThemeContext } from './context/ThemeContext'
-import DropDownPicker from 'react-native-dropdown-picker'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { EXPO_PUBLIC_API_URL, BIBLE_API_KEY, REACT_APP_EXPRESS_URL, REACT_APP_MOCK_CHAPTER_CONTENTS } from '@env'
-import VersionSelectMenu from '../../VersionSelectMenu'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-// import { selectVerse } from '../features/verse/bookSlice'
 import { pushVersesToDatabase, putVerseInDatabase, removeVerseFromDatabase } from '../features/auth/authSlice';
-// import { removeVerseFromDatabase } from '../../database/db';
 import { converted } from '../../css/scriptureConverted'
 import { useDispatch, useSelector } from 'react-redux'
 
-// https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-01/chapters/PSA.1/verses
-
-// https://www.w3schools.com/react/react_jsx.asp
-/*
-JSX stands for JavaScript XML.
-
-JSX allows us to write HTML in React.
-
-JSX makes it easier to write and add HTML in React.
-
-*/
-// https://github.com/meliorence/react-native-render-html/blob/v6.3.1/packages/render-html/src/TNodeRenderer.tsx
-
-// Example of what I am Thinking - <${css}><${html}></${css}>
-/**
- * 
- { label: 'KJV', value: 'de4e12af7f28f599-01' },
-        { label: 'ASV', value: '06125adad2d5898a-01' },
-        { label: 'WEB', value: '9879dbb7cfe39e4d-03' },
-        { label: 'WEBBE', value: '7142879509583d59-04' },
- */
-
+// seems a little buggy on highlight and on page change.
 const BibleScreen = ({ navigation, route }) => {
     const user = useSelector((state) => state.authenticate.reducer) //change name to userReducer
     const dispatch = useDispatch()
@@ -66,9 +40,12 @@ const BibleScreen = ({ navigation, route }) => {
     const theme = React.useContext(ThemeContext);
     const darkMode = theme.state.darkMode;
     const [fontState, fontDispatch] = React.useReducer(fontReducer, { size: 24 });
+    // step 3 (chapter is changed)
     const [chapter, setChapter] = React.useState(route.params.chapter); //took off deep linking for now, so user cannot crash in the url...
     const [bible, setBible] = React.useState(route.params.version);
+    // html is still the same as before, but chapter changed
     const [html, setHtml] = React.useState(null);
+    // data is still the same as before, but chapter changed
     const [data, setData] = React.useState(null);
 
     const customHTMLElementModels = {
@@ -86,6 +63,9 @@ const BibleScreen = ({ navigation, route }) => {
     }
 
     const GetVerse = async () => {
+        // if (loading) {
+        // although the log in the api call was only hit once when highlighting verses
+        // }
         try {
             const options = {
                 method: 'GET',
@@ -110,8 +90,11 @@ const BibleScreen = ({ navigation, route }) => {
             const result = await axios(options);
             const cleanHTML = sanitizeHTML(result.data.data.content, sanitizeOptions);
             console.log(result.data.data.content);
+            // step 4
+            // set the new html
             setHtml(cleanHTML);
             // setHtml(cleanHTML, parseOptions)
+            // set the new data
             setData(result.data.data);
         } catch (err) {
             console.log(err);
@@ -119,7 +102,7 @@ const BibleScreen = ({ navigation, route }) => {
     }
 
     const RenderParsed = () => {
-
+        // The Flatlist with the buttons is inside of this function, but is in a different return fn also...
         const parsedHTML = parse(html); //returns jsx elements, empty array, or string
         console.log(typeof parsedHTML);
         console.log(parsedHTML);
@@ -136,7 +119,6 @@ const BibleScreen = ({ navigation, route }) => {
                     result.props.children.map((data) => {
                         if (typeof data === 'object') {
                             if (!isNaN(Number(data.props.children))) {
-                                console.log(data.props.children)
                                 groupedVerse.push(data.props.children)
                                 verses.push({ verse: data.props.children, text: null, className: data.props.className, tag: data.type })
                             }
@@ -157,25 +139,16 @@ const BibleScreen = ({ navigation, route }) => {
             })
         }
 
-
-
-        // console.log(user.highlightedVerses.find(element => element.verse === '1' && element.book === 'GEN.33')) //this will come from mongodb and store... Go ahead and push i guess for fallback...
-        // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === item.book)
         if (Array.isArray(parsedHTML) === false && typeof parsedHTML === 'object') {
             console.log("The object")
             console.log(parsedHTML)
             if (Array.isArray(parsedHTML.props.children)) {
                 parsedHTML.props.children.map((result) => {
-                    // here is where we need to be manipulating some of this data. 
-                    // I could either say that the verse is not null in all of the data, and make sure the verses correspond to the text
-                    // Or i could have a verse, and have an array of text to map out.
                     if (typeof result === 'object') {
                         if (!isNaN(Number(result.props.children))) {
-                            console.log(result.props.children)
                             verses.push({ verse: result.props.children, text: null, className: result.props.className, tag: result.type })
                         }
                         if (isNaN(Number(result.props.children))) {
-                            console.log(result.props.children)
                             verses.push({ verse: null, text: result.props.children, className: result.props.className, tag: result.type })
                         }
                     }
@@ -185,13 +158,7 @@ const BibleScreen = ({ navigation, route }) => {
                 })
             }
         }
-        // for (var i = 1; i < groupedVerse.length; i++) {
-        //     verses.map((result) => {
-        //         if(result.verse === null) {
-        //             result.verse = i
-        //         }
-        //     })
-        // }
+
         for (var i = 0; i < verses.length; i++) {
             let v;
             verses.map((result) => {
@@ -204,43 +171,22 @@ const BibleScreen = ({ navigation, route }) => {
             })
         }
 
-        console.log(verses)
-
         return (
 
             <View>
                 <FlatList
-                    // verses
-                    // data={Array.isArray(parsedHTML) ? parsedHTML : [parsedHTML]}
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => {
-                        // const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === '1' && element.book === 'EPH.6' && element.chapter === 'EPH.6')
-                        /**
-                         * 
-                         * Ex: 
-                         * {verse: '1', book: 'REV', chapter: '1', version: 'KJV'}
-                         * {verse: '5', book: 'REV', chapter: '1', version: 'KJV'} //christ is the prince of the kings of the earth
-                         * {verse: '6', book: 'REV', chapter: '1', version: 'KJV'} //christ made us kings and priests
-                         */
-                        // the problem comes from here if i am not mistaken. for the db deletes, but the store retains.
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
-                        console.log(testToSeeIfVerseInDB)
                         return (
                             <View style={{ display: 'flex' }}>
-                                {/* i guess another boolean for highlighted is user.highlighted.something.find === undefined/null */}
                                 <Pressable style={{
                                     color: darkMode ? styles.dark.color : styles.light.color,
                                     backgroundColor: darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor
                                 }}
                                     onPress={() => {
-                                        // if the item matches something in the db, then it ought to take it out on press
-                                        // if the item is not highlighted, it will highlight on press
-                                        // probably need another db func to remove
                                         dispatch(typeof testToSeeIfVerseInDB === 'undefined' ? pushVersesToDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }) : removeVerseFromDatabase({ verse: item.verse, username: user.username, book: data.id.split('.')[0], chapter: chapter.split('.')[1], version: bible }));
-                                        // if nothing matches theen it is undefined...
-                                        // setHighlighted(typeof testToSeeIfVerseInDB === 'undefined' ? false : true)
-                                        
                                     }}
                                 >
                                     {item.text === null &&
@@ -249,8 +195,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         </View>
                                     }
                                     {item.text !== null &&
-                                        <View style={{ color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor : typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor}}>
-                                            {/* i want all text with identical verses to be highlighted */}
+                                        <View style={{ color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
                                         </View>
                                     }
@@ -296,6 +241,7 @@ const BibleScreen = ({ navigation, route }) => {
                         <Pressable onPress={() => fontDispatch({ type: "INCREASE_FONT" })}>
                             <AntDesign name='pluscircle' style={{ color: darkMode ? styles.dark.color : styles.light.color, width: 50, height: 50 }} size={30} />
                         </Pressable>
+                        {/* Step 1. I press one of these buttons... Then  */}
                         <Pressable onPress={() => { setChapter(`${data.previous.id}`) }}>
                             <AntDesign name='leftcircle' style={{ color: darkMode ? styles.dark.color : styles.light.color }} size={30} />
                         </Pressable>
@@ -422,9 +368,11 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
                                 <View>
-                                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <View style={{ display: 'flex',  }}>
                                         <ErrorBoundary
                                             FallbackComponent={ErrorPage}>
+                                                {/* Step 2. Although the new chapter data is not rendered, it does go from top to botton and shows the same renderparsed */}
+
                                             <RenderParsed />
                                         </ErrorBoundary>
                                     </View>

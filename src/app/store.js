@@ -10,7 +10,7 @@ console.log(authReducer)
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    blacklist: ['highlightedVerses']
+    
 }
 
 // const getDefaultMiddleware = () => {

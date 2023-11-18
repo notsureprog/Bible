@@ -70,8 +70,8 @@ const Login = ({ navigation }) => {
             
             {!user.isLoggedIn && user.loading !== 'success' &&
                 <View>
-                    <TextInput testID='usernam' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
-                    <TextInput aria-aria-label='password' style={styles.inputStyles} placeholder='Enter your password' onChangeText={setPassword} />
+                    <TextInput testID='username' style={styles.inputStyles} placeholder='Enter your username' onChangeText={setUsername} />
+                    <TextInput aria-aria-label='password' style={styles.inputStyles} placeholder='Enter your password' secureTextEntry={true} onChangeText={setPassword} />
                     <Pressable accessibilityRole='button' style={styles.buttonStyles} onPress={onSubmitUser}>
                         <Text>Submit</Text>
                     </Pressable>

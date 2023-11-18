@@ -56,9 +56,9 @@ const Register = ({ navigation }) => {
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Email</Text>
                     <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setEmail} />
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Password</Text>
-                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setPassword} />
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setPassword} secureTextEntry={true} />
                     <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 30, fontWeight: '900', fontFamily: 'serif' }}>Confirm Password</Text>
-                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setConfirmPassword} />
+                    <TextInput style={{ color: darkMode ? styles.dark.color : styles.light.color, borderWidth: 2, fontSize: 30, borderColor: darkMode ? styles.dark.color : styles.light.color, height: 60, width: '100%', borderRadius: 10 }} onChangeText={setConfirmPassword} secureTextEntry={true} />
                     <Pressable style={styles.buttonStyles} onPress={registerUser}>
                         <Text style={{ color: darkMode ? styles.dark.color : styles.light.color, fontSize: 40, fontWeight: '900', fontFamily: 'serif', borderRadius: 5 }}>Submit</Text>
                     </Pressable>
