@@ -176,6 +176,8 @@ const BibleScreen = ({ navigation, route }) => {
             })
         }
 
+
+
         return (
 
             <View>
@@ -183,7 +185,14 @@ const BibleScreen = ({ navigation, route }) => {
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => {
-                        console.log(converted[`.eb-container .${item.className}`])
+                        // className is already - for example - wj, p, v, q1. However, there is no q1 in convertedCss. Also, - iin the case of v - it is sup[class^=v], but q1 - on the other hand - is [class^=q]
+                        // I always want *optional*[class^=something]
+                        const testBibleStyles = {
+                            tagStyle : converted[`.eb-container ${item.tag}`],
+                            textStyle : typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : typeof converted[`.eb-container [class^=${item.className[0]}]`] !== 'undefined' ? converted[`.eb-container [class^=${item.className[0]}]`] : converted[`.eb-container sup[class^=${item.className[0]}]`]
+                        }
+                        console.log(testBibleStyles.textStyle)
+                        console.log(testBibleStyles.tagStyle)
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         return (
                             <View style={{ display: 'flex' }}>
@@ -198,12 +207,18 @@ const BibleScreen = ({ navigation, route }) => {
                                     {item.text === null &&
                                         <View>
                                             {/* I think the ebcontaiiner for q1 is undefiined, so ternary it */}
+                                            {/* <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag> */}
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
                                         </View>
                                     }
                                     {item.text !== null &&
-                                        <View style={{ fontSize: fontState.size, color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                                            <item.tag style={typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : converted[`.eb-container [class^=${item.className[0]}]`]}>{item.text}</item.tag>
+                                        <View style={testBibleStyles.tagStyle}>
+                                        {/* <View style={converted[`.eb-container ${item.tag}`]}> */}
+                                            <View style={{ fontSize: fontState.size, color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                                                {/* Test styles in a func */}
+                                                {/* <item.tag style={typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : typeof converted[`.eb-container [class^=${item.className[0]}]`] !== 'undefined' ? converted[`.eb-container [class^=${item.className[0]}]`] : converted[`.eb-container sup[class^=${item.className[0]}]`]}>{item.text}</item.tag> */}
+                                                <item.tag style={testBibleStyles.textStyle}>{item.text}</item.tag>
+                                            </View>
                                         </View>
                                     }
                                 </Pressable>
