@@ -115,6 +115,7 @@ const BibleScreen = ({ navigation, route }) => {
             console.log("The Array")
             console.log(parsedHTML)
             parsedHTML.map((result) => {
+                // The Psalm has a key of 0 for the title (a sample of A Psalm of David)...
                 if (Array.isArray(result.props.children)) {
                     result.props.children.map((data) => {
                         if (typeof data === 'object') {
@@ -135,6 +136,9 @@ const BibleScreen = ({ navigation, route }) => {
                             verses.push({ text: data, verse: null, className: result.props.className, tag: result.type })
                         }
                     })
+                }
+                if (typeof result.props.children === 'string') {
+                    verses.push({verse: null, text: result.props.children, className: result.props.className, tag: result.type})
                 }
             })
         }
@@ -157,6 +161,7 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                 })
             }
+            
         }
 
         for (var i = 0; i < verses.length; i++) {
@@ -195,7 +200,7 @@ const BibleScreen = ({ navigation, route }) => {
                                         </View>
                                     }
                                     {item.text !== null &&
-                                        <View style={{ color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
+                                        <View style={{ fontSize: fontState.size, color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
                                         </View>
                                     }
@@ -372,7 +377,6 @@ const BibleScreen = ({ navigation, route }) => {
                                         <ErrorBoundary
                                             FallbackComponent={ErrorPage}>
                                                 {/* Step 2. Although the new chapter data is not rendered, it does go from top to botton and shows the same renderparsed */}
-
                                             <RenderParsed />
                                         </ErrorBoundary>
                                     </View>
