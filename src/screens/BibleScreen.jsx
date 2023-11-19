@@ -74,7 +74,7 @@ const BibleScreen = ({ navigation, route }) => {
                     'api-key': `${BIBLE_API_KEY}`
                 }
             }
- 
+
             const sanitizeOptions = {
                 allowedTags: [
                     // Will be removing all but 3.
@@ -138,7 +138,7 @@ const BibleScreen = ({ navigation, route }) => {
                     })
                 }
                 if (typeof result.props.children === 'string') {
-                    verses.push({verse: null, text: result.props.children, className: result.props.className, tag: result.type})
+                    verses.push({ verse: null, text: result.props.children, className: result.props.className, tag: result.type })
                 }
             })
         }
@@ -161,7 +161,7 @@ const BibleScreen = ({ navigation, route }) => {
                     }
                 })
             }
-            
+
         }
 
         for (var i = 0; i < verses.length; i++) {
@@ -183,6 +183,7 @@ const BibleScreen = ({ navigation, route }) => {
                     data={verses}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => {
+                        console.log(converted[`.eb-container .${item.className}`])
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         return (
                             <View style={{ display: 'flex' }}>
@@ -196,12 +197,13 @@ const BibleScreen = ({ navigation, route }) => {
                                 >
                                     {item.text === null &&
                                         <View>
+                                            {/* I think the ebcontaiiner for q1 is undefiined, so ternary it */}
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
                                         </View>
                                     }
                                     {item.text !== null &&
                                         <View style={{ fontSize: fontState.size, color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                                            <item.tag style={converted[`.eb-container .${item.className}`]}>{item.text}</item.tag>
+                                            <item.tag style={typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : converted[`.eb-container [class^=${item.className[0]}]`]}>{item.text}</item.tag>
                                         </View>
                                     }
                                 </Pressable>
@@ -373,10 +375,10 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id !== 'GEN.intro' && data.id !== 'REV.22' &&
                                 <View>
-                                    <View style={{ display: 'flex',  }}>
+                                    <View style={{ display: 'flex', }}>
                                         <ErrorBoundary
                                             FallbackComponent={ErrorPage}>
-                                                {/* Step 2. Although the new chapter data is not rendered, it does go from top to botton and shows the same renderparsed */}
+                                            {/* Step 2. Although the new chapter data is not rendered, it does go from top to botton and shows the same renderparsed */}
                                             <RenderParsed />
                                         </ErrorBoundary>
                                     </View>
