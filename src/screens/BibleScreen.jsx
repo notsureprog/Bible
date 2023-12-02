@@ -164,17 +164,24 @@ const BibleScreen = ({ navigation, route }) => {
 
         }
 
+        // So what it is, is that i assign a verse number to all pieeces of text in the bible. there can be 2 or more pieces of text with the same verse.
+        // those are on different lines though
         for (var i = 0; i < verses.length; i++) {
             let v;
             verses.map((result) => {
                 if (result.verse !== null) {
                     v = result.verse
+                    // Well, they should already be grouped by verse tbh
+                    // Object.groupBy(result, ({ verse }) => verse);
                 }
                 if (result.verse === null) {
                     result.verse = v
+                    // Object.groupBy(result, ({ verse }) => verse);
                 }
             })
         }
+
+        console.log(verses)
 
 
 
@@ -188,13 +195,14 @@ const BibleScreen = ({ navigation, route }) => {
                         // className is already - for example - wj, p, v, q1. However, there is no q1 in convertedCss. Also, - iin the case of v - it is sup[class^=v], but q1 - on the other hand - is [class^=q]
                         // I always want *optional*[class^=something]
                         const testBibleStyles = {
-                            tagStyle : converted[`.eb-container ${item.tag}`],
-                            textStyle : typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : typeof converted[`.eb-container [class^=${item.className[0]}]`] !== 'undefined' ? converted[`.eb-container [class^=${item.className[0]}]`] : converted[`.eb-container sup[class^=${item.className[0]}]`]
+                            tagStyle: converted[`.eb-container ${item.tag}`],
+                            textStyle: typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : typeof converted[`.eb-container [class^=${item.className[0]}]`] !== 'undefined' ? converted[`.eb-container [class^=${item.className[0]}]`] : converted[`.eb-container sup[class^=${item.className[0]}]`]
                         }
                         console.log(testBibleStyles.textStyle)
                         console.log(testBibleStyles.tagStyle)
                         const testToSeeIfVerseInDB = user.highlightedVerses.find(element => element.verse === item.verse && element.book === data.id.split('.')[0] && element.chapter === chapter.split('.')[1])
                         return (
+                            // in this view should be the style with item.verse being grouped together
                             <View style={{ display: 'flex' }}>
                                 <Pressable style={{
                                     color: darkMode ? styles.dark.color : styles.light.color,
@@ -206,17 +214,13 @@ const BibleScreen = ({ navigation, route }) => {
                                 >
                                     {item.text === null &&
                                         <View>
-                                            {/* I think the ebcontaiiner for q1 is undefiined, so ternary it */}
-                                            {/* <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag> */}
                                             <item.tag style={converted[`.eb-container .${item.className}`]}>{item.verse}</item.tag>
                                         </View>
                                     }
                                     {item.text !== null &&
                                         <View style={testBibleStyles.tagStyle}>
-                                        {/* <View style={converted[`.eb-container ${item.tag}`]}> */}
+                                            {/* <View style={converted[`.eb-container ${item.tag}`]}> */}
                                             <View style={{ fontSize: fontState.size, color: typeof testToSeeIfVerseInDB !== 'undefined' && darkMode ? styles.light.color : darkMode ? styles.dark.color : styles.light.color, backgroundColor: typeof testToSeeIfVerseInDB !== 'undefined' ? 'yellow' : darkMode ? styles.dark.backgroundColor : styles.light.backgroundColor }}>
-                                                {/* Test styles in a func */}
-                                                {/* <item.tag style={typeof converted[`.eb-container .${item.className}`] !== 'undefined' ? converted[`.eb-container .${item.className}`] : typeof converted[`.eb-container [class^=${item.className[0]}]`] !== 'undefined' ? converted[`.eb-container [class^=${item.className[0]}]`] : converted[`.eb-container sup[class^=${item.className[0]}]`]}>{item.text}</item.tag> */}
                                                 <item.tag style={testBibleStyles.textStyle}>{item.text}</item.tag>
                                             </View>
                                         </View>
@@ -289,7 +293,6 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                             {data.id === 'REV.22' &&
                                 <View style={{ display: 'flex', borderColor: 'black', borderWidth: 2, position: 'relative' }}>
-
                                     <TRenderEngineProvider>
                                         <RenderHTMLConfigProvider>
                                             <RenderHTML customHTMLElementModels={customHTMLElementModels} source={{ html: `<div class="scripture-styles"><dynamic-font>${data.content}</dynamic-font></div>` }} />
@@ -318,6 +321,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                         </View>
                     }
+
                     {Platform.OS === 'ios' &&
                         <SafeAreaView>
                             {data.id === 'GEN.intro' &&
@@ -358,6 +362,7 @@ const BibleScreen = ({ navigation, route }) => {
                             }
                         </SafeAreaView>
                     }
+
                     {Platform.OS === 'web' &&
                         <View>
                             {data.id === 'GEN.intro' &&
